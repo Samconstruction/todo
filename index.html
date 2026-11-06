@@ -83,7 +83,7 @@ var S={me:null,pin:null,tab:'Yossi',tasks:[],showDone:false,loaded:false,saving:
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
 S.me=store('sam_me');S.pin=store('sam_pin');S.tab=S.me||'Yossi';
 LANG=store('sam_lang')||((navigator.language||'').toLowerCase().indexOf('es')===0?'es':'en');
-function setLang(l){LANG=l;store('sam_lang',l);document.documentElement.lang=l;render();}
+function setLang(l){LANG=l;store('sam_lang',l);document.documentElement.lang=l;closeSheet();render();}
 function langSwitch(){return el('div',{class:'lang'},[['en','English'],['es','Español']].map(function(p){return el('button',{class:'lang-b'+(LANG===p[0]?' on':''),onclick:function(){if(LANG!==p[0])setLang(p[0]);}},p[1]);}));}
 
 function call(action,payload){
