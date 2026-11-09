@@ -5,3 +5,12 @@ firebase.messaging();
 self.addEventListener('install',function(){self.skipWaiting();});
 self.addEventListener('activate',function(e){e.waitUntil(self.clients.claim());});
 self.addEventListener('fetch',function(){});
+// Tapping a notification opens (or brings forward) the app.
+self.addEventListener('notificationclick',function(e){
+  e.notification.close();
+  var url='https://samconstruction.github.io/todo/';
+  e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(function(list){
+    for(var i=0;i<list.length;i++){if(list[i].url.indexOf('/todo/')>=0&&'focus' in list[i])return list[i].focus();}
+    return self.clients.openWindow(url);
+  }));
+});

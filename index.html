@@ -847,6 +847,19 @@ function getReg(){
   if(swReg)return Promise.resolve(swReg);
   return navigator.serviceWorker.register('sw.js').then(function(r){swReg=r;return navigator.serviceWorker.ready.then(function(){return r;});});
 }
+// When the app is open on screen, Google hands notifications to the page instead of showing them,
+// so show them ourselves (system notification + in-app banner) and refresh the list.
+var fgOn=false;
+function listenForeground(){
+  if(fgOn||!window.firebase||!firebase.messaging)return;fgOn=true;
+  try{firebase.messaging().onMessage(function(p){
+    var n=(p&&p.notification)||{},d=(p&&p.data)||{},title=n.title||d.title||'SAM To-Do',body=n.body||d.body||'';
+    getReg().then(function(reg){return reg.showNotification(title,{body:body,icon:'icon-192.png',badge:'icon-192.png',tag:(p&&p.fcmOptions&&p.fcmOptions.analyticsLabel)||('fg'+Date.now()),renotify:true,data:{url:location.href}});})
+      .catch(function(e){logErr('Foreground notification failed: '+String(e&&e.message||e),'');});
+    toast('🔔 '+title+(body?' — '+body.split('\n')[0]:''));
+    refresh(true);
+  });}catch(e){fgOn=false;logErr('onMessage setup failed: '+String(e&&e.message||e),'');}
+}
 function enablePush(ask){
   var st=notifState();
   if(st==='unsupported'||st==='ios-browser'||st==='denied'||!window.firebase)return;
@@ -855,6 +868,7 @@ function enablePush(ask){
     render();
     if(p!=='granted')return;
     if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);
+    listenForeground();
     return getReg().then(function(reg){return firebase.messaging().getToken({vapidKey:VAPID,serviceWorkerRegistration:reg});})
       .then(function(token){if(!token)return;var key=S.me+'|'+LANG+'|'+token;if(!ask&&store('sam_tok')===key)return;
         return call('register',{token:token,lang:LANG}).then(function(){store('sam_tok',key);if(ask)toast('✓ '+T('Notifications are on'));});});
