@@ -144,6 +144,15 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .annrow details summary{cursor:pointer;color:var(--acc);font-weight:600;font-size:14px}
 .allbtn{display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px;border-radius:10px;background:#EFECE5;font-weight:700;font-size:15px}
 .allbtn.on{background:var(--acc);color:#fff}
+.cmts{background:#F4F6F9;border-radius:10px;padding:8px 10px;margin:8px 0 2px;display:flex;flex-direction:column;gap:5px}
+.cmt{font-size:14px;line-height:1.35;white-space:pre-wrap}
+.cmt .cwhen{color:#8A9099;font-size:12px}
+.cmore{align-self:flex-start;color:var(--acc);font-weight:600;font-size:13px;padding:0}
+.actions{gap:6px;padding:6px 8px 10px}
+.seg{min-width:0}
+.seg-b{padding:10px 2px;font-size:12.5px;min-width:0}
+.push{padding:10px 9px}
+.cam{padding:10px 7px}
 </style></head><body>
 <div id="app"></div>
 <input type="file" id="photoIn" accept="image/*" style="display:none">
@@ -156,7 +165,7 @@ var PEOPLE=['Yossi','Rocky','Ashley'];
 var ES={"Today":"Hoy","Tomorrow":"Mañana","Yesterday":"Ayer","Could not connect. Check your signal and try again.":"No se pudo conectar. Revisa tu señal e intenta de nuevo.","To-Do":"Tareas","Who is using this phone?":"¿Quién usa este teléfono?","Saving…":"Guardando…","Signed in as ":"Conectado como ","Switch to ":"Cambiar a ","Refresh now":"Actualizar ahora","Sign out":"Cerrar sesión","Cancel":"Cancelar","Loading…":"Cargando…","Try again":"Intentar de nuevo","Overdue":"Atrasadas","Urgent":"Urgentes","Coming up":"Próximas","No date":"Sin fecha","Nothing open for ":"No hay tareas pendientes para ",". Tap + to add a task.":". Toca + para agregar una tarea.","Completed":"Completadas","Not started":"No empezado","Halfway":"A medias","Done":"Hecho","Added by ":"Agregada por "," · updated by ":" · actualizada por ","Overdue · ":"Atrasada · ","Push →":"Mover →","Could not save — check signal":"No se pudo guardar — revisa la señal","Could not load the list. Check your signal.":"No se pudo cargar la lista. Revisa tu señal.","What needs to be done?":"¿Qué hay que hacer?","Note — details (optional)":"Nota — detalles (opcional)","Address (optional)":"Dirección (opcional)","For":"Para","New task":"Nueva tarea","Edit task":"Editar tarea","Date":"Fecha","Time (optional)":"Hora (opcional)","Mark as urgent":"Marcar como urgente","URGENT":"URGENTE","Type the task first.":"Escribe la tarea primero.","Add task":"Agregar tarea","Save changes":"Guardar cambios","Tap again to delete":"Toca otra vez para borrar","Delete task":"Borrar tarea","Moved to ":"Movida a ","Push to later":"Mover para después","1 day later":"1 día después","2 days later":"2 días después","1 week later":"1 semana después","Or pick a date":"O elige una fecha","Move to this date":"Mover a esta fecha","Language":"Idioma","Turn on notifications":"Activa las notificaciones","Get alerts for new tasks and reminders.":"Recibe avisos de trabajos nuevos y recordatorios.","Allow":"Permitir","Notifications are on":"Notificaciones activadas","Notifications are blocked. Turn them on in your phone settings for this app.":"Las notificaciones están bloqueadas. Actívalas en los ajustes del teléfono para esta app.","To get notifications on iPhone, open SAM To-Do from your home screen icon.":"Para recibir notificaciones en iPhone, abre SAM To-Do desde el ícono de tu pantalla de inicio.","Notifications":"Notificaciones","Enter your PIN":"Ingresa tu PIN","Last 4 digits of your phone number":"Últimos 4 dígitos de tu número de teléfono","Continue":"Continuar","Checking…":"Verificando…","Wrong PIN. Try again.":"PIN incorrecto. Intenta de nuevo.","Back":"Atrás","Check on map":"Ver en el mapa",
 "Crew":"Equipo","I'm on the crew":"Soy del equipo","My jobs":"Mis trabajos","No jobs right now.":"No tienes trabajos por ahora.","Assign job":"Asignar trabajo","Copy to next day":"Copiar al día siguiente","Manage crew":"Administrar equipo","workers":"trabajadores","jobs":"trabajos","done":"hechos","No job this day":"Sin trabajo este día","Not finished from before":"Sin terminar de antes","Add worker":"Agregar trabajador","Name":"Nombre","Phone number":"Número de teléfono","PIN (last 4 of phone)":"PIN (últimos 4 del teléfono)","Save":"Guardar","Remove":"Quitar","Tap again to remove":"Toca otra vez para quitar","That PIN is already used by someone else. Type a different 4-digit PIN.":"Ese PIN ya lo usa otra persona. Escribe otro PIN de 4 dígitos.","Enter a name and phone number.":"Escribe un nombre y un número de teléfono.","Select crew":"Elegir equipo","selected":"elegidos","Search name":"Buscar nombre","Pick at least one person.":"Elige al menos una persona.","Copy":"Copiar","Nothing to copy on this day.":"No hay nada que copiar en este día.","Copied":"Copiado","Add photo":"Agregar foto","Uploading photo…":"Subiendo foto…","Photo added":"Foto agregada","Could not upload the photo.":"No se pudo subir la foto.","Call":"Llamar","All jobs":"Todos los trabajos","No workers yet. Tap Manage crew to add your workers.":"Todavía no hay trabajadores. Toca Administrar equipo para agregarlos.","Edit worker":"Editar trabajador","jobs to":"trabajos a","Phone list":"Lista de teléfonos","Office":"Oficina"};
 var LANG=null;
-Object.assign(ES,{'Announcement':'Anuncio','Announcement from ':'Anuncio de ','Send announcement':'Enviar anuncio','Write the message…':'Escribe el mensaje…','All workers':'Todos los trabajadores','Pick workers':'Elegir trabajadores','Send to':'Enviar a','Send':'Enviar','Type the message first.':'Escribe el mensaje primero.','Recent announcements':'Anuncios recientes','Seen by':'Visto por','Not seen yet':'Todavía no lo vieron','OK, got it':'OK, entendido','Sent':'Enviado','of':'de','They will see it in Spanish if their app is in Spanish.':'Lo verán en inglés si su app está en inglés.','Job':'Obra','No job':'Sin obra','+ Add new job':'+ Agregar obra nueva','Job name':'Nombre de la obra','Job address (optional)':'Dirección de la obra (opcional)','Save job':'Guardar obra','Manage jobs':'Administrar obras','Edit job':'Editar obra','Search job':'Buscar obra','Type the job name.':'Escribe el nombre de la obra.','No jobs yet.':'Todavía no hay obras.'});
+Object.assign(ES,{'Mark as Done':'Marcar como hecho','Add a note (optional)':'Agrega una nota (opcional)','e.g. price, what was done, what is left':'ej. precio, qué se hizo, qué falta','✓ Done':'✓ Hecho','Comment':'Comentario','Write a comment…':'Escribe un comentario…','Send comment':'Enviar comentario','Show all':'Ver todos','Comments':'Comentarios','Announcement':'Anuncio','Announcement from ':'Anuncio de ','Send announcement':'Enviar anuncio','Write the message…':'Escribe el mensaje…','All workers':'Todos los trabajadores','Pick workers':'Elegir trabajadores','Send to':'Enviar a','Send':'Enviar','Type the message first.':'Escribe el mensaje primero.','Recent announcements':'Anuncios recientes','Seen by':'Visto por','Not seen yet':'Todavía no lo vieron','OK, got it':'OK, entendido','Sent':'Enviado','of':'de','They will see it in Spanish if their app is in Spanish.':'Lo verán en inglés si su app está en inglés.','Job':'Obra','No job':'Sin obra','+ Add new job':'+ Agregar obra nueva','Job name':'Nombre de la obra','Job address (optional)':'Dirección de la obra (opcional)','Save job':'Guardar obra','Manage jobs':'Administrar obras','Edit job':'Editar obra','Search job':'Buscar obra','Type the job name.':'Escribe el nombre de la obra.','No jobs yet.':'Todavía no hay obras.'});
 function T(x){return LANG==='es'&&ES[x]!==undefined?ES[x]:x;}
 var S={me:null,name:null,role:null,pin:null,pick:null,tab:'Yossi',tasks:[],crew:[],showDone:false,loaded:false,saving:0,err:'',crewDay:null,crewView:null,photos:{}};
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
@@ -457,10 +466,47 @@ function card(x,opts){
     isOffice()?el('button',{class:'cardhead',onclick:function(){openEditor(x);}},head):el('div',{class:'cardhead'},head),
     x.address?el('a',{class:'addr',href:mapsUrl(x.address),target:'_blank',rel:'noopener'},'📍',el('span',{text:x.address})):null,
     photos.length?el('div',{class:'thumbs'},photos.map(function(id){return thumb(id);})):null,
+    commentsBox(x),
     el('div',{class:'actions'},
-      el('div',{class:'seg'},STAT.map(function(s){return el('button',{class:'seg-b '+s[0]+(x.status===s[0]?' on':''),onclick:function(){if(x.status!==s[0])save('update',{id:x.id,status:s[0]});}},T(s[1]));})),
+      el('div',{class:'seg'},STAT.map(function(s){return el('button',{class:'seg-b '+s[0]+(x.status===s[0]?' on':''),onclick:function(){if(x.status===s[0])return;if(s[0]==='done')openDone(x);else save('update',{id:x.id,status:s[0]});}},T(s[1]));})),
+      el('button',{class:'push cam','aria-label':T('Comment'),onclick:function(){openComment(x);}},'💬'),
       el('button',{class:'push cam','aria-label':T('Add photo'),onclick:function(){pickPhoto(x);}},'📷'),
       isOffice()&&x.status!=='done'?el('button',{class:'push',onclick:function(){openPush(x);}},T('Push →')):null));
+}
+
+// ---------- comments ----------
+function parseComments(x){try{return x.comments?JSON.parse(x.comments):[];}catch(e){return [];}}
+function cWhen(iso){var d=new Date(iso);if(isNaN(d))return '';var dd=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  return (dd===today()?'':dueLabel(dd)+' ')+d.toLocaleTimeString(LANG==='es'?'es':'en-US',{hour:'numeric',minute:'2-digit'});}
+function commentsBox(x){
+  var list=parseComments(x);if(!list.length)return null;
+  var open=S.openC&&S.openC[x.id],show=open?list:list.slice(-2);
+  var box=el('div',{class:'cmts'});
+  if(list.length>2&&!open)box.appendChild(el('button',{class:'cmore',onclick:function(){S.openC=S.openC||{};S.openC[x.id]=1;render();}},T('Show all')+' ('+list.length+')'));
+  show.forEach(function(c){box.appendChild(el('div',{class:'cmt'},el('b',{text:nameOf(c.by)+': '}),el('span',{text:c.text}),el('span',{class:'cwhen',text:' · '+cWhen(c.at)})));});
+  return box;
+}
+function sendComment(x,text,status){
+  var now=new Date().toISOString();
+  S.tasks.forEach(function(t){if(t.id!==x.id)return;if(status)t.status=status;if(text){var l=parseComments(t);l.push({by:S.me,at:now,text:text});t.comments=JSON.stringify(l);}});
+  S.saving++;render();
+  call('comment',{id:x.id,text:text,status:status||''}).then(function(d){S.saving--;if(!S.saving)apply(d);render();})
+  .catch(function(e){S.saving--;if(isBadPin(e)){signOut(T('Wrong PIN. Try again.'));return;}toast(T('Could not save — check signal'));refresh(true);});
+}
+function openDone(x){
+  var note=el('textarea',{class:'in',rows:'3',placeholder:T('e.g. price, what was done, what is left'),maxlength:'500'});
+  openSheet([el('h2',{text:'✓ '+T('Mark as Done')}),el('p',{class:'muted',style:'margin:0',text:x.title}),
+    el('label',{class:'lbl',text:T('Add a note (optional)')}),note,
+    el('button',{class:'primary',style:'background:#2B8A3E',onclick:function(){closeSheet();sendComment(x,note.value.trim(),'done');}},T('✓ Done')),
+    el('button',{class:'ghost',onclick:closeSheet},T('Cancel'))]);
+}
+function openComment(x){
+  var note=el('textarea',{class:'in',rows:'3',placeholder:T('Write a comment…'),maxlength:'500'});
+  var kids=[el('h2',{text:'💬 '+T('Comment')}),el('p',{class:'muted',style:'margin:0',text:x.title})];
+  var list=parseComments(x);if(list.length){var b=el('div',{class:'cmts'});list.forEach(function(c){b.appendChild(el('div',{class:'cmt'},el('b',{text:nameOf(c.by)+': '}),el('span',{text:c.text}),el('span',{class:'cwhen',text:' · '+cWhen(c.at)})));});kids.push(b);}
+  kids.push(note,el('button',{class:'primary',onclick:function(){var t=note.value.trim();if(!t){note.focus();return;}closeSheet();sendComment(x,t,'');}},T('Send comment')),
+    el('button',{class:'ghost',onclick:closeSheet},T('Cancel')));
+  openSheet(kids);setTimeout(function(){note.focus();},50);
 }
 
 // ---------- photos ----------
