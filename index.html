@@ -158,6 +158,21 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .vidtile .play{background:#fff;color:#1F2328;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:11px}
 .pbar{height:12px;background:#EFECE5;border-radius:6px;overflow:hidden;margin:10px 0}
 .pfill{height:100%;width:0;background:var(--acc);transition:width .3s}
+.viewseg{display:flex;gap:6px;margin:4px 0 8px}
+.vbtn{flex:1;padding:9px;border-radius:10px;background:#EFECE5;font-weight:700;font-size:14px}
+.vbtn.on{background:var(--acc);color:#fff}
+.jgcard{background:#fff;border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:14px;padding:12px 12px 6px;margin:10px 0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.jgcard.urg{border-left-color:#D9480F}
+.jghead{display:flex;gap:10px;align-items:flex-start}
+.jgtitle{font-weight:800;font-size:17px;line-height:1.25}
+.jgcard .addr{margin-top:6px}
+.jgpeople{margin-top:8px;border-top:1px solid var(--line)}
+.jgrow{display:flex;align-items:center;gap:8px;padding:7px 2px;border-bottom:1px solid #F1EEE8}
+.jgrow:last-child{border-bottom:0}
+.jgst{width:24px;text-align:center;font-size:16px}
+.jgname{flex:1;text-align:left;font-weight:700;font-size:15px;padding:0}
+.jgrow.st-done .jgname{color:var(--ok)}
+.jgrow.st-half .jgst{color:#C98A12}
 </style></head><body>
 <div id="app"></div>
 <input type="file" id="photoIn" accept="image/*" style="display:none"><input type="file" id="videoIn" accept="video/*" style="display:none">
@@ -170,7 +185,7 @@ var PEOPLE=['Yossi','Rocky','Ashley'];
 var ES={"Today":"Hoy","Tomorrow":"Mañana","Yesterday":"Ayer","Could not connect. Check your signal and try again.":"No se pudo conectar. Revisa tu señal e intenta de nuevo.","To-Do":"Tareas","Who is using this phone?":"¿Quién usa este teléfono?","Saving…":"Guardando…","Signed in as ":"Conectado como ","Switch to ":"Cambiar a ","Refresh now":"Actualizar ahora","Sign out":"Cerrar sesión","Cancel":"Cancelar","Loading…":"Cargando…","Try again":"Intentar de nuevo","Overdue":"Atrasadas","Urgent":"Urgentes","Coming up":"Próximas","No date":"Sin fecha","Nothing open for ":"No hay tareas pendientes para ",". Tap + to add a task.":". Toca + para agregar una tarea.","Completed":"Completadas","Not started":"No empezado","Halfway":"A medias","Done":"Hecho","Added by ":"Agregada por "," · updated by ":" · actualizada por ","Overdue · ":"Atrasada · ","Push →":"Mover →","Could not save — check signal":"No se pudo guardar — revisa la señal","Could not load the list. Check your signal.":"No se pudo cargar la lista. Revisa tu señal.","What needs to be done?":"¿Qué hay que hacer?","Note — details (optional)":"Nota — detalles (opcional)","Address (optional)":"Dirección (opcional)","For":"Para","New task":"Nueva tarea","Edit task":"Editar tarea","Date":"Fecha","Time (optional)":"Hora (opcional)","Mark as urgent":"Marcar como urgente","URGENT":"URGENTE","Type the task first.":"Escribe la tarea primero.","Add task":"Agregar tarea","Save changes":"Guardar cambios","Tap again to delete":"Toca otra vez para borrar","Delete task":"Borrar tarea","Moved to ":"Movida a ","Push to later":"Mover para después","1 day later":"1 día después","2 days later":"2 días después","1 week later":"1 semana después","Or pick a date":"O elige una fecha","Move to this date":"Mover a esta fecha","Language":"Idioma","Turn on notifications":"Activa las notificaciones","Get alerts for new tasks and reminders.":"Recibe avisos de trabajos nuevos y recordatorios.","Allow":"Permitir","Notifications are on":"Notificaciones activadas","Notifications are blocked. Turn them on in your phone settings for this app.":"Las notificaciones están bloqueadas. Actívalas en los ajustes del teléfono para esta app.","To get notifications on iPhone, open SAM To-Do from your home screen icon.":"Para recibir notificaciones en iPhone, abre SAM To-Do desde el ícono de tu pantalla de inicio.","Notifications":"Notificaciones","Enter your PIN":"Ingresa tu PIN","Last 4 digits of your phone number":"Últimos 4 dígitos de tu número de teléfono","Continue":"Continuar","Checking…":"Verificando…","Wrong PIN. Try again.":"PIN incorrecto. Intenta de nuevo.","Back":"Atrás","Check on map":"Ver en el mapa",
 "Crew":"Equipo","I'm on the crew":"Soy del equipo","My jobs":"Mis trabajos","No jobs right now.":"No tienes trabajos por ahora.","Assign job":"Asignar trabajo","Copy to next day":"Copiar al día siguiente","Manage crew":"Administrar equipo","workers":"trabajadores","jobs":"trabajos","done":"hechos","No job this day":"Sin trabajo este día","Not finished from before":"Sin terminar de antes","Add worker":"Agregar trabajador","Name":"Nombre","Phone number":"Número de teléfono","PIN (last 4 of phone)":"PIN (últimos 4 del teléfono)","Save":"Guardar","Remove":"Quitar","Tap again to remove":"Toca otra vez para quitar","That PIN is already used by someone else. Type a different 4-digit PIN.":"Ese PIN ya lo usa otra persona. Escribe otro PIN de 4 dígitos.","Enter a name and phone number.":"Escribe un nombre y un número de teléfono.","Select crew":"Elegir equipo","selected":"elegidos","Search name":"Buscar nombre","Pick at least one person.":"Elige al menos una persona.","Copy":"Copiar","Nothing to copy on this day.":"No hay nada que copiar en este día.","Copied":"Copiado","Add photo":"Agregar foto","Uploading photo…":"Subiendo foto…","Photo added":"Foto agregada","Could not upload the photo.":"No se pudo subir la foto.","Call":"Llamar","All jobs":"Todos los trabajos","No workers yet. Tap Manage crew to add your workers.":"Todavía no hay trabajadores. Toca Administrar equipo para agregarlos.","Edit worker":"Editar trabajador","jobs to":"trabajos a","Phone list":"Lista de teléfonos","Office":"Oficina"};
 var LANG=null;
-Object.assign(ES,{'Photo':'Foto','Video (up to 1 minute)':'Video (hasta 1 minuto)','Add photo or video':'Agregar foto o video','Uploading video…':'Subiendo video…','Keep the app open until it finishes.':'Deja la app abierta hasta que termine.','Video added':'Video agregado','Could not upload the video.':'No se pudo subir el video.','That video is too long. Please send a video of 1 minute or less.':'Ese video es muy largo. Manda un video de 1 minuto o menos.','Loading video…':'Cargando video…','Could not load the video.':'No se pudo cargar el video.','Video':'Video','Report a problem':'Reportar un problema','What went wrong? What were you trying to do?':'¿Qué pasó? ¿Qué estabas tratando de hacer?','Thanks! We got your report.':'¡Gracias! Recibimos tu reporte.','Mark as Done':'Marcar como hecho','Add a note (optional)':'Agrega una nota (opcional)','e.g. price, what was done, what is left':'ej. precio, qué se hizo, qué falta','✓ Done':'✓ Hecho','Comment':'Comentario','Write a comment…':'Escribe un comentario…','Send comment':'Enviar comentario','Show all':'Ver todos','Comments':'Comentarios','Announcement':'Anuncio','Announcement from ':'Anuncio de ','Send announcement':'Enviar anuncio','Write the message…':'Escribe el mensaje…','All workers':'Todos los trabajadores','Pick workers':'Elegir trabajadores','Send to':'Enviar a','Send':'Enviar','Type the message first.':'Escribe el mensaje primero.','Recent announcements':'Anuncios recientes','Seen by':'Visto por','Not seen yet':'Todavía no lo vieron','OK, got it':'OK, entendido','Sent':'Enviado','of':'de','They will see it in Spanish if their app is in Spanish.':'Lo verán en inglés si su app está en inglés.','Job':'Obra','No job':'Sin obra','+ Add new job':'+ Agregar obra nueva','Job name':'Nombre de la obra','Job address (optional)':'Dirección de la obra (opcional)','Save job':'Guardar obra','Manage jobs':'Administrar obras','Edit job':'Editar obra','Search job':'Buscar obra','Type the job name.':'Escribe el nombre de la obra.','No jobs yet.':'Todavía no hay obras.'});
+Object.assign(ES,{'By job':'Por trabajo','By worker':'Por trabajador','people':'personas','Not started':'No empezado','Halfway':'A medias','Photo':'Foto','Video (up to 1 minute)':'Video (hasta 1 minuto)','Add photo or video':'Agregar foto o video','Uploading video…':'Subiendo video…','Keep the app open until it finishes.':'Deja la app abierta hasta que termine.','Video added':'Video agregado','Could not upload the video.':'No se pudo subir el video.','That video is too long. Please send a video of 1 minute or less.':'Ese video es muy largo. Manda un video de 1 minuto o menos.','Loading video…':'Cargando video…','Could not load the video.':'No se pudo cargar el video.','Video':'Video','Report a problem':'Reportar un problema','What went wrong? What were you trying to do?':'¿Qué pasó? ¿Qué estabas tratando de hacer?','Thanks! We got your report.':'¡Gracias! Recibimos tu reporte.','Mark as Done':'Marcar como hecho','Add a note (optional)':'Agrega una nota (opcional)','e.g. price, what was done, what is left':'ej. precio, qué se hizo, qué falta','✓ Done':'✓ Hecho','Comment':'Comentario','Write a comment…':'Escribe un comentario…','Send comment':'Enviar comentario','Show all':'Ver todos','Comments':'Comentarios','Announcement':'Anuncio','Announcement from ':'Anuncio de ','Send announcement':'Enviar anuncio','Write the message…':'Escribe el mensaje…','All workers':'Todos los trabajadores','Pick workers':'Elegir trabajadores','Send to':'Enviar a','Send':'Enviar','Type the message first.':'Escribe el mensaje primero.','Recent announcements':'Anuncios recientes','Seen by':'Visto por','Not seen yet':'Todavía no lo vieron','OK, got it':'OK, entendido','Sent':'Enviado','of':'de','They will see it in Spanish if their app is in Spanish.':'Lo verán en inglés si su app está en inglés.','Job':'Obra','No job':'Sin obra','+ Add new job':'+ Agregar obra nueva','Job name':'Nombre de la obra','Job address (optional)':'Dirección de la obra (opcional)','Save job':'Guardar obra','Manage jobs':'Administrar obras','Edit job':'Editar obra','Search job':'Buscar obra','Type the job name.':'Escribe el nombre de la obra.','No jobs yet.':'Todavía no hay obras.'});
 function T(x){return LANG==='es'&&ES[x]!==undefined?ES[x]:x;}
 var S={me:null,name:null,role:null,pin:null,pick:null,tab:'Yossi',tasks:[],crew:[],showDone:false,loaded:false,saving:0,err:'',crewDay:null,crewView:null,photos:{}};
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
@@ -392,8 +407,12 @@ function crewDayView(){
     el('button',{class:'cbtn',onclick:openCrewManager},'👷 '+T('Manage crew')+' ('+S.crew.length+')')));
   if(!S.crew.length){wrap.appendChild(el('p',{class:'empty',text:T('No workers yet. Tap Manage crew to add your workers.')}));return wrap;}
   var busy={};dayTasks.forEach(function(x){busy[x.owner]=busy[x.owner]||[];busy[x.owner].push(x);});
-  wrap.appendChild(el('p',{class:'summary',text:Object.keys(busy).length+' '+T('workers')+' · '+dayTasks.length+' '+T('jobs')+' · '+doneN+' '+T('done')}));
-  S.crew.forEach(function(c){
+  var byJob=(S.crewByWorker||store('sam_crewview')||'job')!=='worker';
+  wrap.appendChild(el('p',{class:'summary',text:Object.keys(busy).length+' '+T('workers')+' · '+(byJob?jobGroups(dayTasks).length:dayTasks.length)+' '+T('jobs')+' · '+doneN+'/'+dayTasks.length+' '+T('done')}));
+  if(!S.crewByWorker)S.crewByWorker=store('sam_crewview')==='worker'?'worker':'job';
+  wrap.appendChild(el('div',{class:'viewseg'},['job','worker'].map(function(v){return el('button',{class:'vbtn'+(S.crewByWorker===v?' on':''),onclick:function(){S.crewByWorker=v;store('sam_crewview',v);render();}},v==='job'?'🏗 '+T('By job'):'👷 '+T('By worker'));})));
+  if(S.crewByWorker==='job')jobGroups(dayTasks).forEach(function(g){wrap.appendChild(jobGroupCard(g));});
+  else S.crew.forEach(function(c){
     var list=busy[c.id];if(!list)return;
     list.sort(byWhen);
     var dn=list.filter(function(x){return x.status==='done';}).length;
@@ -414,6 +433,32 @@ function crewDayView(){
   }
   return wrap;
 }
+// Jobs given to several workers at once are shown together as one job.
+function jobGroups(tasks){
+  var map={},order=[];
+  tasks.slice().sort(byWhen).forEach(function(x){var k=x.group||[x.title,x.address,x.time,x.job].join('|');if(!map[k]){map[k]=[];order.push(k);}map[k].push(x);});
+  return order.map(function(k){return map[k];});
+}
+function jobGroupCard(list){
+  var x=list[0],dn=list.filter(function(t){return t.status==='done';}).length,jb=jobOf(x.job);
+  var ST={todo:'⬜',half:'🟡',done:'✅'};
+  return el('div',{class:'jgcard'+(x.urgent?' urg':'')},
+    el('div',{class:'jghead'},el('div',{style:'flex:1;min-width:0'},
+        x.urgent?el('span',{class:'tag urg',text:T('URGENT')}):null,
+        el('div',{class:'jgtitle',text:x.title}),
+        x.time?el('div',{class:'muted',style:'font-size:14px;font-weight:700',text:'🕐 '+timeLabel(x.time)}):null,
+        jb?el('div',{class:'jobtag',text:'🏗 '+jb.name}):null),
+      el('span',{class:'wkcount'+(dn===list.length?' ok':''),text:dn+'/'+list.length+' ✓'})),
+    x.address?el('a',{class:'addr',href:mapsUrl(x.address),target:'_blank',rel:'noopener'},'📍',el('span',{text:x.address})):null,
+    x.note?el('div',{class:'note',text:x.note}):null,
+    el('div',{class:'jgpeople'},list.map(function(t){var c=S.crew.filter(function(q){return q.id===t.owner;})[0]||{name:nameOf(t.owner),phone:''};
+      var extra=parsePhotos(t).length+parseVideos(t).length+parseComments(t).length;
+      return el('div',{class:'jgrow st-'+t.status},
+        el('span',{class:'jgst',title:T(t.status==='done'?'Done':t.status==='half'?'Halfway':'Not started'),text:ST[t.status]||'⬜'}),
+        el('button',{class:'jgname',onclick:function(){openEditor(t);}},c.name+(extra?'  📎'+extra:'')),
+        c.phone?el('a',{class:'telbtn sm',href:'tel:+1'+String(c.phone).slice(-10),'aria-label':T('Call')},'📞'):null);})));
+}
+function parsePhotos(t){return t.photos?String(t.photos).split(',').filter(Boolean):[];}
 function workerDetail(id){
   var c=S.crew.filter(function(x){return x.id===id;})[0];
   var wrap=listShell();if(!wrap)return el('main',{class:'list'},el('p',{class:'empty',text:T('Loading…')}));
