@@ -87,6 +87,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .whos{flex-wrap:wrap}.who{min-width:30%}
 .tab{font-size:16px;padding:12px 6px}
 .who-opt{display:flex;gap:8px}
+.pinin{width:100%;padding:16px;border:2px solid var(--line);border-radius:12px;font-size:28px;text-align:center;letter-spacing:.5em;background:#fff;color:var(--ink)}
 </style></head><body>
 <div id="app"></div>
 <script>
@@ -95,19 +96,19 @@ var LOGO='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQ
 var VAPID='BFZlSYpjuD6754hDsVE6DIgIivA_d7hNcWYC72RdWUprg_XaZSNaD1sqdS4dS_wuTcu-S9HGIbsZ_8DbB2Q1Y3E';
 var FB_CONFIG={apiKey:"AIzaSyC_2FSwxf4zIPNoT_VGQ5NpgG7-YZ0CiGU",authDomain:"sam-to-do.firebaseapp.com",projectId:"sam-to-do",storageBucket:"sam-to-do.firebasestorage.app",messagingSenderId:"853325320603",appId:"1:853325320603:web:8d32eab58545c5aff2513e"};
 var PEOPLE=['Yossi','Rocky','Ashley'];
-var ES={"Today":"Hoy","Tomorrow":"Mañana","Yesterday":"Ayer","Could not connect. Check your signal and try again.":"No se pudo conectar. Revisa tu señal e intenta de nuevo.","To-Do":"Tareas","Who is using this phone?":"¿Quién usa este teléfono?","Saving…":"Guardando…","Signed in as ":"Conectado como ","Switch to ":"Cambiar a ","Refresh now":"Actualizar ahora","Sign out":"Cerrar sesión","Cancel":"Cancelar","Loading…":"Cargando…","Try again":"Intentar de nuevo","Overdue":"Atrasadas","Urgent":"Urgentes","Coming up":"Próximas","No date":"Sin fecha","Nothing open for ":"No hay tareas pendientes para ",". Tap + to add a task.":". Toca + para agregar una tarea.","Completed":"Completadas","Not started":"No empezado","Halfway":"A medias","Done":"Hecho","Added by ":"Agregada por "," · updated by ":" · actualizada por ","Overdue · ":"Atrasada · ","Push →":"Mover →","Could not save — check signal":"No se pudo guardar — revisa la señal","Could not load the list. Check your signal.":"No se pudo cargar la lista. Revisa tu señal.","What needs to be done?":"¿Qué hay que hacer?","Note — details (optional)":"Nota — detalles (opcional)","Address (optional)":"Dirección (opcional)","For":"Para","New task":"Nueva tarea","Edit task":"Editar tarea","Date":"Fecha","Time (optional)":"Hora (opcional)","Mark as urgent":"Marcar como urgente","URGENT":"URGENTE","Type the task first.":"Escribe la tarea primero.","Add task":"Agregar tarea","Save changes":"Guardar cambios","Tap again to delete":"Toca otra vez para borrar","Delete task":"Borrar tarea","Moved to ":"Movida a ","Push to later":"Mover para después","1 day later":"1 día después","2 days later":"2 días después","1 week later":"1 semana después","Or pick a date":"O elige una fecha","Move to this date":"Mover a esta fecha","Language":"Idioma","Turn on notifications":"Activa las notificaciones","Get alerts for new tasks and reminders.":"Recibe avisos de tareas nuevas y recordatorios.","Allow":"Permitir","Notifications are on":"Notificaciones activadas","Notifications are blocked. Turn them on in your phone settings for this app.":"Las notificaciones están bloqueadas. Actívalas en los ajustes del teléfono para esta app.","To get notifications on iPhone, open SAM To-Do from your home screen icon.":"Para recibir notificaciones en iPhone, abre SAM To-Do desde el ícono de tu pantalla de inicio.","Notifications":"Notificaciones","Clear":"Borrar"};
+var ES={"Today":"Hoy","Tomorrow":"Mañana","Yesterday":"Ayer","Could not connect. Check your signal and try again.":"No se pudo conectar. Revisa tu señal e intenta de nuevo.","To-Do":"Tareas","Who is using this phone?":"¿Quién usa este teléfono?","Saving…":"Guardando…","Signed in as ":"Conectado como ","Switch to ":"Cambiar a ","Refresh now":"Actualizar ahora","Sign out":"Cerrar sesión","Cancel":"Cancelar","Loading…":"Cargando…","Try again":"Intentar de nuevo","Overdue":"Atrasadas","Urgent":"Urgentes","Coming up":"Próximas","No date":"Sin fecha","Nothing open for ":"No hay tareas pendientes para ",". Tap + to add a task.":". Toca + para agregar una tarea.","Completed":"Completadas","Not started":"No empezado","Halfway":"A medias","Done":"Hecho","Added by ":"Agregada por "," · updated by ":" · actualizada por ","Overdue · ":"Atrasada · ","Push →":"Mover →","Could not save — check signal":"No se pudo guardar — revisa la señal","Could not load the list. Check your signal.":"No se pudo cargar la lista. Revisa tu señal.","What needs to be done?":"¿Qué hay que hacer?","Note — details (optional)":"Nota — detalles (opcional)","Address (optional)":"Dirección (opcional)","For":"Para","New task":"Nueva tarea","Edit task":"Editar tarea","Date":"Fecha","Time (optional)":"Hora (opcional)","Mark as urgent":"Marcar como urgente","URGENT":"URGENTE","Type the task first.":"Escribe la tarea primero.","Add task":"Agregar tarea","Save changes":"Guardar cambios","Tap again to delete":"Toca otra vez para borrar","Delete task":"Borrar tarea","Moved to ":"Movida a ","Push to later":"Mover para después","1 day later":"1 día después","2 days later":"2 días después","1 week later":"1 semana después","Or pick a date":"O elige una fecha","Move to this date":"Mover a esta fecha","Language":"Idioma","Turn on notifications":"Activa las notificaciones","Get alerts for new tasks and reminders.":"Recibe avisos de tareas nuevas y recordatorios.","Allow":"Permitir","Notifications are on":"Notificaciones activadas","Notifications are blocked. Turn them on in your phone settings for this app.":"Las notificaciones están bloqueadas. Actívalas en los ajustes del teléfono para esta app.","To get notifications on iPhone, open SAM To-Do from your home screen icon.":"Para recibir notificaciones en iPhone, abre SAM To-Do desde el ícono de tu pantalla de inicio.","Notifications":"Notificaciones","Clear":"Borrar","Enter your PIN":"Ingresa tu PIN","Last 4 digits of your phone number":"Últimos 4 dígitos de tu número de teléfono","Continue":"Continuar","Checking…":"Verificando…","Wrong PIN. Try again.":"PIN incorrecto. Intenta de nuevo.","Back":"Atrás"};
 var LANG=null;
 function T(x){return LANG==='es'&&ES[x]!==undefined?ES[x]:x;}
-var S={me:null,tab:'Yossi',tasks:[],showDone:false,loaded:false,saving:0,err:''};
+var S={me:null,pin:null,pick:null,tab:'Yossi',tasks:[],showDone:false,loaded:false,saving:0,err:''};
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
-S.me=store('sam_me');if(PEOPLE.indexOf(S.me)<0)S.me=null;S.tab=S.me||'Yossi';
+S.me=store('sam_me');S.pin=store('sam_pin');if(PEOPLE.indexOf(S.me)<0||!S.pin){S.me=null;S.pin=null;}S.tab=S.me||'Yossi';
 LANG=store('sam_lang')||((navigator.language||'').toLowerCase().indexOf('es')===0?'es':'en');
 document.documentElement.lang=LANG;
 function setLang(l){LANG=l;store('sam_lang',l);document.documentElement.lang=l;closeSheet();render();if(S.me&&notifState()==='granted')enablePush(false);}
 function langSwitch(){return el('div',{class:'lang'},[['en','English'],['es','Español']].map(function(p){return el('button',{class:'lang-b'+(LANG===p[0]?' on':''),onclick:function(){if(LANG!==p[0])setLang(p[0]);}},p[1]);}));}
 
 function call(action,payload){
-  payload=payload||{};payload.by=S.me;
+  payload=payload||{};payload.by=S.me;payload.pin=S.pin;
   return fetch(API,{method:'POST',credentials:'omit',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:action,payload:payload})})
     .then(function(r){return r.json();}).then(function(j){if(!j.ok)throw new Error(j.error||'Error');return j.data;});
 }
@@ -148,12 +149,36 @@ function render(){
   app.appendChild(el('button',{class:'fab','aria-label':'Add task',onclick:function(){openEditor(null);}},'+'));
 }
 
-function signIn(name){S.me=name;S.tab=name;store('sam_me',name);S.loaded=false;render();refresh(true);startPolling();if(notifState()==='granted')enablePush(false);}
+function isBadPin(e){return String((e&&e.message)||e).indexOf('BAD_PIN')>=0;}
+function signOut(msg){store('sam_me',null);store('sam_pin',null);store('sam_tok',null);S.me=null;S.pin=null;S.tasks=[];S.loaded=false;S.loginMsg=msg||'';closeSheet();render();}
+function goLogin(name){store('sam_me',null);store('sam_pin',null);store('sam_tok',null);S.me=null;S.pin=null;S.tasks=[];S.loaded=false;S.pick=name||null;S.loginMsg='';closeSheet();render();}
 function loginView(){
-  return el('div',{class:'login'},el('img',{class:'biglogo',src:LOGO,alt:'SAM Construction'}),el('h1',{text:T('To-Do')}),
-    el('p',{class:'muted',text:T('Who is using this phone?')}),
-    el('div',{class:'whos'},PEOPLE.map(function(p){return el('button',{class:'who',onclick:function(){signIn(p);}},p);})),
-    langSwitch());
+  var box=el('div',{class:'login'},el('img',{class:'biglogo',src:LOGO,alt:'SAM Construction'}),el('h1',{text:T('To-Do')}));
+  if(!S.pick){
+    box.appendChild(el('p',{class:'muted',text:T('Who is using this phone?')}));
+    box.appendChild(el('div',{class:'whos'},PEOPLE.map(function(p){return el('button',{class:'who',onclick:function(){S.pick=p;S.loginMsg='';render();}},p);})));
+    if(S.loginMsg)box.appendChild(el('div',{class:'err',style:'text-align:center',text:S.loginMsg}));
+  } else {
+    var err=el('div',{class:'err',style:'text-align:center',text:S.loginMsg||''});
+    var pin=el('input',{class:'pinin',type:'password',inputmode:'numeric',pattern:'[0-9]*',maxlength:'4',placeholder:'••••',autocomplete:'off'});
+    var go=el('button',{class:'primary',onclick:function(){
+      var p=pin.value.trim();if(p.length!==4){err.textContent=T('Enter your PIN');pin.focus();return;}
+      go.disabled=true;go.textContent=T('Checking…');err.textContent='';
+      var name=S.pick;S.me=name;S.pin=p;
+      call('list').then(function(list){store('sam_me',name);store('sam_pin',p);S.pick=null;S.loginMsg='';S.tab=name;S.tasks=list;S.loaded=true;S.err='';render();startPolling();if(notifState()==='granted')enablePush(false);})
+      .catch(function(e){S.me=null;S.pin=null;go.disabled=false;go.textContent=T('Continue');err.textContent=isBadPin(e)?T('Wrong PIN. Try again.'):T('Could not connect. Check your signal and try again.');pin.value='';pin.focus();});
+    }},T('Continue'));
+    pin.addEventListener('keydown',function(e){if(e.key==='Enter')go.click();});
+    box.appendChild(el('div',{class:'who on',style:'text-align:center;flex:none'},S.pick));
+    box.appendChild(el('label',{class:'lbl',style:'text-align:center;margin:0',text:T('Enter your PIN')}));
+    box.appendChild(pin);
+    box.appendChild(el('p',{class:'muted',style:'text-align:center;margin:0;font-size:14px',text:T('Last 4 digits of your phone number')}));
+    box.appendChild(err);box.appendChild(go);
+    box.appendChild(el('button',{class:'ghost',onclick:function(){S.pick=null;S.loginMsg='';render();}},'← '+T('Back')));
+    setTimeout(function(){pin.focus();},50);
+  }
+  box.appendChild(langSwitch());
+  return box;
 }
 
 function header(){
@@ -168,7 +193,7 @@ function openMenu(){
   var ns=notifState();
   openSheet([
     el('h2',{text:T('Signed in as ')+S.me}),
-    el('div',{class:'who-opt'},others.map(function(p){return el('button',{class:'primary',style:'flex:1',onclick:function(){closeSheet();signIn(p);}},T('Switch to ')+p);})),
+    el('div',{class:'who-opt'},others.map(function(p){return el('button',{class:'primary',style:'flex:1',onclick:function(){goLogin(p);}},T('Switch to ')+p);})),
     el('div',{class:'lbl',text:T('Language')}),langSwitch(),
     el('div',{class:'lbl',text:T('Notifications')}),
     ns==='granted'?el('p',{class:'muted',style:'margin:0',text:'✓ '+T('Notifications are on')}):
@@ -176,7 +201,7 @@ function openMenu(){
     ns==='ios-browser'?el('p',{class:'muted',style:'margin:0',text:T('To get notifications on iPhone, open SAM To-Do from your home screen icon.')}):
     ns==='default'?el('button',{class:'primary',onclick:function(){closeSheet();enablePush(true);}},T('Turn on notifications')):null,
     el('button',{class:'ghost',onclick:function(){closeSheet();refresh(true);}},T('Refresh now')),
-    el('button',{class:'ghost',onclick:function(){closeSheet();store('sam_me',null);S.me=null;render();}},T('Sign out')),
+    el('button',{class:'ghost',onclick:function(){signOut('');}},T('Sign out')),
     el('button',{class:'ghost',onclick:closeSheet},T('Cancel'))]);
 }
 
@@ -226,13 +251,13 @@ function save(action,payload){
   else if(action==='add')S.tasks.push({id:'tmp'+Date.now(),owner:payload.owner,title:payload.title,note:payload.note,due:payload.due,time:payload.time,address:payload.address,urgent:payload.urgent?'1':'',status:'todo',createdBy:S.me,createdAt:now,updatedBy:S.me,updatedAt:now});
   S.saving++;render();
   call(action,payload).then(function(list){S.saving--;if(!S.saving)S.tasks=list;render();})
-  .catch(function(e){S.saving--;toast(T('Could not save — check signal'));refresh(true);});
+  .catch(function(e){S.saving--;if(isBadPin(e)){signOut(T('Wrong PIN. Try again.'));return;}toast(T('Could not save — check signal'));refresh(true);});
 }
 
 function refresh(force){
-  if(!S.me||(S.saving&&!force))return;
+  if(!S.me||!S.pin||(S.saving&&!force))return;
   call('list').then(function(list){if(S.saving)return;S.tasks=list;S.loaded=true;S.err='';render();})
-  .catch(function(e){S.loaded=true;if(!S.tasks.length)S.err=T('Could not load the list. Check your signal.');render();});
+  .catch(function(e){if(isBadPin(e)){signOut('');return;}S.loaded=true;if(!S.tasks.length)S.err=T('Could not load the list. Check your signal.');render();});
 }
 function startPolling(){
   if(S.poll)return;
