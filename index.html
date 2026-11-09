@@ -87,6 +87,12 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .whos{flex-wrap:wrap}.who{min-width:30%}
 .tab{font-size:16px;padding:12px 6px}
 .who-opt{display:flex;gap:8px}
+.addrwrap{position:relative;display:flex;flex-direction:column;gap:4px}
+.sugg{display:none;background:#fff;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.sugg-i{display:flex;flex-direction:column;align-items:flex-start;width:100%;text-align:left;padding:11px 13px;border-bottom:1px solid var(--line)}
+.sugg-i:last-child{border-bottom:0}.sugg-i:active{background:#E8F1FA}
+.sugg-m{font-weight:700;font-size:15px}.sugg-s{font-size:13px;color:var(--muted)}
+.chk{font-size:13px;font-weight:700;color:var(--acc);text-decoration:none;padding:2px 4px}
 .pinin{width:100%;padding:16px;border:2px solid var(--line);border-radius:12px;font-size:28px;text-align:center;letter-spacing:.5em;background:#fff;color:var(--ink)}
 </style></head><body>
 <div id="app"></div>
@@ -96,7 +102,7 @@ var LOGO='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQ
 var VAPID='BFZlSYpjuD6754hDsVE6DIgIivA_d7hNcWYC72RdWUprg_XaZSNaD1sqdS4dS_wuTcu-S9HGIbsZ_8DbB2Q1Y3E';
 var FB_CONFIG={apiKey:"AIzaSyC_2FSwxf4zIPNoT_VGQ5NpgG7-YZ0CiGU",authDomain:"sam-to-do.firebaseapp.com",projectId:"sam-to-do",storageBucket:"sam-to-do.firebasestorage.app",messagingSenderId:"853325320603",appId:"1:853325320603:web:8d32eab58545c5aff2513e"};
 var PEOPLE=['Yossi','Rocky','Ashley'];
-var ES={"Today":"Hoy","Tomorrow":"Mañana","Yesterday":"Ayer","Could not connect. Check your signal and try again.":"No se pudo conectar. Revisa tu señal e intenta de nuevo.","To-Do":"Tareas","Who is using this phone?":"¿Quién usa este teléfono?","Saving…":"Guardando…","Signed in as ":"Conectado como ","Switch to ":"Cambiar a ","Refresh now":"Actualizar ahora","Sign out":"Cerrar sesión","Cancel":"Cancelar","Loading…":"Cargando…","Try again":"Intentar de nuevo","Overdue":"Atrasadas","Urgent":"Urgentes","Coming up":"Próximas","No date":"Sin fecha","Nothing open for ":"No hay tareas pendientes para ",". Tap + to add a task.":". Toca + para agregar una tarea.","Completed":"Completadas","Not started":"No empezado","Halfway":"A medias","Done":"Hecho","Added by ":"Agregada por "," · updated by ":" · actualizada por ","Overdue · ":"Atrasada · ","Push →":"Mover →","Could not save — check signal":"No se pudo guardar — revisa la señal","Could not load the list. Check your signal.":"No se pudo cargar la lista. Revisa tu señal.","What needs to be done?":"¿Qué hay que hacer?","Note — details (optional)":"Nota — detalles (opcional)","Address (optional)":"Dirección (opcional)","For":"Para","New task":"Nueva tarea","Edit task":"Editar tarea","Date":"Fecha","Time (optional)":"Hora (opcional)","Mark as urgent":"Marcar como urgente","URGENT":"URGENTE","Type the task first.":"Escribe la tarea primero.","Add task":"Agregar tarea","Save changes":"Guardar cambios","Tap again to delete":"Toca otra vez para borrar","Delete task":"Borrar tarea","Moved to ":"Movida a ","Push to later":"Mover para después","1 day later":"1 día después","2 days later":"2 días después","1 week later":"1 semana después","Or pick a date":"O elige una fecha","Move to this date":"Mover a esta fecha","Language":"Idioma","Turn on notifications":"Activa las notificaciones","Get alerts for new tasks and reminders.":"Recibe avisos de tareas nuevas y recordatorios.","Allow":"Permitir","Notifications are on":"Notificaciones activadas","Notifications are blocked. Turn them on in your phone settings for this app.":"Las notificaciones están bloqueadas. Actívalas en los ajustes del teléfono para esta app.","To get notifications on iPhone, open SAM To-Do from your home screen icon.":"Para recibir notificaciones en iPhone, abre SAM To-Do desde el ícono de tu pantalla de inicio.","Notifications":"Notificaciones","Clear":"Borrar","Enter your PIN":"Ingresa tu PIN","Last 4 digits of your phone number":"Últimos 4 dígitos de tu número de teléfono","Continue":"Continuar","Checking…":"Verificando…","Wrong PIN. Try again.":"PIN incorrecto. Intenta de nuevo.","Back":"Atrás"};
+var ES={"Today":"Hoy","Tomorrow":"Mañana","Yesterday":"Ayer","Could not connect. Check your signal and try again.":"No se pudo conectar. Revisa tu señal e intenta de nuevo.","To-Do":"Tareas","Who is using this phone?":"¿Quién usa este teléfono?","Saving…":"Guardando…","Signed in as ":"Conectado como ","Switch to ":"Cambiar a ","Refresh now":"Actualizar ahora","Sign out":"Cerrar sesión","Cancel":"Cancelar","Loading…":"Cargando…","Try again":"Intentar de nuevo","Overdue":"Atrasadas","Urgent":"Urgentes","Coming up":"Próximas","No date":"Sin fecha","Nothing open for ":"No hay tareas pendientes para ",". Tap + to add a task.":". Toca + para agregar una tarea.","Completed":"Completadas","Not started":"No empezado","Halfway":"A medias","Done":"Hecho","Added by ":"Agregada por "," · updated by ":" · actualizada por ","Overdue · ":"Atrasada · ","Push →":"Mover →","Could not save — check signal":"No se pudo guardar — revisa la señal","Could not load the list. Check your signal.":"No se pudo cargar la lista. Revisa tu señal.","What needs to be done?":"¿Qué hay que hacer?","Note — details (optional)":"Nota — detalles (opcional)","Address (optional)":"Dirección (opcional)","For":"Para","New task":"Nueva tarea","Edit task":"Editar tarea","Date":"Fecha","Time (optional)":"Hora (opcional)","Mark as urgent":"Marcar como urgente","URGENT":"URGENTE","Type the task first.":"Escribe la tarea primero.","Add task":"Agregar tarea","Save changes":"Guardar cambios","Tap again to delete":"Toca otra vez para borrar","Delete task":"Borrar tarea","Moved to ":"Movida a ","Push to later":"Mover para después","1 day later":"1 día después","2 days later":"2 días después","1 week later":"1 semana después","Or pick a date":"O elige una fecha","Move to this date":"Mover a esta fecha","Language":"Idioma","Turn on notifications":"Activa las notificaciones","Get alerts for new tasks and reminders.":"Recibe avisos de tareas nuevas y recordatorios.","Allow":"Permitir","Notifications are on":"Notificaciones activadas","Notifications are blocked. Turn them on in your phone settings for this app.":"Las notificaciones están bloqueadas. Actívalas en los ajustes del teléfono para esta app.","To get notifications on iPhone, open SAM To-Do from your home screen icon.":"Para recibir notificaciones en iPhone, abre SAM To-Do desde el ícono de tu pantalla de inicio.","Notifications":"Notificaciones","Clear":"Borrar","Enter your PIN":"Ingresa tu PIN","Last 4 digits of your phone number":"Últimos 4 dígitos de tu número de teléfono","Continue":"Continuar","Checking…":"Verificando…","Wrong PIN. Try again.":"PIN incorrecto. Intenta de nuevo.","Back":"Atrás","Check on map":"Ver en el mapa"};
 var LANG=null;
 function T(x){return LANG==='es'&&ES[x]!==undefined?ES[x]:x;}
 var S={me:null,pin:null,pick:null,tab:'Yossi',tasks:[],showDone:false,loaded:false,saving:0,err:''};
@@ -268,7 +274,8 @@ function startPolling(){
 function openEditor(x){
   var isNew=!x,owner=x?x.owner:S.tab,ob={},urgent=x?x.urgent==='1':false;
   var title=el('input',{class:'in',placeholder:T('What needs to be done?'),maxlength:'200'});title.value=x?x.title:'';
-  var address=el('input',{class:'in',placeholder:'📍 '+T('Address (optional)'),maxlength:'300',autocomplete:'street-address'});address.value=x?(x.address||''):'';
+  var address=el('input',{class:'in',placeholder:'📍 '+T('Address (optional)'),maxlength:'300',autocomplete:'off'});address.value=x?(x.address||''):'';
+  var addrBox=addressPicker(address);
   var note=el('textarea',{class:'in',rows:'2',placeholder:T('Note — details (optional)'),maxlength:'1000'});note.value=x?x.note:'';
   var due=el('input',{class:'in',type:'date'});due.value=x?x.due:today();
   var time=el('input',{class:'in',type:'time'});time.value=x?(x.time||''):'';
@@ -276,7 +283,7 @@ function openEditor(x){
     ob[o]=el('button',{class:'seg-b'+(owner===o?' on':''),onclick:function(){owner=o;PEOPLE.forEach(function(p){ob[p].classList.toggle('on',p===o);});}},o);return ob[o];}));
   var ub=el('button',{class:'urgbtn'+(urgent?' on':''),onclick:function(){urgent=!urgent;ub.classList.toggle('on',urgent);}},el('span',{text:'❗ '+T('Mark as urgent')}),el('span',{class:'sw'}));
   var err=el('div',{class:'err'});
-  var kids=[el('h2',{text:isNew?T('New task'):T('Edit task')}),el('label',{class:'lbl',text:T('For')}),whoRow,title,address,note,
+  var kids=[el('h2',{text:isNew?T('New task'):T('Edit task')}),el('label',{class:'lbl',text:T('For')}),whoRow,title,addrBox,note,
     el('div',{class:'row2'},el('div',{},el('label',{class:'lbl',text:T('Date')}),due),el('div',{},el('label',{class:'lbl',text:T('Time (optional)')}),time)),
     ub,err,
     el('button',{class:'primary',onclick:function(){
@@ -300,6 +307,36 @@ function openPush(x){
     el('label',{class:'lbl',text:T('Or pick a date')}),pick,
     el('button',{class:'primary',onclick:function(){if(!pick.value)return;closeSheet();save('update',{id:x.id,due:pick.value});toast(T('Moved to ')+dueLabel(pick.value));}},T('Move to this date')),
     el('button',{class:'ghost',onclick:closeSheet},T('Cancel'))]);
+}
+
+// ---------- address suggestions ----------
+function uuid(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16);});}
+function addressPicker(input){
+  var session=uuid(),timer=null,seq=0,picked=input.value;
+  var list=el('div',{class:'sugg'});
+  var check=el('a',{class:'chk',target:'_blank',rel:'noopener'},'🗺 '+T('Check on map'));
+  function upd(){var v=input.value.trim();check.style.display=v?'':'none';check.href=mapsUrl(v);}
+  function clear(){list.innerHTML='';list.style.display='none';}
+  input.addEventListener('input',function(){
+    upd();clearTimeout(timer);var q=input.value.trim();
+    if(q.length<3||q===picked){clear();return;}
+    timer=setTimeout(function(){
+      var my=++seq;
+      call('places',{q:q,session:session}).then(function(res){
+        if(my!==seq)return;list.innerHTML='';
+        if(!res||!res.length){clear();return;}
+        res.forEach(function(r){
+          list.appendChild(el('button',{class:'sugg-i',type:'button',onmousedown:function(e){e.preventDefault();},onclick:function(){
+            input.value=r.text;picked=r.text;session=uuid();clear();upd();}},
+            el('span',{class:'sugg-m',text:'📍 '+(r.main||r.text)}),r.sub?el('span',{class:'sugg-s',text:r.sub}):null));
+        });
+        list.style.display='block';
+      }).catch(function(){clear();});
+    },350);
+  });
+  input.addEventListener('blur',function(){setTimeout(clear,200);});
+  clear();upd();
+  return el('div',{class:'addrwrap'},input,list,check);
 }
 
 // ---------- notifications ----------
