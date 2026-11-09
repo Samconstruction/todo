@@ -126,6 +126,15 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .sugg-m{font-weight:700;font-size:15px}.sugg-s{font-size:13px;color:var(--muted)}
 .chk{font-size:13px;font-weight:700;color:var(--acc);text-decoration:none;padding:2px 4px}
 .pinin{width:100%;padding:16px;border:2px solid var(--line);border-radius:12px;font-size:28px;text-align:center;letter-spacing:.5em;background:#fff;color:var(--ink)}
+.jobtag{font-size:13px;font-weight:700;color:#8A5A00;margin-top:3px}
+.jobpick{display:block;width:100%;text-align:left;padding:12px;border-radius:10px;background:#FFF4DC;font-weight:700;font-size:15px;color:#6B4600}
+.jobpick.on{background:#F2B233;color:#3A2600}
+.joblist{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;max-height:300px;overflow:auto;background:#fff}
+.jobopt{display:flex;flex-direction:column;align-items:flex-start;padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);font-weight:700}
+.jobopt small{font-weight:500;color:#6B7078;font-size:12px;margin-top:2px}
+.jobopt.on{background:#FFF4DC}
+.jobopt.add{color:var(--acc);background:#E8F1FA}
+.jobnew{display:flex;flex-direction:column;gap:8px;padding:10px;border:2px dashed #F2B233;border-radius:10px}
 </style></head><body>
 <div id="app"></div>
 <input type="file" id="photoIn" accept="image/*" style="display:none">
@@ -138,6 +147,7 @@ var PEOPLE=['Yossi','Rocky','Ashley'];
 var ES={"Today":"Hoy","Tomorrow":"Mañana","Yesterday":"Ayer","Could not connect. Check your signal and try again.":"No se pudo conectar. Revisa tu señal e intenta de nuevo.","To-Do":"Tareas","Who is using this phone?":"¿Quién usa este teléfono?","Saving…":"Guardando…","Signed in as ":"Conectado como ","Switch to ":"Cambiar a ","Refresh now":"Actualizar ahora","Sign out":"Cerrar sesión","Cancel":"Cancelar","Loading…":"Cargando…","Try again":"Intentar de nuevo","Overdue":"Atrasadas","Urgent":"Urgentes","Coming up":"Próximas","No date":"Sin fecha","Nothing open for ":"No hay tareas pendientes para ",". Tap + to add a task.":". Toca + para agregar una tarea.","Completed":"Completadas","Not started":"No empezado","Halfway":"A medias","Done":"Hecho","Added by ":"Agregada por "," · updated by ":" · actualizada por ","Overdue · ":"Atrasada · ","Push →":"Mover →","Could not save — check signal":"No se pudo guardar — revisa la señal","Could not load the list. Check your signal.":"No se pudo cargar la lista. Revisa tu señal.","What needs to be done?":"¿Qué hay que hacer?","Note — details (optional)":"Nota — detalles (opcional)","Address (optional)":"Dirección (opcional)","For":"Para","New task":"Nueva tarea","Edit task":"Editar tarea","Date":"Fecha","Time (optional)":"Hora (opcional)","Mark as urgent":"Marcar como urgente","URGENT":"URGENTE","Type the task first.":"Escribe la tarea primero.","Add task":"Agregar tarea","Save changes":"Guardar cambios","Tap again to delete":"Toca otra vez para borrar","Delete task":"Borrar tarea","Moved to ":"Movida a ","Push to later":"Mover para después","1 day later":"1 día después","2 days later":"2 días después","1 week later":"1 semana después","Or pick a date":"O elige una fecha","Move to this date":"Mover a esta fecha","Language":"Idioma","Turn on notifications":"Activa las notificaciones","Get alerts for new tasks and reminders.":"Recibe avisos de trabajos nuevos y recordatorios.","Allow":"Permitir","Notifications are on":"Notificaciones activadas","Notifications are blocked. Turn them on in your phone settings for this app.":"Las notificaciones están bloqueadas. Actívalas en los ajustes del teléfono para esta app.","To get notifications on iPhone, open SAM To-Do from your home screen icon.":"Para recibir notificaciones en iPhone, abre SAM To-Do desde el ícono de tu pantalla de inicio.","Notifications":"Notificaciones","Enter your PIN":"Ingresa tu PIN","Last 4 digits of your phone number":"Últimos 4 dígitos de tu número de teléfono","Continue":"Continuar","Checking…":"Verificando…","Wrong PIN. Try again.":"PIN incorrecto. Intenta de nuevo.","Back":"Atrás","Check on map":"Ver en el mapa",
 "Crew":"Equipo","I'm on the crew":"Soy del equipo","My jobs":"Mis trabajos","No jobs right now.":"No tienes trabajos por ahora.","Assign job":"Asignar trabajo","Copy to next day":"Copiar al día siguiente","Manage crew":"Administrar equipo","workers":"trabajadores","jobs":"trabajos","done":"hechos","No job this day":"Sin trabajo este día","Not finished from before":"Sin terminar de antes","Add worker":"Agregar trabajador","Name":"Nombre","Phone number":"Número de teléfono","PIN (last 4 of phone)":"PIN (últimos 4 del teléfono)","Save":"Guardar","Remove":"Quitar","Tap again to remove":"Toca otra vez para quitar","That PIN is already used by someone else. Type a different 4-digit PIN.":"Ese PIN ya lo usa otra persona. Escribe otro PIN de 4 dígitos.","Enter a name and phone number.":"Escribe un nombre y un número de teléfono.","Select crew":"Elegir equipo","selected":"elegidos","Search name":"Buscar nombre","Pick at least one person.":"Elige al menos una persona.","Copy":"Copiar","Nothing to copy on this day.":"No hay nada que copiar en este día.","Copied":"Copiado","Add photo":"Agregar foto","Uploading photo…":"Subiendo foto…","Photo added":"Foto agregada","Could not upload the photo.":"No se pudo subir la foto.","Call":"Llamar","All jobs":"Todos los trabajos","No workers yet. Tap Manage crew to add your workers.":"Todavía no hay trabajadores. Toca Administrar equipo para agregarlos.","Edit worker":"Editar trabajador","jobs to":"trabajos a","Phone list":"Lista de teléfonos","Office":"Oficina"};
 var LANG=null;
+Object.assign(ES,{'Job':'Obra','No job':'Sin obra','+ Add new job':'+ Agregar obra nueva','Job name':'Nombre de la obra','Job address (optional)':'Dirección de la obra (opcional)','Save job':'Guardar obra','Manage jobs':'Administrar obras','Edit job':'Editar obra','Search job':'Buscar obra','Type the job name.':'Escribe el nombre de la obra.','No jobs yet.':'Todavía no hay obras.'});
 function T(x){return LANG==='es'&&ES[x]!==undefined?ES[x]:x;}
 var S={me:null,name:null,role:null,pin:null,pick:null,tab:'Yossi',tasks:[],crew:[],showDone:false,loaded:false,saving:0,err:'',crewDay:null,crewView:null,photos:{}};
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
@@ -157,10 +167,12 @@ function call(action,payload,as){
 }
 function apply(d){
   if(!d||!d.me)return;
-  S.me=d.me.key;S.name=d.me.name;S.role=d.me.role;S.tasks=d.tasks||[];S.crew=(d.crew||[]).slice().sort(function(a,b){return a.name.localeCompare(b.name);});S.office=d.office||[];
+  S.me=d.me.key;S.name=d.me.name;S.role=d.me.role;S.tasks=d.tasks||[];S.crew=(d.crew||[]).slice().sort(function(a,b){return a.name.localeCompare(b.name);});S.office=d.office||[];S.jobs=d.jobs||S.jobs||[];
   store('sam_me',S.me);store('sam_name',S.name);store('sam_role',S.role);
 }
 function nameOf(k){if(!k)return '?';if(PEOPLE.indexOf(k)>=0)return k;if(k===S.me)return S.name;for(var i=0;i<S.crew.length;i++)if(S.crew[i].id===k)return S.crew[i].name;return '—';}
+function jobOf(id){if(!id)return null;var j=(S.jobs||[]).filter(function(x){return x.id===id;})[0];return j||null;}
+function activeJobs(){return (S.jobs||[]).filter(function(j){return j.active==='1';}).sort(function(a,b){return a.name.localeCompare(b.name);});}
 function isCrewKey(k){return k&&PEOPLE.indexOf(k)<0;}
 
 function el(tag,props){
@@ -256,6 +268,7 @@ function openMenu(){
     ns==='ios-browser'?el('p',{class:'muted',style:'margin:0',text:T('To get notifications on iPhone, open SAM To-Do from your home screen icon.')}):
     ns==='default'?el('button',{class:'primary',onclick:function(){closeSheet();enablePush(true);}},T('Turn on notifications')):null,
     el('button',{class:'primary',style:'background:#2B8A3E',onclick:openPhones},'📞 '+T('Phone list')),
+    isOffice()?el('button',{class:'primary',style:'background:#C98A12',onclick:openJobManager},'🏗 '+T('Manage jobs')):null,
     el('button',{class:'ghost',onclick:function(){closeSheet();refresh(true);}},T('Refresh now')),
     el('button',{class:'ghost',onclick:function(){signOut('');}},T('Sign out')),
     el('button',{class:'ghost',onclick:closeSheet},T('Cancel')));
@@ -422,6 +435,7 @@ function card(x,opts){
   if(opts.compact&&x.due===S.crewDay)when=x.time?timeLabel(x.time):'';
   var head=[el('div',{class:'ttl'},urgent?el('span',{class:'urg',text:T('URGENT')}):null,x.title),
       opts.showOwner?el('div',{class:'owner',text:'👷 '+nameOf(x.owner)}):null,
+      jobOf(x.job)?el('div',{class:'jobtag',text:'🏗 '+jobOf(x.job).name}):null,
       x.note?el('div',{class:'note',text:x.note}):null,
       el('div',{class:'meta'},when?el('span',{class:'due'+(od?' red':''),text:when}):null,opts.worker?null:el('span',{text:by}))];
   var photos=x.photos?x.photos.split(','):[];
@@ -466,7 +480,7 @@ function save(action,payload){
   var now=new Date().toISOString();
   if(action==='update')S.tasks.forEach(function(x){if(x.id===payload.id){for(var k in payload)if(k!=='id')x[k]=k==='urgent'?(payload[k]?'1':''):payload[k];x.updatedBy=S.me;x.updatedAt=now;}});
   else if(action==='delete')S.tasks=S.tasks.filter(function(x){return x.id!==payload.id;});
-  else if(action==='add')(payload.owners||[]).forEach(function(o,i){S.tasks.push({id:'tmp'+Date.now()+i,owner:o,title:payload.title,note:payload.note,due:payload.due,time:payload.time,address:payload.address,urgent:payload.urgent?'1':'',status:'todo',createdBy:S.me,createdAt:now,updatedBy:S.me,updatedAt:now,photos:''});});
+  else if(action==='add')(payload.owners||[]).forEach(function(o,i){S.tasks.push({id:'tmp'+Date.now()+i,owner:o,title:payload.title,note:payload.note,due:payload.due,time:payload.time,address:payload.address,urgent:payload.urgent?'1':'',job:payload.job||'',status:'todo',createdBy:S.me,createdAt:now,updatedBy:S.me,updatedAt:now,photos:''});});
   S.saving++;render();
   call(action,payload).then(function(d){S.saving--;if(!S.saving)apply(d);render();})
   .catch(function(e){S.saving--;if(isBadPin(e)){signOut(T('Wrong PIN. Try again.'));return;}toast(T('Could not save — check signal'));refresh(true);});
@@ -499,6 +513,7 @@ function openEditor(x,preset){
   var crewSum=el('button',{class:'crewpick'});
   var crewList=el('div',{class:'crewlist'}),search=el('input',{class:'in',placeholder:'🔎 '+T('Search name')});
   var crewOpen=!!(preset.crew||(sel.length&&isCrewKey(sel[0])));
+  var jp=jobPicker(x?(x.job||''):(preset.job||''),address);
   function paint(){
     PEOPLE.forEach(function(p){ob[p].classList.toggle('on',sel.length===1&&sel[0]===p);});
     var n=sel.filter(isCrewKey).length;
@@ -519,13 +534,13 @@ function openEditor(x,preset){
   var crewBox=el('div',{class:'crewbox'},S.crew.length>8?search:null,crewList);
   var ub=el('button',{class:'urgbtn'+(urgent?' on':''),onclick:function(){urgent=!urgent;ub.classList.toggle('on',urgent);}},el('span',{text:'❗ '+T('Mark as urgent')}),el('span',{class:'sw'}));
   var err=el('div',{class:'err'});
-  var kids=[el('h2',{text:isNew?T('New task'):T('Edit task')}),el('label',{class:'lbl',text:T('For')}),whoRow,S.crew.length?crewSum:null,crewBox,title,addrBox,note,
+  var kids=[el('h2',{text:isNew?T('New task'):T('Edit task')}),el('label',{class:'lbl',text:T('For')}),whoRow,S.crew.length?crewSum:null,crewBox,jp.box,title,addrBox,note,
     el('div',{class:'row2'},el('div',{},el('label',{class:'lbl',text:T('Date')}),due),el('div',{},el('label',{class:'lbl',text:T('Time (optional)')}),time)),
     ub,err,
     el('button',{class:'primary',onclick:function(){
       var tt=title.value.trim();if(!tt){err.textContent=T('Type the task first.');title.focus();return;}
       if(!sel.length){err.textContent=T('Pick at least one person.');return;}
-      var p={title:tt,note:note.value.trim(),address:address.value.trim(),due:due.value,time:time.value,urgent:urgent};closeSheet();
+      var p={title:tt,note:note.value.trim(),address:address.value.trim(),due:due.value,time:time.value,urgent:urgent,job:jp.get()};closeSheet();
       if(isNew){p.owners=sel.slice();if(isCrewKey(sel[0])){S.tab='Crew';S.crewDay=due.value||S.crewDay;if(sel.length===1&&S.crewView&&S.crewView!==sel[0])S.crewView=null;}else{S.tab=sel[0];S.crewView=null;}save('add',p);}
       else{p.id=x.id;p.owner=sel[0];save('update',p);}
     }},isNew?T('Add task'):T('Save changes'))];
@@ -544,6 +559,68 @@ function openPush(x){
     el('label',{class:'lbl',text:T('Or pick a date')}),pick,
     el('button',{class:'primary',onclick:function(){if(!pick.value)return;closeSheet();save('update',{id:x.id,due:pick.value});toast(T('Moved to ')+dueLabel(pick.value));}},T('Move to this date')),
     el('button',{class:'ghost',onclick:closeSheet},T('Cancel'))]);
+}
+
+// ---------- jobs ----------
+function jobPicker(initial,addressInput){
+  var cur=initial||'',open=false,adding=false;
+  var btn=el('button',{class:'jobpick',type:'button'});
+  var body=el('div',{});
+  function label(){var j=jobOf(cur);btn.textContent='🏗 '+T('Job')+': '+(j?j.name:T('No job'))+(open?'  ▴':'  ▾');btn.classList.toggle('on',!!j);}
+  function choose(id){var old=jobOf(cur),nj=jobOf(id);cur=id;open=false;adding=false;
+    var av=addressInput.value.trim(),fromOld=old&&old.address&&av===old.address;
+    if(nj&&nj.address&&(!av||fromOld))addressInput.value=nj.address;else if(fromOld)addressInput.value='';
+    paint();}
+  var q=el('input',{class:'in',placeholder:'🔎 '+T('Search job')});
+  q.addEventListener('input',function(){paintList();});
+  var list=el('div',{class:'joblist'});
+  function paintList(){
+    list.innerHTML='';var s=q.value.trim().toLowerCase();
+    list.appendChild(el('button',{class:'jobopt add',type:'button',onclick:function(){adding=true;paint();}},T('+ Add new job')));
+    if(!s)list.appendChild(el('button',{class:'jobopt'+(cur?'':' on'),type:'button',onclick:function(){choose('');}},'— '+T('No job')+' —'));
+    activeJobs().forEach(function(j){if(s&&(j.name+' '+j.address).toLowerCase().indexOf(s)<0)return;
+      list.appendChild(el('button',{class:'jobopt'+(j.id===cur?' on':''),type:'button',onclick:function(){choose(j.id);}},el('span',{text:j.name}),j.address?el('small',{text:j.address}):null));});
+  }
+  function paint(){
+    label();body.innerHTML='';
+    if(adding){body.appendChild(jobForm(null,function(id){choose(id);},function(){adding=false;paint();}));}
+    else if(open){if(activeJobs().length>6)body.appendChild(q);paintList();body.appendChild(list);}
+  }
+  btn.addEventListener('click',function(){open=!open;adding=false;q.value='';paint();});
+  paint();
+  return {box:el('div',{class:'crewbox'},btn,body),get:function(){return cur;}};
+}
+function jobForm(j,onSaved,onCancel){
+  var name=el('input',{class:'in',placeholder:T('Job name'),maxlength:'80'});name.value=j?j.name:'';
+  var addr=el('input',{class:'in',placeholder:'📍 '+T('Job address (optional)'),maxlength:'300',autocomplete:'off'});addr.value=j?(j.address||''):'';
+  var err=el('div',{class:'err'});
+  var b=el('button',{class:'primary',type:'button',onclick:function(){
+    var n=name.value.trim();if(!n){err.textContent=T('Type the job name.');name.focus();return;}
+    b.disabled=true;
+    call('jobSave',{id:j?j.id:'',name:n,address:addr.value.trim()}).then(function(r){
+      var tasks=S.tasks;apply(r);toast('✓ '+n);onSaved(j?j.id:(r.newJob||''));})
+    .catch(function(){b.disabled=false;err.textContent=T('Could not save — check signal');});
+  }},T('Save job'));
+  setTimeout(function(){name.focus();},50);
+  return el('div',{class:'jobnew'},name,addressPicker(addr),err,b,el('button',{class:'ghost',type:'button',onclick:onCancel},T('Cancel')));
+}
+function openJobManager(){
+  var jobs=activeJobs();
+  var kids=[el('h2',{text:'🏗 '+T('Manage jobs')+' ('+jobs.length+')'}),
+    el('button',{class:'primary',onclick:function(){openJobEdit(null);}},T('+ Add new job'))];
+  if(!jobs.length)kids.push(el('p',{class:'muted',text:T('No jobs yet.')}));
+  jobs.forEach(function(j){
+    kids.push(el('div',{class:'crewrow'},el('div',{},el('b',{text:j.name}),j.address?el('div',{class:'muted',style:'font-size:13px',text:j.address}):null),
+      el('button',{class:'cbtn',onclick:function(){openJobEdit(j);}},'✎')));
+  });
+  kids.push(el('button',{class:'ghost',onclick:closeSheet},T('Cancel')));
+  openSheet(kids);
+}
+function openJobEdit(j){
+  var kids=[el('h2',{text:j?T('Edit job'):T('+ Add new job')}),jobForm(j,function(){render();openJobManager();},openJobManager)];
+  if(j){var armed=false,rm=el('button',{class:'danger',onclick:function(){if(!armed){armed=true;rm.textContent=T('Tap again to remove');return;}
+    call('jobRemove',{id:j.id}).then(function(r){apply(r);render();openJobManager();}).catch(function(){toast(T('Could not save — check signal'));});}},T('Remove'));kids.push(rm);}
+  openSheet(kids);
 }
 
 // ---------- address suggestions ----------
