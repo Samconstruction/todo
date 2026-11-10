@@ -446,7 +446,6 @@ function openMenu(){
     ns==='denied'?el('p',{class:'muted',style:'margin:0',text:T('Notifications are blocked. Turn them on in your phone settings for this app.')}):
     ns==='ios-browser'?el('p',{class:'muted',style:'margin:0',text:T('To get notifications on iPhone, open SAM To-Do from your home screen icon.')}):
     ns==='default'?el('button',{class:'primary',onclick:function(){closeSheet();enablePush(true);}},T('Turn on notifications')):null,
-    isOffice()?null:el('button',{class:'primary',style:'background:#2B8A3E',onclick:openPhones},'📞 '+T('Phone list')),
     isOffice()?null:el('button',{class:'ghost',onclick:openReport},'🐞 '+T('Report a problem')),
     el('button',{class:'ghost',onclick:function(){signOut('');}},T('Sign out')),
     el('button',{class:'ghost',onclick:closeSheet},T('Cancel')));
