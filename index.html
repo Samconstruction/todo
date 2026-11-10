@@ -492,8 +492,8 @@ function workerView(){
     el('div',{class:'txt',text:(LANG==='es'?a.es:a.en)||a.text}),
     el('button',{class:'primary',onclick:function(){S.anns=S.anns.filter(function(q){return q.id!==a.id;});render();call('annSeen',{id:a.id}).catch(function(){});}},'✓ '+T('OK, got it'))));});
   (S.steady&&S.steady.crews||[]).filter(function(c){return c.leader===S.me;}).forEach(function(c){wrap.appendChild(leaderCard(c));});
-  if(S.myweek)wrap.appendChild(myWeekCard());
   groupedList(wrap,S.tasks.filter(function(x){return x.owner===S.me;}),T('No jobs right now.'),{worker:true,splitTomorrow:true});
+  if(S.myweek){var mwc=myWeekCard();mwc.style.marginTop='14px';wrap.appendChild(mwc);}
   if((S.mates||[]).length)wrap.appendChild(el('button',{class:'homebtn',style:'margin-top:14px',onclick:openPhones},el('span',{class:'hi',text:'📞'}),el('span',{text:T('Phone list')}),el('span',{class:'hchev',text:'›'})));
   return wrap;
 }
