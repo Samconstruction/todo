@@ -91,21 +91,12 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .daybar{display:flex;align-items:center;gap:8px;margin:12px 0 8px}
 .dayarrow{width:46px;height:46px;border-radius:12px;background:#fff;border:1.5px solid var(--line);font-size:26px;font-weight:700;line-height:1}
 .daylabel{flex:1;height:46px;border-radius:12px;background:#fff;border:1.5px solid var(--line);font-size:16px}
-.crewbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
 .cbtn{padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-weight:700;font-size:14px;text-decoration:none;color:var(--ink);white-space:nowrap}
-.cbtn.pri{background:var(--acc);color:#fff;border-color:var(--acc)}
 .summary{color:var(--muted);font-size:14px;margin:8px 4px}
-.wkhead{display:flex;align-items:center;gap:10px;width:100%;margin:16px 0 8px;padding:6px 4px;text-align:left}
-.wkcount{font-size:13px;font-weight:700;background:#EFECE5;border-radius:999px;padding:3px 10px}.wkcount.ok{background:#DDF1E1;color:var(--ok)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{padding:8px 12px;border-radius:999px;background:#fff;border:1.5px dashed #C9C4B8;font-weight:600;font-size:14px}
-.backlink{font-weight:700;color:var(--acc);padding:12px 4px;font-size:16px}
-.wkcard{display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:14px;padding:14px;margin-bottom:6px}
-.wkbig{font-size:20px;font-weight:800}
 .owner{font-size:13px;font-weight:700;color:var(--acc);margin-top:2px}
 .crewrow{display:flex;justify-content:space-between;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line)}
-.crewpick{display:block;width:100%;text-align:left;padding:12px;border-radius:10px;background:#EFECE5;font-weight:700;font-size:15px}
-.crewpick.on{background:var(--acc);color:#fff}
 .crewbox{display:flex;flex-direction:column;gap:6px}
 .crewlist{display:flex;flex-direction:column;max-height:38vh;overflow:auto;border:1.5px solid var(--line);border-radius:10px}
 .crewopt{display:flex;align-items:center;gap:10px;padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);font-weight:600}
@@ -117,8 +108,6 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .telrow{display:flex;justify-content:space-between;align-items:center;padding:12px 6px;border-bottom:1px solid var(--line);color:var(--ink);text-decoration:none}
 .telbtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:#DDF1E1;font-size:20px;text-decoration:none;flex:none}
 .telbtn.sm{width:38px;height:38px;font-size:17px}
-.wkname{font-weight:800;font-size:17px;flex:1;text-align:left;padding:0}
-
 .addrwrap{position:relative;display:flex;flex-direction:column;gap:4px}
 .sugg{display:none;background:#fff;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.12)}
 .sugg-i{display:flex;flex-direction:column;align-items:flex-start;width:100%;text-align:left;padding:11px 13px;border-bottom:1px solid var(--line)}
@@ -161,35 +150,16 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .viewseg{display:flex;gap:6px;margin:4px 0 8px}
 .vbtn{flex:1;padding:9px;border-radius:10px;background:#EFECE5;font-weight:700;font-size:14px}
 .vbtn.on{background:var(--acc);color:#fff}
-.jgcard{background:#fff;border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:14px;padding:12px 12px 6px;margin:10px 0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.jgcard.urg{border-left-color:#D9480F}
-.jghead{display:flex;gap:10px;align-items:flex-start}
-.jgtitle{font-weight:800;font-size:17px;line-height:1.25}
-.jgcard .addr{margin-top:6px}
-.jgpeople{margin-top:8px;border-top:1px solid var(--line)}
-.jgrow{display:flex;align-items:center;gap:8px;padding:7px 2px;border-bottom:1px solid #F1EEE8}
-.jgrow:last-child{border-bottom:0}
-.jgst{width:24px;text-align:center;font-size:16px}
-.jgname{flex:1;text-align:left;font-weight:700;font-size:15px;padding:0}
-.jgrow.st-done .jgname{color:var(--ok)}
-.jgrow.st-half .jgst{color:#C98A12}
 .teamline{font-size:14px;font-weight:700;color:#2B6CB0;margin-top:3px}
 .repcard{background:#FFF8E6;border:2px solid #F2B233;border-radius:14px;padding:12px 14px;margin:0 0 14px;display:flex;flex-direction:column;gap:6px}
 .repcard.ok{background:#EDF8EF;border-color:#7CC48A}
 .reptitle{font-weight:800;font-size:17px}
 .reprow{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--line)}
 .reprow.off .rname,.reprow.off b{color:#A0A4AA;text-decoration:line-through}
-.pbtn{width:38px;height:38px;border-radius:10px;background:#DDF1E1;color:var(--ok);font-weight:900;font-size:18px;flex:none}
-.reprow.off .pbtn{background:#FBE3E3;color:#C92A2A}
 .rname{flex:1;font-weight:700;font-size:16px}
 .otbox{display:flex;align-items:center;gap:6px}
 .otbox b{min-width:30px;text-align:center}
 .ot{width:32px;height:32px;border-radius:8px;background:#EFECE5;font-weight:900;font-size:18px}
-.actrow{border:1px solid var(--line);border-radius:10px;margin:6px 0;background:#fff}
-.actrow.on{border-color:#7CC48A;background:#F4FBF5}
-.acthead{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;padding:10px 12px;text-align:left;position:relative}
-.acthead span:last-child{position:absolute;right:12px;top:10px}
-.acthead .muted{font-size:13px;padding-right:20px}
 .chip.on{background:var(--acc);color:#fff;border-style:solid;border-color:var(--acc)}
 .repsum{font-weight:800;margin:8px 0;padding:8px 10px;background:#F4F6F9;border-radius:10px}
 .pst{width:24px;text-align:center}
@@ -198,11 +168,6 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .wkrow{display:grid;grid-template-columns:1fr auto 70px;gap:8px;padding:7px 10px;border-bottom:1px solid #F1EEE8;font-size:14px}
 .wkrow:last-child{border-bottom:0}
 .wkrow b{text-align:right}
-.actchk{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;margin:5px 0;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:left;font-weight:700;font-size:15px}
-.actchk .box{width:24px;height:24px;border-radius:6px;border:2px solid #C9C4B8;display:inline-flex;align-items:center;justify-content:center;flex:none}
-.actchk.on{border-color:#7CC48A;background:#F4FBF5}
-.actchk.on .box{background:var(--ok);border-color:var(--ok);color:#fff}
-.dayacts{margin-top:8px;padding:8px 10px;background:#F4FBF5;border-radius:10px;font-weight:600}
 .actgrid{border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}
 .agrow{display:grid;grid-template-columns:1fr repeat(7,26px);align-items:center;border-bottom:1px solid #F1EEE8}
 .agrow:last-child{border-bottom:0}
@@ -228,6 +193,19 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .schip.in{background:#E8F1FA;border-color:#B9D4EC}.schip.in::after{content:' ✕';color:var(--muted);font-size:12px}
 .schip.sel{background:var(--acc);border-color:var(--acc);color:#fff}
 .schip.add{border-style:dashed;border-color:var(--acc);color:var(--acc)}
+.schedbig{width:100%;font-size:18px;padding:16px;margin:4px 0 10px}
+.schsum{background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px 10px;margin-bottom:12px}
+.schok{font-size:13px;font-weight:800;color:var(--ok);padding:6px 2px}
+.schline{display:flex;align-items:center;gap:8px;width:100%;padding:11px 2px;border-top:1px solid var(--line);text-align:left;background:none;font-size:16px}
+.schdrv{font-weight:800}.schjob{flex:1;min-width:0;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.schcnt{color:var(--muted);font-weight:700;font-size:14px}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gbtn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px 8px;border-radius:14px;background:#fff;border:1.5px solid var(--line);font-weight:800;font-size:15px;color:var(--ink)}
+.gbtn .gi{font-size:26px}
+.teambox{margin:8px 0 4px;padding:10px;background:#EAF3FB;border-radius:12px}
+.teamhd{font-size:16px;font-weight:800;color:#1D4F7A;margin-bottom:8px}
+.teamchips{display:flex;flex-wrap:wrap;gap:8px}
+.tchip{padding:8px 14px;border-radius:999px;background:#fff;border:1.5px solid #B9D4EC;font-size:18px;font-weight:800;color:var(--ink)}
+.tchip.drv{background:#FFF4D6;border-color:#E8C35A}
 </style></head><body>
 <div id="app"></div>
 <input type="file" id="photoIn" accept="image/*" style="display:none"><input type="file" id="videoIn" accept="video/*" style="display:none">
@@ -237,12 +215,11 @@ var LOGO='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQ
 var VAPID='BFZlSYpjuD6754hDsVE6DIgIivA_d7hNcWYC72RdWUprg_XaZSNaD1sqdS4dS_wuTcu-S9HGIbsZ_8DbB2Q1Y3E';
 var FB_CONFIG={apiKey:"AIzaSyC_2FSwxf4zIPNoT_VGQ5NpgG7-YZ0CiGU",authDomain:"sam-to-do.firebaseapp.com",projectId:"sam-to-do",storageBucket:"sam-to-do.firebasestorage.app",messagingSenderId:"853325320603",appId:"1:853325320603:web:8d32eab58545c5aff2513e"};
 var PEOPLE=['Yossi','Rocky','Ashley'];
-var ES={"Today":"Hoy","Tomorrow":"Mañana","Yesterday":"Ayer","Could not connect. Check your signal and try again.":"No se pudo conectar. Revisa tu señal e intenta de nuevo.","To-Do":"Tareas","Who is using this phone?":"¿Quién usa este teléfono?","Saving…":"Guardando…","Signed in as ":"Conectado como ","Switch to ":"Cambiar a ","Refresh now":"Actualizar ahora","Sign out":"Cerrar sesión","Cancel":"Cancelar","Loading…":"Cargando…","Try again":"Intentar de nuevo","Overdue":"Atrasadas","Urgent":"Urgentes","Coming up":"Próximas","No date":"Sin fecha","Nothing open for ":"No hay tareas pendientes para ",". Tap + to add a task.":". Toca + para agregar una tarea.","Completed":"Completadas","Not started":"No empezado","Halfway":"A medias","Done":"Hecho","Added by ":"Agregada por "," · updated by ":" · actualizada por ","Overdue · ":"Atrasada · ","Push →":"Mover →","Could not save — check signal":"No se pudo guardar — revisa la señal","Could not load the list. Check your signal.":"No se pudo cargar la lista. Revisa tu señal.","What needs to be done?":"¿Qué hay que hacer?","Note — details (optional)":"Nota — detalles (opcional)","Address (optional)":"Dirección (opcional)","For":"Para","New task":"Nueva tarea","Edit task":"Editar tarea","Date":"Fecha","Time (optional)":"Hora (opcional)","Mark as urgent":"Marcar como urgente","URGENT":"URGENTE","Type the task first.":"Escribe la tarea primero.","Add task":"Agregar tarea","Save changes":"Guardar cambios","Tap again to delete":"Toca otra vez para borrar","Delete task":"Borrar tarea","Moved to ":"Movida a ","Push to later":"Mover para después","1 day later":"1 día después","2 days later":"2 días después","1 week later":"1 semana después","Or pick a date":"O elige una fecha","Move to this date":"Mover a esta fecha","Language":"Idioma","Turn on notifications":"Activa las notificaciones","Get alerts for new tasks and reminders.":"Recibe avisos de trabajos nuevos y recordatorios.","Allow":"Permitir","Notifications are on":"Notificaciones activadas","Notifications are blocked. Turn them on in your phone settings for this app.":"Las notificaciones están bloqueadas. Actívalas en los ajustes del teléfono para esta app.","To get notifications on iPhone, open SAM To-Do from your home screen icon.":"Para recibir notificaciones en iPhone, abre SAM To-Do desde el ícono de tu pantalla de inicio.","Notifications":"Notificaciones","Enter your PIN":"Ingresa tu PIN","Last 4 digits of your phone number":"Últimos 4 dígitos de tu número de teléfono","Continue":"Continuar","Checking…":"Verificando…","Wrong PIN. Try again.":"PIN incorrecto. Intenta de nuevo.","Back":"Atrás","Check on map":"Ver en el mapa",
-"Crew":"Equipo","I'm on the crew":"Soy del equipo","My jobs":"Mis trabajos","No jobs right now.":"No tienes trabajos por ahora.","Assign job":"Asignar trabajo","Copy to next day":"Copiar al día siguiente","Manage crew":"Administrar equipo","workers":"trabajadores","jobs":"trabajos","done":"hechos","No job this day":"Sin trabajo este día","Not finished from before":"Sin terminar de antes","Add worker":"Agregar trabajador","Name":"Nombre","Phone number":"Número de teléfono","PIN (last 4 of phone)":"PIN (últimos 4 del teléfono)","Save":"Guardar","Remove":"Quitar","Tap again to remove":"Toca otra vez para quitar","That PIN is already used by someone else. Type a different 4-digit PIN.":"Ese PIN ya lo usa otra persona. Escribe otro PIN de 4 dígitos.","Enter a name and phone number.":"Escribe un nombre y un número de teléfono.","Select crew":"Elegir equipo","selected":"elegidos","Search name":"Buscar nombre","Pick at least one person.":"Elige al menos una persona.","Copy":"Copiar","Nothing to copy on this day.":"No hay nada que copiar en este día.","Copied":"Copiado","Add photo":"Agregar foto","Uploading photo…":"Subiendo foto…","Photo added":"Foto agregada","Could not upload the photo.":"No se pudo subir la foto.","Call":"Llamar","All jobs":"Todos los trabajos","No workers yet. Tap Manage crew to add your workers.":"Todavía no hay trabajadores. Toca Administrar equipo para agregarlos.","Edit worker":"Editar trabajador","jobs to":"trabajos a","Phone list":"Lista de teléfonos","Office":"Oficina"};
+var ES={};
 var LANG=null;
-Object.assign(ES,{'What did the crew do today?':'¿Qué hizo la cuadrilla hoy?','Mark ✓ or ✗ on every line':'Marca ✓ o ✗ en cada línea','Go to date':'Ir a la fecha','Schedule':'Horario','Tomorrow':'Mañana','change anything and send again':'cambia lo que quieras y manda de nuevo','Same as last time':'Igual que la última vez','Off / no job':'Libre / sin obra','Together with crew':'Junto con la cuadrilla','Note (optional)':'Nota (opcional)','here':'aquí','Not placed yet':'Sin asignar','tap a name, then tap a crew':'toca un nombre y luego una cuadrilla','Everyone is placed':'Todos están asignados','Send schedule':'Enviar horario','Schedule sent':'Horario enviado','Each person gets one notification with the job, address and who they are with.':'Cada persona recibe una notificación con la obra, la dirección y con quién va.','Close':'Cerrar','Could not load — check signal':'No se pudo cargar — revisa la señal','left':'faltan','Activities this week':'Actividades de la semana','Call my crew':'Llamar a mi cuadrilla','Daily report':'Reporte del día','Daily reports':'Reportes diarios','Not sent yet':'Todavía no enviado','Sent':'Enviado','tap to edit':'toca para cambiar','Who came today?':'¿Quién vino hoy?','Overtime':'Horas extra','What did they do?':'¿Qué hicieron?','Who did this?':'¿Quién hizo esto?','Everyone':'Todos','Nobody':'Nadie','Add other work…':'Agregar otro trabajo…','Add':'Agregar','Notes for the day':'Notas del día','Send report':'Enviar reporte','Report sent':'Reporte enviado','Yesterday':'Ayer','came':'vinieron','absent':'faltó','Absent':'Faltaron','hrs':'h','OT':'Extra','Weekly overtime':'Horas extra de la semana','days':'días','No report for this day.':'No hay reporte para este día.','Crew setup':'Configurar cuadrilla','Crew name':'Nombre de la cuadrilla','Crew leader (fills the report)':'Encargado (llena el reporte)','Members – one name per line':'Miembros – un nombre por línea','Activities – one per line':'Actividades – una por línea','Reminder time if no report':'Hora del recordatorio si no hay reporte','Edit report':'Editar reporte','Spread hay':'Regar paja (hay)','Silt fence':'Silt fence (cerca de sedimentos)','Straw / landscaping':'Paja / jardinería','Orange fence':'Cerca naranja','Debris pick up (inside / outside)':'Recoger basura (adentro / afuera)','Sweep the streets':'Barrer las calles','Spread water':'Regar agua','Unload deliveries':'Descargar entregas','Organize construction supplies':'Organizar materiales','Help the plumbers':'Ayudar a los plomeros','Help the concrete guys':'Ayudar a los de concreto','With you':'Contigo','By job':'Por trabajo','By worker':'Por trabajador','people':'personas','Not started':'No empezado','Halfway':'A medias','Photo':'Foto','Video (up to 1 minute)':'Video (hasta 1 minuto)','Add photo or video':'Agregar foto o video','Uploading video…':'Subiendo video…','Keep the app open until it finishes.':'Deja la app abierta hasta que termine.','Video added':'Video agregado','Could not upload the video.':'No se pudo subir el video.','That video is too long. Please send a video of 1 minute or less.':'Ese video es muy largo. Manda un video de 1 minuto o menos.','Loading video…':'Cargando video…','Could not load the video.':'No se pudo cargar el video.','Video':'Video','Report a problem':'Reportar un problema','What went wrong? What were you trying to do?':'¿Qué pasó? ¿Qué estabas tratando de hacer?','Thanks! We got your report.':'¡Gracias! Recibimos tu reporte.','Mark as Done':'Marcar como hecho','Add a note (optional)':'Agrega una nota (opcional)','e.g. price, what was done, what is left':'ej. precio, qué se hizo, qué falta','✓ Done':'✓ Hecho','Comment':'Comentario','Write a comment…':'Escribe un comentario…','Send comment':'Enviar comentario','Show all':'Ver todos','Comments':'Comentarios','Announcement':'Anuncio','Announcement from ':'Anuncio de ','Send announcement':'Enviar anuncio','Write the message…':'Escribe el mensaje…','All workers':'Todos los trabajadores','Pick workers':'Elegir trabajadores','Send to':'Enviar a','Send':'Enviar','Type the message first.':'Escribe el mensaje primero.','Recent announcements':'Anuncios recientes','Seen by':'Visto por','Not seen yet':'Todavía no lo vieron','OK, got it':'OK, entendido','Sent':'Enviado','of':'de','They will see it in Spanish if their app is in Spanish.':'Lo verán en inglés si su app está en inglés.','Job':'Obra','No job':'Sin obra','+ Add new job':'+ Agregar obra nueva','Job name':'Nombre de la obra','Job address (optional)':'Dirección de la obra (opcional)','Save job':'Guardar obra','Manage jobs':'Administrar obras','Edit job':'Editar obra','Search job':'Buscar obra','Type the job name.':'Escribe el nombre de la obra.','No jobs yet.':'Todavía no hay obras.'});
+Object.assign(ES,{'Spread hay':'Regar paja (hay)','Silt fence':'Silt fence (cerca de sedimentos)','Straw / landscaping':'Paja / jardinería','Orange fence':'Cerca naranja','Debris pick up (inside / outside)':'Recoger basura (adentro / afuera)','Sweep the streets':'Barrer las calles','Spread water':'Regar agua','Unload deliveries':'Descargar entregas','Organize construction supplies':'Organizar materiales','Help the plumbers':'Ayudar a los plomeros','Help the concrete guys':'Ayudar a los de concreto','What did the crew do today?':'¿Qué hizo la cuadrilla hoy?','Mark ✓ or ✗ on every line':'Marca ✓ o ✗ en cada línea','Go to date':'Ir a la fecha','Make / change schedule':'Hacer / cambiar horario','Nobody is working this day.':'Nadie trabaja este día.','No schedule yet for this day.':'Todavía no hay horario para este día.','Going with you':'Van contigo','Schedule':'Horario','Tomorrow':'Mañana','change anything and send again':'cambia lo que quieras y manda de nuevo','Same as last time':'Igual que la última vez','Off / no job':'Libre / sin obra','Together with crew':'Junto con la cuadrilla','Note (optional)':'Nota (opcional)','here':'aquí','Not placed yet':'Sin asignar','tap a name, then tap a crew':'toca un nombre y luego una cuadrilla','Everyone is placed':'Todos están asignados','Send schedule':'Enviar horario','Schedule sent':'Horario enviado','Each person gets one notification with the job, address and who they are with.':'Cada persona recibe una notificación con la obra, la dirección y con quién va.','Close':'Cerrar','Could not load — check signal':'No se pudo cargar — revisa la señal','left':'faltan','Activities this week':'Actividades de la semana','Call my crew':'Llamar a mi cuadrilla','Daily report':'Reporte del día','Daily reports':'Reportes diarios','Not sent yet':'Todavía no enviado','Sent':'Enviado','tap to edit':'toca para cambiar','Who came today?':'¿Quién vino hoy?','Add other work…':'Agregar otro trabajo…','Add':'Agregar','Notes for the day':'Notas del día','Send report':'Enviar reporte','Report sent':'Reporte enviado','Yesterday':'Ayer','came':'vinieron','absent':'faltó','hrs':'h','OT':'Extra','Weekly overtime':'Horas extra de la semana','days':'días','No report for this day.':'No hay reporte para este día.','Crew setup':'Configurar cuadrilla','Crew name':'Nombre de la cuadrilla','Crew leader (fills the report)':'Encargado (llena el reporte)','Members – one name per line':'Miembros – un nombre por línea','Activities – one per line':'Actividades – una por línea','Reminder time if no report':'Hora del recordatorio si no hay reporte','Edit report':'Editar reporte','With you':'Contigo','people':'personas','Not started':'No empezado','Halfway':'A medias','Photo':'Foto','Video (up to 1 minute)':'Video (hasta 1 minuto)','Add photo or video':'Agregar foto o video','Uploading video…':'Subiendo video…','Keep the app open until it finishes.':'Deja la app abierta hasta que termine.','Video added':'Video agregado','Could not upload the video.':'No se pudo subir el video.','That video is too long. Please send a video of 1 minute or less.':'Ese video es muy largo. Manda un video de 1 minuto o menos.','Loading video…':'Cargando video…','Could not load the video.':'No se pudo cargar el video.','Video':'Video','Report a problem':'Reportar un problema','What went wrong? What were you trying to do?':'¿Qué pasó? ¿Qué estabas tratando de hacer?','Thanks! We got your report.':'¡Gracias! Recibimos tu reporte.','Mark as Done':'Marcar como hecho','Add a note (optional)':'Agrega una nota (opcional)','e.g. price, what was done, what is left':'ej. precio, qué se hizo, qué falta','✓ Done':'✓ Hecho','Comment':'Comentario','Write a comment…':'Escribe un comentario…','Send comment':'Enviar comentario','Show all':'Ver todos','Announcement':'Anuncio','Announcement from ':'Anuncio de ','Send announcement':'Enviar anuncio','Write the message…':'Escribe el mensaje…','All workers':'Todos los trabajadores','Pick workers':'Elegir trabajadores','Send to':'Enviar a','Send':'Enviar','Type the message first.':'Escribe el mensaje primero.','Recent announcements':'Anuncios recientes','Seen by':'Visto por','Not seen yet':'Todavía no lo vieron','OK, got it':'OK, entendido','Sent':'Enviado','of':'de','They will see it in Spanish if their app is in Spanish.':'Lo verán en inglés si su app está en inglés.','Job':'Obra','No job':'Sin obra','+ Add new job':'+ Agregar obra nueva','Job name':'Nombre de la obra','Job address (optional)':'Dirección de la obra (opcional)','Save job':'Guardar obra','Manage jobs':'Administrar obras','Edit job':'Editar obra','Search job':'Buscar obra','Type the job name.':'Escribe el nombre de la obra.','No jobs yet.':'Todavía no hay obras.'});
 function T(x){return LANG==='es'&&ES[x]!==undefined?ES[x]:x;}
-var S={me:null,name:null,role:null,pin:null,pick:null,tab:'Yossi',tasks:[],crew:[],showDone:false,loaded:false,saving:0,err:'',crewDay:null,crewView:null,photos:{}};
+var S={me:null,name:null,role:null,pin:null,pick:null,tab:'Yossi',tasks:[],crew:[],showDone:false,loaded:false,saving:0,err:'',crewDay:null,photos:{}};
 function store(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
 S.me=store('sam_me');S.pin=store('sam_pin');S.role=store('sam_role')||(PEOPLE.indexOf(S.me)>=0?'office':null);S.name=store('sam_name')||S.me;
 if(!S.me||!S.pin||!S.role){S.me=null;S.pin=null;S.role=null;}
@@ -269,7 +246,7 @@ window.addEventListener('unhandledrejection',function(e){var r=e.reason;if(r&&/^
 function openReport(){
   var t=el('textarea',{class:'in',rows:'4',placeholder:T('What went wrong? What were you trying to do?'),maxlength:'500'});
   var b=el('button',{class:'primary',onclick:function(){var v=t.value.trim();if(!v){t.focus();return;}b.disabled=true;
-    fetch(API,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'logError',payload:{kind:'report',who:S.me||'',message:v,detail:'screen: '+(S.tab||'')+' '+(S.crewView||'')+' lang:'+LANG,ua:navigator.userAgent.slice(0,200)}})})
+    fetch(API,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'logError',payload:{kind:'report',who:S.me||'',message:v,detail:'screen: '+(S.tab||'')+' lang:'+LANG,ua:navigator.userAgent.slice(0,200)}})})
     .then(function(){closeSheet();toast('✓ '+T('Thanks! We got your report.'));}).catch(function(){b.disabled=false;toast(T('Could not save — check signal'));});}},T('Send'));
   openSheet([el('h2',{text:'🐞 '+T('Report a problem')}),t,b,el('button',{class:'ghost',onclick:closeSheet},T('Cancel'))]);setTimeout(function(){t.focus();},50);
 }
@@ -314,7 +291,6 @@ function closeSheet(quiet){var s=document.getElementById('scrim');if(s)s.remove(
 function atRoot(){
   if(document.getElementById('scrim'))return false;
   if(!S.me)return !S.pick;
-  if(S.crewView)return false;
   if(isOffice()&&S.tab&&S.tab!==S.me)return false;
   return true;
 }
@@ -330,7 +306,6 @@ window.addEventListener('popstate',function(){
   if(ignorePop>0){ignorePop--;return;}
   if(document.getElementById('scrim')){var sc=document.getElementById('scrim');if(sc&&sc.dataset.lock){history.pushState({sam:1},'');return;}closeSheet(true);}
   else if(!S.me&&S.pick){S.pick=null;}
-  else if(S.crewView){S.crewView=null;}
   else if(isOffice()&&S.tab!==S.me){S.tab=S.me;}
   render_();queueHist();
 });
@@ -344,14 +319,14 @@ function render_(){
   if(isOffice())app.appendChild(tabs());
   var nb=notifBanner();if(nb)app.appendChild(nb);
   if(!isOffice())app.appendChild(workerView());
-  else if(S.tab==='Crew')app.appendChild(S.crewView?workerDetail(S.crewView):crewDayView());
+  else if(S.tab==='Crew')app.appendChild(crewDayView());
   else app.appendChild(listView(S.tab));
-  if(isOffice())app.appendChild(el('button',{class:'fab','aria-label':'Add task',onclick:function(){openEditor(null,S.tab==='Crew'?(S.crewView?{owners:[S.crewView],due:S.crewDay}:{crew:true,due:S.crewDay}):null);}},'+'));
+  if(isOffice()&&S.tab!=='Crew')app.appendChild(el('button',{class:'fab','aria-label':'Add task',onclick:function(){openEditor(null);}},'+'));
   window.scrollTo(0,y);
 }
 
 function isBadPin(e){return String((e&&e.message)||e).indexOf('BAD_PIN')>=0;}
-function clearSession(){['sam_me','sam_pin','sam_tok','sam_role','sam_name'].forEach(function(k){store(k,null);});S.me=null;S.pin=null;S.role=null;S.name=null;S.tasks=[];S.crew=[];S.loaded=false;S.crewView=null;}
+function clearSession(){['sam_me','sam_pin','sam_tok','sam_role','sam_name'].forEach(function(k){store(k,null);});S.me=null;S.pin=null;S.role=null;S.name=null;S.tasks=[];S.crew=[];S.loaded=false;}
 function signOut(msg){clearSession();S.loginMsg=msg||'';closeSheet();render();}
 function goLogin(name){clearSession();S.pick=name||null;S.loginMsg='';closeSheet();render();}
 function loginView(){
@@ -413,7 +388,7 @@ function counts(o){var t=today(),n=0,od=0;S.tasks.forEach(function(x){if(x.owner
 function crewCount(){var t=today(),n=0,od=0;S.tasks.forEach(function(x){if(isCrewKey(x.owner)&&x.status!=='done'&&x.due===t){n++;if(x.urgent==='1')od++;}});return{n:n,od:od};}
 function tabs(){
   return el('nav',{class:'tabs'},PEOPLE.concat(['Crew']).map(function(o){var c=o==='Crew'?crewCount():counts(o);
-    return el('button',{class:'tab'+(S.tab===o?' on':''),onclick:function(){S.tab=o;S.crewView=null;render();window.scrollTo(0,0);}},o==='Crew'?T('Crew'):o,el('span',{class:'count'+(c.od?' red':'')},String(c.n)));}));
+    return el('button',{class:'tab'+(S.tab===o?' on':''),onclick:function(){S.tab=o;render();window.scrollTo(0,0);}},o==='Crew'?'🗓 '+T('Schedule'):o,o==='Crew'?null:el('span',{class:'count'+(c.od?' red':'')},String(c.n)));}));
 }
 
 function byWhen(a,b){var A=(a.due||'9999')+(a.time||'99'),B=(b.due||'9999')+(b.time||'99');if(A!==B)return A<B?-1:1;return a.createdAt<b.createdAt?-1:1;}
@@ -477,100 +452,37 @@ function crewDayView(){
   var d=S.crewDay;
   wrap.appendChild(el('div',{class:'daybar'},
     el('button',{class:'dayarrow',onclick:function(){S.crewDay=addDays(d,-1);render();}},'‹'),
-    el('button',{class:'daylabel',onclick:function(){S.crewDay=today();render();}},el('b',{text:dueLabel(d)}),d===today()||d===addDays(today(),1)?el('span',{class:'muted',text:' · '+dateLabel(d)}):null),
+    el('button',{class:'daylabel',onclick:function(){S.crewDay=today();render();}},el('b',{text:dueLabel(d)}),el('span',{class:'muted',text:' · '+dateLabel(d)})),
     el('button',{class:'dayarrow',onclick:function(){S.crewDay=addDays(d,1);render();}},'›')));
-  var dayTasks=S.tasks.filter(function(x){return isCrewKey(x.owner)&&x.due===d;});
-  var doneN=dayTasks.filter(function(x){return x.status==='done';}).length;
-  wrap.appendChild(el('div',{class:'crewbar'},
-    el('button',{class:'cbtn pri',onclick:function(){openSchedule(d>=today()?d:null);}},'🗓 '+T('Schedule')),
-    el('button',{class:'cbtn',onclick:function(){openEditor(null,{crew:true,due:d});}},'+ '+T('Assign job')),
-    el('button',{class:'cbtn',onclick:function(){openCopy(d);}},'⧉ '+T('Copy to next day')),
-    el('button',{class:'cbtn',onclick:function(){openAnnounce();}},'📣 '+T('Announcement')),
-    el('button',{class:'cbtn',onclick:function(){openReports();}},'📋 '+T('Daily reports')),
-    el('button',{class:'cbtn',onclick:openCrewManager},'👷 '+T('Manage crew')+' ('+S.crew.length+')')));
-  if(!S.crew.length){wrap.appendChild(el('p',{class:'empty',text:T('No workers yet. Tap Manage crew to add your workers.')}));return wrap;}
-  var busy={};dayTasks.forEach(function(x){busy[x.owner]=busy[x.owner]||[];busy[x.owner].push(x);});
-  var byJob=(S.crewByWorker||store('sam_crewview')||'job')!=='worker';
-  wrap.appendChild(el('p',{class:'summary',text:Object.keys(busy).length+' '+T('workers')+' · '+(byJob?jobGroups(dayTasks).length:dayTasks.length)+' '+T('jobs')+' · '+doneN+'/'+dayTasks.length+' '+T('done')}));
-  if(!S.crewByWorker)S.crewByWorker=store('sam_crewview')==='worker'?'worker':'job';
-  wrap.appendChild(el('div',{class:'viewseg'},['job','worker'].map(function(v){return el('button',{class:'vbtn'+(S.crewByWorker===v?' on':''),onclick:function(){S.crewByWorker=v;store('sam_crewview',v);render();}},v==='job'?'🏗 '+T('By job'):'👷 '+T('By worker'));})));
-  if(S.crewByWorker==='job')jobGroups(dayTasks).forEach(function(g){wrap.appendChild(jobGroupCard(g));});
-  else dailyCrew().forEach(function(c){
-    var list=busy[c.id];if(!list)return;
-    list.sort(byWhen);
-    var dn=list.filter(function(x){return x.status==='done';}).length;
-    wrap.appendChild(el('div',{class:'wkhead'},
-      el('button',{class:'wkname',onclick:function(){S.crewView=c.id;S.showDone=false;render();window.scrollTo(0,0);}},'👷 '+c.name+' ›'),
-      el('span',{class:'wkcount'+(dn===list.length?' ok':''),text:dn+'/'+list.length+' ✓'}),
-      c.phone?el('a',{class:'telbtn sm',href:'tel:+1'+c.phone.slice(-10),'aria-label':T('Call')},'📞'):null));
-    list.forEach(function(x){wrap.appendChild(card(x,{compact:true}));});
-  });
-  var idle=dailyCrew().filter(function(c){return !busy[c.id];});
-  if(idle.length){
-    wrap.appendChild(el('h3',{class:'group'},T('No job this day')+' · '+idle.length));
-    wrap.appendChild(el('div',{class:'chips'},idle.map(function(c){return el('button',{class:'chip',onclick:function(){openEditor(null,{owners:[c.id],due:d});}},'+ '+c.name);})));
+  var past=d<today();
+  wrap.appendChild(el('button',{class:'primary schedbig',onclick:function(){openSchedule(past?today():d);}},'🗓 '+T('Make / change schedule')));
+  var sc=(S.sched||{})[d],sum=el('div',{class:'schsum'});
+  var crews=sc&&sc.crews?sc.crews.filter(function(c){return c.job||c.note;}):[];
+  if(!crews.length)sum.appendChild(el('div',{class:'muted',style:'text-align:center;padding:14px 0',text:sc?T('Nobody is working this day.'):T('No schedule yet for this day.')}));
+  else{
+    sum.appendChild(el('div',{class:'schok',text:'✓ '+T('Sent')}));
+    sc.crews.forEach(function(c,i){if(!c.job&&!c.note)return;var jb=jobOf(c.job);
+      sum.appendChild(el('button',{class:'schline',onclick:function(){openSchedule(past?today():d);}},
+        el('span',{class:'snum',text:String(i+1)}),
+        el('span',{class:'schdrv',text:nameOf(c.leader)}),
+        el('span',{class:'schjob',text:'→ '+(jb?jb.name:(c.note||''))}),
+        el('span',{class:'schcnt',text:'👥 '+(1+(c.members||[]).length)})));});
   }
-  if(d===today()){
-    var left=S.tasks.filter(function(x){return isCrewKey(x.owner)&&x.status!=='done'&&x.due&&x.due<d;}).sort(byWhen);
-    if(left.length){wrap.appendChild(el('h3',{class:'group red'},T('Not finished from before')+' · '+left.length));left.forEach(function(x){wrap.appendChild(card(x,{showOwner:true}));});}
-  }
-  return wrap;
-}
-// Jobs given to several workers at once are shown together as one job.
-function jobGroups(tasks){
-  var map={},order=[];
-  tasks.slice().sort(byWhen).forEach(function(x){var k=x.group||[x.title,x.address,x.time,x.job].join('|');if(!map[k]){map[k]=[];order.push(k);}map[k].push(x);});
-  return order.map(function(k){return map[k];});
-}
-function jobGroupCard(list){
-  var x=list[0],dn=list.filter(function(t){return t.status==='done';}).length,jb=jobOf(x.job);
-  var ST={todo:'⬜',half:'🟡',done:'✅'};
-  return el('div',{class:'jgcard'+(x.urgent?' urg':'')},
-    el('div',{class:'jghead'},el('div',{style:'flex:1;min-width:0'},
-        x.urgent?el('span',{class:'tag urg',text:T('URGENT')}):null,
-        el('div',{class:'jgtitle',text:x.title}),
-        x.time?el('div',{class:'muted',style:'font-size:14px;font-weight:700',text:'🕐 '+timeLabel(x.time)}):null,
-        jb?el('div',{class:'jobtag',text:'🏗 '+jb.name}):null),
-      el('span',{class:'wkcount'+(dn===list.length?' ok':''),text:dn+'/'+list.length+' ✓'})),
-    x.address?el('a',{class:'addr',href:mapsUrl(x.address),target:'_blank',rel:'noopener'},'📍',el('span',{text:x.address})):null,
-    x.note?el('div',{class:'note',text:x.note}):null,
-    el('div',{class:'jgpeople'},list.map(function(t){var c=S.crew.filter(function(q){return q.id===t.owner;})[0]||{name:nameOf(t.owner),phone:''};
-      var extra=parsePhotos(t).length+parseVideos(t).length+parseComments(t).length;
-      return el('div',{class:'jgrow st-'+t.status},
-        el('span',{class:'jgst',title:T(t.status==='done'?'Done':t.status==='half'?'Halfway':'Not started'),text:ST[t.status]||'⬜'}),
-        el('button',{class:'jgname',onclick:function(){openTaskSheet(t);}},c.name+(extra?'  📎'+extra:'')),
-        c.phone?el('a',{class:'telbtn sm',href:'tel:+1'+String(c.phone).slice(-10),'aria-label':T('Call')},'📞'):null);})));
-}
-function openTaskSheet(t){
-  openSheet([card(t,{showOwner:true}),el('button',{class:'ghost',onclick:closeSheet},'✕')]);
-  var sc=document.getElementById('scrim');
-  if(sc)sc.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('.seg-b'))setTimeout(function(){if(document.getElementById('scrim')===sc)closeSheet();},0);});
-}
-function parsePhotos(t){return t.photos?String(t.photos).split(',').filter(Boolean):[];}
-function workerDetail(id){
-  var c=S.crew.filter(function(x){return x.id===id;})[0];
-  var wrap=listShell();if(!wrap)return el('main',{class:'list'},el('p',{class:'empty',text:T('Loading…')}));
-  if(!c){S.crewView=null;return crewDayView();}
-  wrap.appendChild(el('button',{class:'backlink',onclick:function(){S.crewView=null;render();}},'‹ '+T('Crew')));
-  wrap.appendChild(el('div',{class:'wkcard'},el('div',{},el('div',{class:'wkbig',text:'👷 '+c.name}),el('div',{class:'muted',text:fmtPhone(c.phone)+' · PIN '+c.pin})),
-    el('a',{class:'cbtn',href:'tel:'+c.phone},'📞 '+T('Call'))));
-  groupedList(wrap,S.tasks.filter(function(x){return x.owner===id;}),T('No jobs right now.'),{splitTomorrow:true});
+  wrap.appendChild(sum);
+  wrap.appendChild(el('div',{class:'grid4'},
+    el('button',{class:'gbtn',onclick:function(){openReports();}},el('span',{class:'gi',text:'📋'}),T('Daily reports')),
+    el('button',{class:'gbtn',onclick:function(){openAnnounce();}},el('span',{class:'gi',text:'📣'}),T('Announcement')),
+    el('button',{class:'gbtn',onclick:function(){openCopy(d);}},el('span',{class:'gi',text:'⧉'}),T('Copy to next day')),
+    el('button',{class:'gbtn',onclick:openCrewManager},el('span',{class:'gi',text:'👷'}),T('Manage crew'))));
   return wrap;
 }
 function fmtPhone(p){p=String(p||'');var d=p.slice(-10);return d.length===10?'('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6):p;}
 
 function openCopy(d){
-  var src=S.tasks.filter(function(x){return isCrewKey(x.owner)&&x.due===d;});
-  var to=addDays(d,1),pick=el('input',{class:'in',type:'date'});pick.value=to;
-  if(!src.length){toast(T('Nothing to copy on this day.'));return;}
-  openSheet([el('h2',{text:T('Copy to next day')}),
-    el('p',{class:'muted',style:'margin:0',text:src.length+' '+T('jobs')+' · '+dueLabel(d)+' →'}),pick,
-    el('button',{class:'primary',onclick:function(){var t=pick.value;if(!t||t===d)return;closeSheet();S.saving++;render();
-      call('copyDay',{from:d,to:t}).then(function(r){S.saving--;apply(r);S.crewDay=t;render();toast('✓ '+T('Copied')+': '+src.length+' '+T('jobs to')+' '+dueLabel(t));})
-      .catch(function(e){S.saving--;render();if(isBadPin(e)){signOut('');return;}toast(T('Could not save — check signal'));});}},T('Copy')),
-    el('button',{class:'ghost',onclick:closeSheet},T('Cancel'))]);
+  var src=(S.sched||{})[d];
+  if(!src||!(src.crews||[]).some(function(c){return c.job||c.note;})){toast(T('Nothing to copy on this day.'));return;}
+  openSchedule(addDays(d,1),src);
 }
-
 function openCrewManager(){
   var kids=[el('h2',{text:'👷 '+T('Manage crew')+' ('+S.crew.length+')'}),
     el('button',{class:'primary',onclick:function(){openWorkerForm(null);}},'+ '+T('Add worker'))];
@@ -596,7 +508,7 @@ function openWorkerForm(c){
   }},T('Save'));
   var kids=[el('h2',{text:c?T('Edit worker'):T('Add worker')}),name,phone,el('label',{class:'lbl',text:T('PIN (last 4 of phone)')}),pin,err,saveB];
   if(c){var armed=false,rm=el('button',{class:'danger',onclick:function(){if(!armed){armed=true;rm.textContent=T('Tap again to remove');return;}
-    call('crewRemove',{id:c.id}).then(function(r){apply(r);if(S.crewView===c.id)S.crewView=null;render();openCrewManager();}).catch(function(){toast(T('Could not save — check signal'));});}},T('Remove'));kids.push(rm);}
+    call('crewRemove',{id:c.id}).then(function(r){apply(r);render();openCrewManager();}).catch(function(){toast(T('Could not save — check signal'));});}},T('Remove'));kids.push(rm);}
   kids.push(el('button',{class:'ghost',onclick:openCrewManager},'← '+T('Back')));
   openSheet(kids);
   setTimeout(function(){name.focus();},50);
@@ -604,6 +516,11 @@ function openWorkerForm(c){
 
 // ---------- task card ----------
 var STAT=[['todo','Not started'],['half','Halfway'],['done','Done']];
+function teamBox(x){
+  var drv=/^🚐 \d+ · /.test(x.title||'')?x.title.replace(/^🚐 \d+ · /,''):'';
+  return el('div',{class:'teambox'},el('div',{class:'teamhd',text:'👥 '+T('Going with you')+' ('+x.team.length+')'}),
+    el('div',{class:'teamchips'},x.team.map(function(n){return el('span',{class:'tchip'+(n===drv?' drv':''),text:(n===drv?'🚐 ':'')+n});})));
+}
 function card(x,opts){
   opts=opts||{};
   var t=today(),od=x.status!=='done'&&x.due&&x.due<t,urgent=x.urgent==='1'&&x.status!=='done';
@@ -613,7 +530,7 @@ function card(x,opts){
   var head=[el('div',{class:'ttl'},urgent?el('span',{class:'urg',text:T('URGENT')}):null,x.title),
       opts.showOwner?el('div',{class:'owner',text:'👷 '+nameOf(x.owner)}):null,
       jobOf(x.job)?el('div',{class:'jobtag',text:'🏗 '+jobOf(x.job).name}):null,
-      x.team&&x.team.length?el('div',{class:'teamline',text:'👷 '+T('With you')+': '+x.team.join(', ')}):null,
+      x.team&&x.team.length?(opts.worker?teamBox(x):el('div',{class:'teamline',text:'👷 '+T('With you')+': '+x.team.join(', ')})):null,
       x.note?el('div',{class:'note',text:x.note}):null,
       el('div',{class:'meta'},when?el('span',{class:'due'+(od?' red':''),text:when}):null,opts.worker?null:el('span',{text:by}))];
   var photos=x.photos?x.photos.split(','):[];
@@ -756,7 +673,7 @@ function refresh(force){
 }
 function startPolling(){
   if(S.poll)return;
-  S.poll=setInterval(function(){if(!document.hidden&&!document.getElementById('scrim'))refresh();},isOffice()?20000:60000);
+  S.poll=setInterval(function(){if(!document.hidden&&!document.getElementById('scrim'))refresh();},isOffice()?60000:180000);
   document.addEventListener('visibilitychange',function(){if(!document.hidden)refresh();});
 }
 
@@ -764,8 +681,7 @@ function startPolling(){
 function openEditor(x,preset){
   preset=preset||{};
   var isNew=!x,urgent=x?x.urgent==='1':false;
-  var sel=isNew?(preset.owners?preset.owners.slice():(preset.crew?[]:[S.tab==='Crew'?S.me:S.tab])):[x.owner];
-  var multi=isNew;
+  var sel=[isNew?(S.tab==='Crew'||PEOPLE.indexOf(S.tab)<0?S.me:S.tab):x.owner];
   var title=el('input',{class:'in',placeholder:T('What needs to be done?'),maxlength:'200'});title.value=x?x.title:'';
   var address=el('input',{class:'in',placeholder:'📍 '+T('Address (optional)'),maxlength:'300',autocomplete:'off'});address.value=x?(x.address||''):'';
   var addrBox=addressPicker(address);
@@ -773,44 +689,24 @@ function openEditor(x,preset){
   var due=el('input',{class:'in',type:'date'});due.value=x?x.due:(preset.due||today());
   var time=el('input',{class:'in',type:'time'});time.value=x?(x.time||''):'';
   var ob={},whoRow=el('div',{class:'seg wide'});
-  var crewSum=el('button',{class:'crewpick'});
-  var crewList=el('div',{class:'crewlist'}),search=el('input',{class:'in',placeholder:'🔎 '+T('Search name')});
-  var crewOpen=!!(preset.crew||(sel.length&&isCrewKey(sel[0])));
   var jp=jobPicker(x?(x.job||''):(preset.job||''),address);
-  function paint(){
-    PEOPLE.forEach(function(p){ob[p].classList.toggle('on',sel.length===1&&sel[0]===p);});
-    var n=sel.filter(isCrewKey).length;
-    crewSum.textContent='👷 '+T('Crew')+(n?' · '+(n===1?nameOf(sel.filter(isCrewKey)[0]):n+' '+T('selected')):'')+(crewOpen?'  ▴':'  ▾');
-    crewSum.classList.toggle('on',n>0);
-    crewBox.style.display=crewOpen?'':'none';
-    var q=search.value.trim().toLowerCase();crewList.innerHTML='';
-    dailyCrew().forEach(function(c){if(q&&c.name.toLowerCase().indexOf(q)<0)return;
-      var on=sel.indexOf(c.id)>=0;
-      crewList.appendChild(el('button',{class:'crewopt'+(on?' on':''),type:'button',onclick:function(){
-        sel=sel.filter(isCrewKey);
-        if(multi){if(on)sel=sel.filter(function(k){return k!==c.id;});else sel.push(c.id);}else sel=[c.id];
-        paint();}},el('span',{class:'box',text:on?'✓':''}),c.name));});
-  }
-  PEOPLE.forEach(function(p){ob[p]=el('button',{class:'seg-b',type:'button',onclick:function(){sel=[p];crewOpen=false;paint();}},p);whoRow.appendChild(ob[p]);});
-  crewSum.addEventListener('click',function(){crewOpen=!crewOpen;paint();});
-  search.addEventListener('input',paint);
-  var crewBox=el('div',{class:'crewbox'},S.crew.length>8?search:null,crewList);
+  function paint(){PEOPLE.forEach(function(p){ob[p].classList.toggle('on',sel[0]===p);});}
+  PEOPLE.forEach(function(p){ob[p]=el('button',{class:'seg-b',type:'button',onclick:function(){sel=[p];paint();}},p);whoRow.appendChild(ob[p]);});
   var ub=el('button',{class:'urgbtn'+(urgent?' on':''),onclick:function(){urgent=!urgent;ub.classList.toggle('on',urgent);}},el('span',{text:'❗ '+T('Mark as urgent')}),el('span',{class:'sw'}));
   var err=el('div',{class:'err'});
-  var kids=[el('h2',{text:isNew?T('New task'):T('Edit task')}),el('label',{class:'lbl',text:T('For')}),whoRow,S.crew.length?crewSum:null,crewBox,jp.box,title,addrBox,note,
+  var kids=[el('h2',{text:isNew?T('New task'):T('Edit task')}),el('label',{class:'lbl',text:T('For')}),whoRow,jp.box,title,addrBox,note,
     el('div',{class:'row2'},el('div',{},el('label',{class:'lbl',text:T('Date')}),due),el('div',{},el('label',{class:'lbl',text:T('Time (optional)')}),time)),
     ub,err,
     el('button',{class:'primary',onclick:function(){
       var tt=title.value.trim();if(!tt){err.textContent=T('Type the task first.');title.focus();return;}
-      if(!sel.length){err.textContent=T('Pick at least one person.');return;}
       var p={title:tt,note:note.value.trim(),address:address.value.trim(),due:due.value,time:time.value,urgent:urgent,job:jp.get()};closeSheet();
-      if(isNew){p.owners=sel.slice();if(isCrewKey(sel[0])){S.tab='Crew';S.crewDay=due.value||S.crewDay;if(sel.length===1&&S.crewView&&S.crewView!==sel[0])S.crewView=null;}else{S.tab=sel[0];S.crewView=null;}save('add',p);}
+      if(isNew){p.owners=sel.slice();S.tab=sel[0];save('add',p);}
       else{p.id=x.id;p.owner=sel[0];save('update',p);}
     }},isNew?T('Add task'):T('Save changes'))];
   if(!isNew){var armed=false,del=el('button',{class:'danger',onclick:function(){if(!armed){armed=true;del.textContent=T('Tap again to delete');return;}closeSheet();save('delete',{id:x.id});}},T('Delete task'));kids.push(del);}
   kids.push(el('button',{class:'ghost',onclick:closeSheet},T('Cancel')));
   openSheet(kids);paint();
-  if(isNew&&!preset.crew)setTimeout(function(){title.focus();},50);
+  if(isNew)setTimeout(function(){title.focus();},50);
 }
 
 function openPush(x){
@@ -833,9 +729,9 @@ function dailyCrew(){var ids=steadyIds();return (S.crew||[]).filter(function(w){
 var SCHED_DRIVERS=['Padrino','Jay','Bayron','Jose','Yelsi'];
 function schedDefault(){return {crews:SCHED_DRIVERS.map(function(n){var w=(S.crew||[]).filter(function(x){return x.name.toLowerCase()===n.toLowerCase();})[0];return {leader:w?w.id:'',job:'',time:'',note:'',members:[]};}).filter(function(c){return c.leader;})};}
 function schedCopy(p){return {crews:(p.crews||[]).map(function(c){return {leader:c.leader,job:c.job||'',time:c.time||'',note:c.note||'',members:(c.members||[]).slice()};})};}
-function openSchedule(date){
+function openSchedule(date,seed){
   if(!date)date=new Date().getHours()>=12?addDays(today(),1):today();
-  var saved=(S.sched||{})[date],plan=schedCopy(saved||schedDefault()),pick='',addingJob=-1,dirty=false;
+  var saved=(S.sched||{})[date],plan=schedCopy(seed||saved||schedDefault()),pick='',addingJob=-1,dirty=false;
   var alive={};(S.crew||[]).forEach(function(w){alive[w.id]=1;});
   plan.crews.forEach(function(c){c.members=c.members.filter(function(k){return alive[k];});});
   var box=el('div',{});
