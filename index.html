@@ -241,7 +241,7 @@ function store(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===n
 S.me=store('sam_me');S.pin=store('sam_pin');S.role=store('sam_role')||(PEOPLE.indexOf(S.me)>=0?'office':null);S.name=store('sam_name')||S.me;
 if(!S.me||!S.pin||!S.role){S.me=null;S.pin=null;S.role=null;}
 S.tab=S.role==='office'?S.me:'Yossi';
-LANG=store('sam_lang')||((navigator.language||'').toLowerCase().indexOf('es')===0?'es':'en');
+LANG=store('sam_lang')||'en';
 document.documentElement.lang=LANG;
 function isOffice(){return S.role==='office';}
 function setLang(l){LANG=l;store('sam_lang',l);document.documentElement.lang=l;closeSheet();render();if(S.me&&notifState()==='granted')enablePush(false);}
