@@ -241,7 +241,7 @@ function store(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===n
 S.me=store('sam_me');S.pin=store('sam_pin');S.role=store('sam_role')||(PEOPLE.indexOf(S.me)>=0?'office':null);S.name=store('sam_name')||S.me;
 if(!S.me||!S.pin||!S.role){S.me=null;S.pin=null;S.role=null;}
 S.tab=S.role==='office'?S.me:'Yossi';
-LANG=store('sam_lang')||'en';
+LANG=store('sam_lang')||((navigator.language||'').toLowerCase().indexOf('es')===0?'es':'en');
 document.documentElement.lang=LANG;
 function isOffice(){return S.role==='office';}
 function setLang(l){LANG=l;store('sam_lang',l);document.documentElement.lang=l;closeSheet();render();if(S.me&&notifState()==='granted')enablePush(false);}
@@ -814,6 +814,7 @@ function allReps(){var cur=S.steady.reports||[],k={};cur.forEach(function(r){k[r
 function reportFor(crewId,date){return allReps().filter(function(r){return r.crew===crewId&&r.date===date;})[0]||null;}
 function tAct(a){return T(a);}
 function clockOf(iso){var d=new Date(iso);return isNaN(d)?'':d.toLocaleTimeString(LANG==='es'?'es':'en-US',{hour:'numeric',minute:'2-digit'});}
+function crewTitle(c){var m=/^(.+)'s crew$/.exec(c.name||'');return m&&LANG==='es'?'Cuadrilla de '+m[1]:c.name;}
 function leaderCard(c){
   var wk=S.lweek||0,ws=addDays(weekStart(today()),wk*7),t=today();
   var rows=el('div',{class:'wkdays'});
@@ -824,13 +825,13 @@ function leaderCard(c){
       el('span',{class:'wst',text:fut?'':(r?'✓ '+n+'/'+c.members.length+(r.acts&&r.acts.length?' · 🛠 '+r.acts.length:''):T('Missing'))})));
   })(addDays(ws,i));
   return el('div',{class:'repcard'},
-    el('div',{class:'reptitle',text:'📋 '+T('Daily report')+' · '+c.name}),
+    el('div',{class:'reptitle',text:'📋 '+T('Daily report')+' · '+crewTitle(c)}),
     el('div',{class:'daybar',style:'margin:6px 0'},
       el('button',{class:'dayarrow',disabled:wk<=-4?'disabled':null,onclick:function(){S.lweek=wk-1;render();}},'‹'),
       el('button',{class:'daylabel',onclick:function(){S.lweek=0;render();}},el('b',{text:wk===0?T('This week'):(wk===-1?T('Last week'):T('Week of')+' '+dateLabel(ws))})),
       el('button',{class:'dayarrow',disabled:wk>=0?'disabled':null,onclick:function(){S.lweek=wk+1;render();}},'›')),
     rows,
-    el('button',{class:'cbtn',style:'margin-top:8px',onclick:function(){openSheet([el('h2',{text:'📞 '+c.name})].concat(c.members.map(function(n){return telRow(n,(c.phones||{})[n]);})).concat([el('button',{class:'ghost',onclick:closeSheet},'✕')]));}},'📞 '+T('Call my crew')));
+    el('button',{class:'cbtn',style:'margin-top:8px',onclick:function(){openSheet([el('h2',{text:'📞 '+crewTitle(c)})].concat(c.members.map(function(n){return telRow(n,(c.phones||{})[n]);})).concat([el('button',{class:'ghost',onclick:closeSheet},'✕')]));}},'📞 '+T('Call my crew')));
 }
 function openReportEditor(c,date){
   var prev=reportFor(c.id,date);
@@ -876,7 +877,7 @@ function openReportEditor(c,date){
     body.appendChild(el('button',{class:'ghost',onclick:closeSheet},T('Cancel')));
   }
   var dayBtns=el('div',{class:'repdate',text:'📅 '+dateLabel(date)+(date===today()?' · '+T('Today'):'')});
-  openSheet([el('h2',{text:'📋 '+c.name}),dayBtns,body]);paint();
+  openSheet([el('h2',{text:'📋 '+crewTitle(c)}),dayBtns,body]);paint();
 }
 function weekStart(d){var x=new Date(d+'T12:00:00');x.setDate(x.getDate()-x.getDay());return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');}
 function openReports(crewId,date){
@@ -886,7 +887,7 @@ function openReports(crewId,date){
   if(date>today())date=today();
   var mk=c.id+date.slice(0,7);
   if(date<addDays(today(),-38)&&!HIST.got[mk]){
-    openSheet([el('h2',{text:'📋 '+c.name}),el('p',{class:'empty',text:T('Loading…')})]);
+    openSheet([el('h2',{text:'📋 '+crewTitle(c)}),el('p',{class:'empty',text:T('Loading…')})]);
     var mf=date.slice(0,8)+'01',mt=addDays(addDays(mf,40).slice(0,8)+'01',-1);
     call('reportsRange',{crew:c.id,from:addDays(mf,-7),to:addDays(mt,7)}).then(function(d){
       var k={};(d.reports||[]).forEach(function(r){k[r.crew+r.date]=1;});
@@ -894,8 +895,8 @@ function openReports(crewId,date){
     .catch(function(e){if(isBadPin(e)){signOut('');return;}closeSheet();toast(T('Could not load — check signal'));});
     return;}
   var r=reportFor(c.id,date),kids=[];
-  if(crews.length>1)kids.push(el('div',{class:'chips'},crews.map(function(x){return el('button',{class:'chip'+(x.id===c.id?' on':''),onclick:function(){openReports(x.id,date);}},x.name);})));
-  kids.push(el('div',{style:'display:flex;align-items:center;gap:8px'},el('h2',{style:'flex:1;margin:0',text:'📋 '+c.name}),el('button',{class:'cbtn',onclick:function(){openCrewSetup(c);}},'⚙')));
+  if(crews.length>1)kids.push(el('div',{class:'chips'},crews.map(function(x){return el('button',{class:'chip'+(x.id===c.id?' on':''),onclick:function(){openReports(x.id,date);}},crewTitle(x));})));
+  kids.push(el('div',{style:'display:flex;align-items:center;gap:8px'},el('h2',{style:'flex:1;margin:0',text:'📋 '+crewTitle(c)}),el('button',{class:'cbtn',onclick:function(){openCrewSetup(c);}},'⚙')));
   var lead=S.crew.filter(function(w){return w.id===c.leader;})[0],jb=jobOf(c.job);
   kids.push(el('div',{class:'muted',style:'font-size:13px',text:(lead?'👷 '+lead.name:'')+(jb?' · 🏗 '+jb.name:'')+' · '+c.members.length+' '+T('workers')}));
   kids.push(el('div',{class:'daybar'},el('button',{class:'dayarrow',onclick:function(){openReports(c.id,addDays(date,-1));}},'‹'),
