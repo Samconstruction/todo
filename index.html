@@ -303,7 +303,7 @@ function openReport(){
 }
 function apply(d){
   if(!d||!d.me)return;
-  S.me=d.me.key;S.name=d.me.name;S.role=d.me.role;S.tasks=d.tasks||[];S.crew=(d.crew||[]).slice().sort(function(a,b){return a.name.localeCompare(b.name);});S.office=d.office||[];S.jobs=d.jobs||S.jobs||[];S.anns=d.anns||[];S.sched=d.sched||{};S.steady=d.steady||{crews:[],reports:[]};
+  S.me=d.me.key;S.name=d.me.name;S.role=d.me.role;S.tasks=d.tasks||[];S.crew=(d.crew||[]).slice().sort(function(a,b){return a.name.localeCompare(b.name);});S.office=d.office||[];S.jobs=d.jobs||S.jobs||[];S.anns=d.anns||[];S.sched=d.sched||{};S.mates=d.mates||[];S.steady=d.steady||{crews:[],reports:[]};
   store('sam_me',S.me);store('sam_name',S.name);store('sam_role',S.role);
   try{if(d.tasks)localStorage.setItem('sam_cache',JSON.stringify(d));}catch(e){}
 }
@@ -491,6 +491,7 @@ function workerView(){
     el('button',{class:'primary',onclick:function(){S.anns=S.anns.filter(function(q){return q.id!==a.id;});render();call('annSeen',{id:a.id}).catch(function(){});}},'✓ '+T('OK, got it'))));});
   (S.steady&&S.steady.crews||[]).filter(function(c){return c.leader===S.me;}).forEach(function(c){wrap.appendChild(leaderCard(c));});
   groupedList(wrap,S.tasks.filter(function(x){return x.owner===S.me;}),T('No jobs right now.'),{worker:true,splitTomorrow:true});
+  if((S.mates||[]).length)wrap.appendChild(el('button',{class:'homebtn',style:'margin-top:14px',onclick:openPhones},el('span',{class:'hi',text:'📞'}),el('span',{text:T('Phone list')}),el('span',{class:'hchev',text:'›'})));
   return wrap;
 }
 
@@ -507,9 +508,14 @@ function openPhones(){
     list.appendChild(el('div',{class:'lbl',style:'margin:6px 0',text:T('Office')}));
     (S.office||[]).forEach(function(o){if(f&&o.name.toLowerCase().indexOf(f)<0)return;list.appendChild(telRow(o.name,o.phone));});
     if(isOffice()&&S.crew.length){list.appendChild(el('div',{class:'lbl',style:'margin:12px 0 6px',text:T('Crew')+' ('+S.crew.length+')'}));
-      S.crew.forEach(function(c){if(f&&c.name.toLowerCase().indexOf(f)<0)return;list.appendChild(telRow(c.name,c.phone));});}}
+      S.crew.forEach(function(c){if(f&&c.name.toLowerCase().indexOf(f)<0)return;list.appendChild(telRow(c.name,c.phone));});}
+    var mine=!isOffice()?(S.steady&&S.steady.crews||[]).filter(function(c){return c.leader===S.me;}):[];
+    mine.forEach(function(c){list.appendChild(el('div',{class:'lbl',style:'margin:12px 0 6px',text:crewTitle(c)+' ('+c.members.length+')'}));
+      c.members.forEach(function(n){if(f&&n.toLowerCase().indexOf(f)<0)return;list.appendChild(telRow(n,(c.phones||{})[n]));});});
+    if(!isOffice()&&(S.mates||[]).length){list.appendChild(el('div',{class:'lbl',style:'margin:12px 0 6px',text:T('Crew')+' ('+S.mates.length+')'}));
+      S.mates.forEach(function(c){if(f&&c.name.toLowerCase().indexOf(f)<0)return;list.appendChild(telRow(c.name,c.phone));});}}
   q.addEventListener('input',paint);paint();
-  openSheet([el('h2',{text:'📞 '+T('Phone list')}),isOffice()&&S.crew.length>8?q:null,list,el('button',{class:'ghost',onclick:closeSheet},T('Cancel'))]);
+  openSheet([el('h2',{text:'📞 '+T('Phone list')}),(isOffice()?S.crew.length:(S.mates||[]).length+8)>8?q:null,list,el('button',{class:'ghost',onclick:closeSheet},T('Cancel'))]);
 }
 
 // ---------- crew (office) ----------
