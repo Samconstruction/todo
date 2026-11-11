@@ -456,11 +456,12 @@ window.addEventListener('popstate',function(){
   if(document.getElementById('scrim')){var sc=document.getElementById('scrim');if(sc&&sc.dataset.lock){history.pushState({sam:1},'');return;}if(!closeSheet(true)){history.pushState({sam:1},'');return;}}
   else if(!S.me&&S.pick){S.pick=null;}
   else if(isOffice()&&S.view!=='home'){S.view='home';S.tab=S.me;}
-  render_();queueHist();
+  render_();savePage();queueHist();
 });
 
 // ---------- render ----------
-function render(){render_();if(S.sheetRefresh&&document.getElementById('scrim')){try{S.sheetRefresh();}catch(e){}}queueHist();setTimeout(avLoad,0);}
+function savePage(){try{if(S.me)sessionStorage.setItem('sam_page',JSON.stringify({me:S.me,v:S.view||'home',tab:S.tab,cd:S.crewDay,ctd:S.crewTaskDay}));}catch(e){}}
+function render(){render_();savePage();if(S.sheetRefresh&&document.getElementById('scrim')){try{S.sheetRefresh();}catch(e){}}queueHist();setTimeout(avLoad,0);}
 function goHome(){S.view='home';S.tab=S.me;render();window.scrollTo(0,0);}
 function homeView(){
   var wrap=listShell();if(!wrap)return el('main',{class:'list'},el('p',{class:'empty',text:T('Loading…')}));
@@ -594,7 +595,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611111819',lastUpd=0;
+var BUILD='202611111823',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -1720,6 +1721,7 @@ function enablePush(ask){
 }
 
 if('serviceWorker' in navigator){getReg().catch(function(){});}
+if(S.me){try{var pg=JSON.parse(sessionStorage.getItem('sam_page')||'null');if(pg&&pg.me===S.me&&pg.v&&pg.v!=='home'){S.view=pg.v;if(pg.tab)S.tab=pg.tab;if(pg.cd)S.crewDay=pg.cd;if(pg.ctd)S.crewTaskDay=pg.ctd;}}catch(e){}}
 if(S.me){try{var cached=JSON.parse(localStorage.getItem('sam_cache')||'null');if(cached&&cached.me&&cached.me.key===S.me){apply(cached);S.loaded=true;}}catch(e){}}
 render();
 if(S.me){refresh(true);startPolling();if(notifState()==='granted')enablePush(false);}
