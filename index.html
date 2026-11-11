@@ -591,9 +591,19 @@ function openPinChange(){
   setTimeout(function(){cur.focus();},50);
 }
 // ---------- Notifications open the right screen ----------
-var PENDING_GO=null;
+// Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
+var BUILD='202611111809',lastUpd=0;
+function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
+  fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
+    if(!v||!v.v||v.v===BUILD)return;
+    if(document.getElementById('scrim')||S.saving){setTimeout(function(){checkUpdate(true);},30000);return;}
+    try{if(PENDING_GO)sessionStorage.setItem('sam_go',PENDING_GO);}catch(e){}
+    location.reload();}).catch(function(){});}
+setTimeout(function(){checkUpdate(true);},4000);
+var PENDING_GO=null;try{var sg=sessionStorage.getItem('sam_go');if(sg){PENDING_GO=sg;sessionStorage.removeItem('sam_go');}}catch(e){}
+try{var gq0=0;}catch(e){}
 try{var gq=new URLSearchParams(location.search).get('go');if(gq){PENDING_GO=gq;history.replaceState(history.state,'',location.pathname);}}catch(e){}
-if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',function(e){if(e.data&&e.data.type==='go'&&e.data.go){PENDING_GO=e.data.go;refresh(true);setTimeout(runGo,300);}});
+if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',function(e){if(e.data&&e.data.type==='go'&&e.data.go){PENDING_GO=e.data.go;refresh(true);setTimeout(runGo,4000);checkUpdate(true);}});
 function runGo(){
   if(!PENDING_GO||!S.me||!S.loaded)return;var go=PENDING_GO;PENDING_GO=null;var p=go.split(':');
   try{closeSheet();}catch(e){}
@@ -1122,7 +1132,7 @@ function refresh(force){
 function startPolling(){
   if(S.poll)return;
   S.poll=setInterval(function(){if(!document.hidden&&!document.getElementById('scrim'))refresh();},isOffice()?60000:180000);
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)refresh();});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){refresh();checkUpdate();}});
 }
 
 // ---------- editor (office) ----------
