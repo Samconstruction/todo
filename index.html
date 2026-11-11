@@ -392,7 +392,7 @@ function isOffice(){return S.role==='office';}
 function setLang(l){LANG=l;store('sam_lang',l);document.documentElement.lang=l;closeSheet();render();if(S.me&&notifState()==='granted')enablePush(false);}
 function langSwitch(){return el('div',{class:'lang'},[['en','English'],['es','Español']].map(function(p){return el('button',{class:'lang-b'+(LANG===p[0]?' on':''),onclick:function(){if(LANG!==p[0])setLang(p[0]);}},p[1]);}));}
 
-var READS={list:1,photoGet:1,videoGet:1,avatarGet:1,otWeek:1,schedGet:1,reportsRange:1,places:1,logError:1};
+var READS={list:1,photoGet:1,videoGet:1,avatarGet:1,avatarBig:1,otWeek:1,schedGet:1,reportsRange:1,places:1,logError:1};
 function rid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 function call(action,payload,as){
   payload=payload||{};payload.by=as||S.me;payload.pin=payload.pin||S.pin;if(!READS[action]&&!payload.rid)payload.rid=rid();
@@ -604,7 +604,7 @@ function pickAvatar(done,cam){
   var inp=el('input',{type:'file',accept:'image/*',style:'display:none'});if(cam)inp.setAttribute('capture','user');document.body.appendChild(inp);
   inp.onchange=function(){var f=inp.files&&inp.files[0];inp.remove();if(!f)return;
     var url=URL.createObjectURL(f),img=new Image();
-    img.onload=function(){cropAvatar(img,function(data){URL.revokeObjectURL(url);done(data);},function(){URL.revokeObjectURL(url);openMenu();});};
+    img.onload=function(){cropAvatar(img,function(data,big){URL.revokeObjectURL(url);done(data,big);},function(){URL.revokeObjectURL(url);openMenu();});};
     img.onerror=function(){toast(T('Could not open that picture'));};img.src=url;};
   inp.click();
 }
@@ -629,7 +629,11 @@ function cropAvatar(img,done,cancel){
   zoom.oninput=function(){zoomAt(min*(+zoom.value),V/2,V/2);};
   var save=el('button',{class:'primary',onclick:function(){var S2=192,c=document.createElement('canvas');c.width=S2;c.height=S2;var k=S2/V;
       c.getContext('2d').drawImage(img,ox*k,oy*k,w*sc*k,h*sc*k);
-      var q=0.8,data=c.toDataURL('image/jpeg',q);while(data.length>44000&&q>0.3){q-=0.15;data=c.toDataURL('image/jpeg',q);}done(data);}},'✓ '+T('Save photo'));
+      var q=0.8,data=c.toDataURL('image/jpeg',q);while(data.length>44000&&q>0.3){q-=0.15;data=c.toDataURL('image/jpeg',q);}
+      // Also a sharp copy (up to 1080 px) for full screen.
+      var B=Math.max(192,Math.min(1080,Math.round(V/sc))),cb=document.createElement('canvas');cb.width=B;cb.height=B;var kb=B/V;
+      cb.getContext('2d').drawImage(img,ox*kb,oy*kb,w*sc*kb,h*sc*kb);var big=cb.toDataURL('image/jpeg',0.88);
+      done(data,big);}},'✓ '+T('Save photo'));
   openSheet([el('h2',{text:T('Move and zoom')}),el('p',{class:'muted',style:'margin:0;text-align:center',text:T('Drag the picture to move it. Pinch or use the bar to zoom.')}),
     el('div',{style:'display:flex;justify-content:center'},cv),el('div',{style:'display:flex;align-items:center;gap:10px'},el('span',{text:'➖'}),zoom,el('span',{text:'➕'})),
     save,el('button',{class:'ghost',onclick:function(){closeSheet();cancel();}},T('Cancel'))]);
@@ -661,7 +665,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611112336',lastUpd=0;
+var BUILD='202611112341',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -711,12 +715,12 @@ function openMenu(){
   var mine=!isOffice()?(S.steady&&S.steady.crews||[]).filter(function(c){return c.leader===S.me;})[0]:null;
   var role=isOffice()?T('Office'):(mine?T('Crew leader')+' · '+crewTitle(mine):T('Crew'));
   var bigAv=avatar(S.me,S.name||S.me,112);
-  function setPhoto(data,btn){btn.disabled=true;btn.textContent='…';call('avatarSet',{data:data}).then(function(r){
+  function setPhoto(data,btn,big){btn.disabled=true;btn.textContent='…';call('avatarSet',{data:data,big:big||''}).then(function(r){if(big)AVBIG[S.me]=big;else delete AVBIG[S.me];
       if(data)AV[S.me]={v:'local',src:data};else delete AV[S.me];avSave();apply(r);if(data&&S.avatars[S.me])AV[S.me].v=S.avatars[S.me];avSave();closeSheet();render();openMenu();toast('✓ '+T('Saved'));})
     .catch(function(e){btn.disabled=false;if(isBadPin(e)){signOut('');return;}toast(T('Could not save — check signal'));});}
   var hasPic=!!(AV[S.me]&&AV[S.me].src);
-  var photoBtn=el('button',{class:'primary',onclick:function(){pickAvatar(function(d){setPhoto(d,photoBtn);},true);}},'📷 '+T('Take photo'));
-  var galBtn=el('button',{class:'cbtn',onclick:function(){pickAvatar(function(d){setPhoto(d,photoBtn);});}},'🖼 '+T('From gallery'));
+  var photoBtn=el('button',{class:'primary',onclick:function(){pickAvatar(function(d,bg){setPhoto(d,photoBtn,bg);},true);}},'📷 '+T('Take photo'));
+  var galBtn=el('button',{class:'cbtn',onclick:function(){pickAvatar(function(d,bg){setPhoto(d,photoBtn,bg);});}},'🖼 '+T('From gallery'));
   var kids=[el('div',{class:'profile'},bigAv,el('div',{class:'pname',text:S.name||S.me}),el('div',{class:'muted',text:role})),el('div',{class:'lbl',style:'text-align:center',text:hasPic?T('Change photo'):T('Add photo')}),el('div',{class:'row2'},photoBtn,galBtn),
     hasPic?el('button',{class:'ghost',onclick:function(){setPhoto('',this);}},T('Remove photo')):null];
   kids.push(el('button',{class:'cbtn',onclick:openPinChange},'🔒 '+T('Change my PIN')));
@@ -845,9 +849,12 @@ function workerView(){
 }
 
 // Tap a profile picture (or the letter circle) to see it big.
+var AVBIG={};
 function viewAvatar(key,name){
   var a=key&&AV[key],n=String(name||'?').trim(),big=Math.min(window.innerWidth-60,360);
-  var pic=a&&a.src?el('img',{src:a.src,alt:'',style:'width:'+big+'px;height:'+big+'px;border-radius:50%;object-fit:cover;background:#ddd'}):avatar(key,name,big);
+  var pic=a&&a.src?el('img',{src:AVBIG[key]||a.src,alt:'',style:'width:'+big+'px;height:'+big+'px;border-radius:50%;object-fit:cover;background:#ddd'}):avatar(key,name,big);
+  // Swap in the sharp picture as soon as it arrives.
+  if(a&&a.src&&!AVBIG[key])call('avatarBig',{key:key}).then(function(b){if(b){AVBIG[key]='data:image/jpeg;base64,'+b;pic.src=AVBIG[key];}}).catch(function(){});
   openViewer(el('div',{class:'vwrap'},pic,el('div',{style:'color:#fff;font-size:24px;font-weight:800;margin-top:14px;text-align:center',text:n})));
 }
 function tapAvatar(key,name,size){var a=avatar(key,name,size);a.style.cursor='pointer';a.setAttribute('role','button');a.setAttribute('aria-label',T('See photo')+': '+name);
