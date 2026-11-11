@@ -15,4 +15,11 @@ firebase.initializeApp({apiKey:"AIzaSyC_2FSwxf4zIPNoT_VGQ5NpgG7-YZ0CiGU",authDom
 firebase.messaging();
 self.addEventListener('install',function(){self.skipWaiting();});
 self.addEventListener('activate',function(e){e.waitUntil(self.clients.claim());});
-self.addEventListener('fetch',function(){});
+// Keep the app on the phone so it opens even with no signal: try the network first, use the saved copy if it fails.
+var CACHE='sam-app-v1';
+self.addEventListener('fetch',function(e){
+  var r=e.request;if(r.method!=='GET')return;var u=new URL(r.url);
+  if(u.origin!==self.location.origin||u.pathname.indexOf('/todo/')!==0||/version\.json/.test(u.pathname))return;
+  e.respondWith(fetch(r).then(function(res){if(res&&res.ok){var cp=res.clone();caches.open(CACHE).then(function(c){c.put(r.mode==='navigate'?'/todo/':r,cp);});}return res;})
+    .catch(function(){return caches.match(r.mode==='navigate'?'/todo/':r).then(function(m){return m||caches.match('/todo/');});}));
+});
