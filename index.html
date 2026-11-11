@@ -436,8 +436,8 @@ window.addEventListener('unhandledrejection',function(e){var r=e.reason;if(r&&/^
 function openReport(){
   var t=el('textarea',{class:'in',rows:'4',placeholder:T('What went wrong? What were you trying to do?'),maxlength:'500'});
   var b=el('button',{class:'primary',onclick:function(){var v=t.value.trim();if(!v){t.focus();return;}b.disabled=true;
-    fetch(API,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'logError',payload:{kind:'report',who:S.me||'',message:v,detail:'screen: '+(S.tab||'')+' lang:'+LANG,ua:navigator.userAgent.slice(0,200)}})})
-    .then(function(){closeSheet();toast('✓ '+T('Thanks! We got your report.'));}).catch(function(){b.disabled=false;toast(T('Could not save — check signal'));});}},T('Send'));
+    call('logError',{kind:'report',who:S.me||'',message:v,detail:'screen: '+(S.view||'')+'/'+(S.tab||'')+' lang:'+LANG+' build:'+BUILD,ua:navigator.userAgent.slice(0,200)})
+    .then(function(){closeSheet();toast('✓ '+T('Thanks! We got your report.'));}).catch(function(e){b.disabled=false;toast('❗ '+T('Not sent')+': '+errText(e));});}},T('Send'));
   openSheet([el('h2',{text:'🐞 '+T('Report a problem')}),t,b,el('button',{class:'ghost',onclick:closeSheet},T('Cancel'))]);setTimeout(function(){t.focus();},50);
 }
 function apply(d){if(d&&d.seen)S.seen=d.seen;
@@ -660,7 +660,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611111928',lastUpd=0;
+var BUILD='202611112222',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
