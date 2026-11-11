@@ -9,7 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon2.png">
+<link rel="icon" type="image/png" href="icon2-192.png">
 <style>
 :root{color-scheme:only light;--bg:#F3F1EC;--card:#fff;--ink:#1D2125;--muted:#6B7078;--line:#E3DFD6;--acc:#2172B1;--ok:#2B8A3E;--half:#E8A100;--red:#D9342B}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -665,7 +666,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611112341',lastUpd=0;
+var BUILD='202611112353',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -1904,7 +1905,7 @@ function listenForeground(){
   if(fgOn||!window.firebase||!firebase.messaging)return;fgOn=true;
   try{firebase.messaging().onMessage(function(p){
     var n=(p&&p.notification)||{},d=(p&&p.data)||{},title=n.title||d.title||'SAM To-Do',body=n.body||d.body||'';
-    getReg().then(function(reg){return reg.showNotification(title,{body:body,icon:'icon-192.png',badge:'icon-192.png',tag:(p&&p.fcmOptions&&p.fcmOptions.analyticsLabel)||('fg'+Date.now()),renotify:true,data:{url:location.href,go:d.go||''}});})
+    getReg().then(function(reg){return reg.showNotification(title,{body:body,icon:'icon2-192.png',badge:'icon-192.png',tag:(p&&p.fcmOptions&&p.fcmOptions.analyticsLabel)||('fg'+Date.now()),renotify:true,data:{url:location.href,go:d.go||''}});})
       .catch(function(e){logErr('Foreground notification failed: '+String(e&&e.message||e),'');});
     toast('🔔 '+title+(body?' — '+body.split('\n')[0]:''));
     refresh(true);
