@@ -551,7 +551,7 @@ function render_(){
 function isBadPin(e){return String((e&&e.message)||e).indexOf('BAD_PIN')>=0;}
 function clearSession(){['sam_me','sam_pin','sam_tok','sam_role','sam_name','sam_cache'].forEach(function(k){store(k,null);});S.me=null;S.pin=null;S.role=null;S.name=null;S.tasks=[];S.crew=[];S.loaded=false;}
 function dropPush(){try{var tk=store('sam_tok');if(tk&&S.me&&S.pin)call('unregister',{token:String(tk).split('|').slice(2).join('|')}).catch(function(){});}catch(e){}}
-function signOut(msg){dropPush();clearSession();Q=[];qSave();S.loginMsg=msg||'';closeSheet();render();}
+function signOut(msg){dropPush();clearSession();Q=[];qSave();OTW={};try{localStorage.removeItem('sam_otw');}catch(e){}S.loginMsg=msg||'';closeSheet();render();}
 function goLogin(name){dropPush();clearSession();S.pick=name||null;S.loginMsg='';closeSheet();render();}
 function loginView(){
   var box=el('div',{class:'login'},el('img',{class:'biglogo',src:LOGO,alt:'SAM Construction'}),el('h1',{text:T('To-Do')}));
@@ -660,7 +660,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611112236',lastUpd=0;
+var BUILD='202611112326',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -1479,8 +1479,13 @@ function payrollBtns(ws,txt){
 }
 function openDailyWeek(ws){
   ws=ws||weekStart(today());var t=today(),we=addDays(ws,6);
-  openSheet([el('h2',{text:'🚐 '+T('Daily crew')}),el('p',{class:'empty',text:T('Loading…')})]);
-  call('otWeek',{from:ws,to:we}).then(function(d){
+  // Opens right away from the last saved copy, then quietly updates with fresh numbers.
+  var key=ws+'|'+we,cached=OTW[key],shown='';
+  if(cached){draw(cached);}else openSheet([el('h2',{text:'🚐 '+T('Daily crew')}),el('p',{class:'empty',text:T('Loading…')})]);
+  OTW_OPEN=key;
+  call('otWeek',{from:ws,to:we}).then(function(d){var js=JSON.stringify(d);OTW[key]=d;otwSave();if(OTW_OPEN!==key||js===shown)return;draw(d);})
+  .catch(function(e){if(isBadPin(e)){signOut('');return;}if(!cached){closeSheet();toast(T('Could not load — check signal'));}});
+  function draw(d){shown=JSON.stringify(d);
     var who=d.who||{},ot=d.ot||{},offs=d.off||{},thisWk=weekStart(t);
     var lbl=ws===thisWk?T('This week'):(ws===addDays(thisWk,-7)?T('Last week'):dateLabel(ws)+' – '+dateLabel(addDays(ws,5)));
     var kids=[el('button',{class:'backlink',onclick:openReports},'‹ '+T('Crews')),el('h2',{style:'margin:0',text:'🚐 '+T('Daily crew')}),
@@ -1506,9 +1511,12 @@ function openDailyWeek(ws){
     kids.push(el('div',{style:'display:flex;align-items:center;gap:8px;margin-top:6px'},el('span',{class:'muted',style:'white-space:nowrap',text:'📅 '+T('Go to date')}),pick));
     kids.push(el('button',{class:'ghost',onclick:closeSheet},T('Close')));
     openSheet(kids);
-  }).catch(function(e){if(isBadPin(e)){signOut('');return;}closeSheet();toast(T('Could not load — check signal'));});
+  }
 }
-function openDailyDay(dd,w,o,ws,of){of=of||[];
+var OTW={},OTW_OPEN='';try{OTW=JSON.parse(localStorage.getItem('sam_otw')||'{}')||{};}catch(e){OTW={};}
+function otwSave(){try{var ks=Object.keys(OTW).sort().slice(-6),o={};ks.forEach(function(k){o[k]=OTW[k];});OTW=o;localStorage.setItem('sam_otw',JSON.stringify(o));}catch(e){}}
+function otwPrefetch(){var ws=weekStart(today()),we=addDays(ws,6),key=ws+'|'+we;call('otWeek',{from:ws,to:we}).then(function(d){OTW[key]=d;otwSave();}).catch(function(){});}
+function openDailyDay(dd,w,o,ws,of){of=of||[];OTW_OPEN='';
   var ids=Object.keys(w).filter(function(k){return PEOPLE.indexOf(k)<0;});Object.keys(o).forEach(function(k){if(ids.indexOf(k)<0)ids.push(k);});
   ids.sort(function(a,b){return nameOf(a).localeCompare(nameOf(b));});
   var draft={},rows=el('div',{});
@@ -1617,6 +1625,7 @@ function loadWeeks(c,ws,then){
   .catch(function(e){if(isBadPin(e)){signOut('');return;}closeSheet();toast(T('Could not load — check signal'));});
 }
 function openReports(){
+  OTW_OPEN='';if(isOffice())otwPrefetch(); // get the daily crew week ready before it's tapped
   var crews=(S.steady&&S.steady.crews)||[];
   if(!crews.length&&!(S.crew||[]).length){openCrewSetup(null);return;}
   var ws=weekStart(today()),kids=[el('h2',{text:'📋 '+T('Daily reports')})];
