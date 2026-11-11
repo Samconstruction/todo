@@ -124,10 +124,10 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .jobnew{display:flex;flex-direction:column;gap:8px;padding:10px;border:2px dashed #F2B233;border-radius:10px}
 .ann{background:#FFF4DC;border:2px solid #F2B233;border-radius:14px;padding:12px 14px;margin:0 0 12px}
 .ann .from{font-size:13px;font-weight:700;color:#8A5A00}
-.ann .txt{font-size:17px;font-weight:600;margin:6px 0 10px;white-space:pre-wrap;color:#1F2328}
+.ann .txt{font-size:17px;font-weight:800;margin:6px 0 10px;white-space:pre-wrap;color:#1F2328}
 .ann button{width:100%}
 .annrow{padding:10px 4px;border-bottom:1px solid var(--line)}
-.annrow .txt{white-space:pre-wrap;margin:2px 0 4px}
+.annrow .txt{white-space:pre-wrap;margin:2px 0 4px;font-weight:800}
 .annrow details summary{cursor:pointer;color:var(--acc);font-weight:600;font-size:14px}
 .allbtn{display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px;border-radius:10px;background:#EFECE5;font-weight:700;font-size:15px}
 .allbtn.on{background:var(--acc);color:#fff}
@@ -595,7 +595,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611111828',lastUpd=0;
+var BUILD='202611111850',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
