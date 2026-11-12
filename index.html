@@ -375,6 +375,9 @@ html.big body{zoom:1.15}
 .homesmgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .homesm{display:flex;align-items:center;gap:8px;padding:12px;border-radius:14px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06);font-size:15px;font-weight:700;text-align:left}
 .homesm .hsi{font-size:20px}
+
+.crn{display:block;overflow:hidden;text-overflow:ellipsis}
+.newbadge{display:inline-flex;gap:6px;align-items:center;background:#E5383B;color:#fff;font-size:11px;font-weight:800;border-radius:999px;padding:2px 7px;margin-top:3px;line-height:1.2}
 </style></head><body>
 <div id="app"></div>
 <input type="file" id="photoIn" accept="image/*" style="display:none"><input type="file" id="videoIn" accept="video/*" style="display:none"><input type="file" id="photoCam" accept="image/*" capture="environment" style="display:none"><input type="file" id="videoCam" accept="video/*" capture="environment" style="display:none">
@@ -666,7 +669,7 @@ function render_(){
   else if(v==='sched')app.appendChild(crewDayView());
   else if(v==='sites')app.appendChild(sitesView());
   else app.appendChild(S.tab==='crew'?crewListView():listView(PEOPLE.indexOf(S.tab)>=0?S.tab:S.me));
-  if(isOffice()&&v==='tasks')app.appendChild(el('button',{class:'fab','aria-label':'Add task',onclick:function(){if(S.tab==='crew')openEditor(null,{due:S.crewTaskDay||today()});else openEditor(null);}},'+'));
+  if(isOffice()&&v==='tasks'&&S.tab!=='crew')app.appendChild(el('button',{class:'fab','aria-label':'Add task',onclick:function(){if(S.tab==='crew')openEditor(null,{due:S.crewTaskDay||today()});else openEditor(null);}},'+'));
   window.scrollTo(0,y);
 }
 
@@ -786,7 +789,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611122331',lastUpd=0;
+var BUILD='202611122338',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -898,7 +901,9 @@ function isCrewTask(x){return PEOPLE.indexOf(x.owner)<0;}
 // A schedule task from a past day counts as finished for the list (it moves to "Done & past days").
 function crewClosed(x){return x.status==='done'||(String(x.group||'').indexOf('sch-')===0&&x.due&&x.due<today());}
 function tabs(){
-  return el('nav',{class:'tabs'},PEOPLE.concat(['crew']).map(function(o){var c=counts(o);
+  // Your own tab first, then the others (Yossi, Rocky, Ashley order), then Crew.
+  var order=[S.me].concat(PEOPLE.filter(function(p){return p!==S.me;}));if(PEOPLE.indexOf(S.me)<0)order=PEOPLE.slice();
+  return el('nav',{class:'tabs'},order.concat(['crew']).map(function(o){var c=counts(o);
     return el('button',{class:'tab'+(S.tab===o?' on':''),onclick:function(){S.tab=o;render();window.scrollTo(0,0);}},o==='crew'?T('Crew'):o,o==='crew'?null:el('span',{class:'count'+(c.od?' red':'')},String(c.n)));}));
 }
 
@@ -947,10 +952,15 @@ function crewListView(){
   ks.forEach(function(k){var ts=by[k],st=ts.every(function(x){return x.status==='done';})?'done':(ts.some(function(x){return x.status!=='todo';})?'half':'todo');
     var lab={todo:'Not started',half:'Halfway',done:'Done'}[st];
     wrap.appendChild(el('button',{class:'crewrow',onclick:function(){openWorkerDay(k,d);}},avatar(k,nameOf(k),40),
-      el('span',{class:'crname',text:nameOf(k)+(ts.length>1?'  ('+ts.length+')':'')}),
+      el('span',{class:'crname'},el('span',{class:'crn',text:nameOf(k)+(ts.length>1?'  ('+ts.length+')':'')}),newBadge(ts)),
       el('span',{class:'crst s-'+st,text:T(lab)}),el('span',{class:'hchev',text:'›'})));});
   return wrap;
 }
+// Tiny "new" badge on a worker's row: comments / photos / videos he sent that I haven't opened yet.
+function newBadge(ts){var c=0,ph=0,vd=0;
+  ts.forEach(function(x){var seen=((S.seen||{})[x.id]||{})[S.me]||'';chatMsgs(x).forEach(function(m){if(m.by===S.me||!(m.at>seen))return;if(m.photo)ph++;else if(m.video)vd++;else c++;});});
+  if(!c&&!ph&&!vd)return null;
+  return el('span',{class:'newbadge'},c?el('span',{text:'💬'+c}):null,ph?el('span',{text:'📷'+ph}):null,vd?el('span',{text:'🎥'+vd}):null);}
 function crewOrder(p,q){var A=/^sch-/.test(p.group||'')?0:1,B=/^sch-/.test(q.group||'')?0:1;if(A!==B)return A-B;return p.createdAt<q.createdAt?-1:1;}
 /** One worker's day: his job(s) in order, plus "Add another job". Stays up to date while open. */
 function openWorkerDay(k,d){
