@@ -764,7 +764,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611121353',lastUpd=0;
+var BUILD='202611121402',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -798,6 +798,7 @@ function runGo(){
     render();openChat(tc.id);return;}
   if(p[0]==='rep'&&isOffice()){S.view='home';render();if(p[1])openReportDay(p[1],p[2]);else openReports();return;}
   if(p[0]==='lead'){var c=((S.steady&&S.steady.crews)||[]).filter(function(x){return x.id===p[1];})[0];render();if(c)openReportEditor(c,p[2]||today());return;}
+  if(p[0]==='sched'&&isOffice()){S.view='sched';S.crewDay=today();render();window.scrollTo(0,0);return;}
   if(p[0]==='crew'&&isOffice()){S.view='tasks';S.tab='crew';S.crewTaskDay=today();render();window.scrollTo(0,0);return;}
   if(p[0]==='problems'&&S.me==='Yossi'){S.view='home';render();openProblems();return;}
   if(p[0]==='maint'&&S.me==='Yossi'){S.view='home';render();openMaint();return;}
