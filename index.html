@@ -768,7 +768,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611121922',lastUpd=0;
+var BUILD='202611122327',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -1795,9 +1795,10 @@ function leaderCard(c){
 }
 function openReportEditor(c,date){
   var prev=reportFor(c.id,date);
-  // An old report keeps the people who were on it that day; only today's report adds people who joined later.
+  // An old report keeps the people who were on it that day. Reports from this week (Sunday on) also show people who
+  // joined the crew later, so a new worker can be marked for the days he already worked this week.
   var mem=prev?prev.people.map(function(p){return p.name;}):c.members.slice();
-  if(prev&&date===today())c.members.forEach(function(n){if(mem.indexOf(n)<0)mem.push(n);});
+  if(prev&&weekStart(date)===weekStart(today()))c.members.forEach(function(n){if(mem.indexOf(n)<0)mem.push(n);});
   var ppl={};mem.forEach(function(n){ppl[n]={name:n,present:prev?null:true,ot:0};});
   if(prev)prev.people.forEach(function(p){if(ppl[p.name])ppl[p.name]={name:p.name,present:p.present!==false,ot:+p.ot||0};});
   var acts=c.activities.slice(),dayActs=prev?(prev.acts||[]).slice():[];
