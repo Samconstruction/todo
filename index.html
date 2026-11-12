@@ -768,7 +768,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611121835',lastUpd=0;
+var BUILD='202611121845',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -1045,15 +1045,27 @@ function sitesView(){
             el('button',{class:'ghost',onclick:closeSheet},T('Close'))]);}},'✅ '+T('Checked')+' '+v.times.map(clockOf).join(', ')));
         row.appendChild(el('button',{style:'padding:11px 12px;border-radius:12px;background:#EFECE5;font-weight:700',onclick:function(){checkIn(g.job);}},'＋ '+T('Again')));}
       else row.appendChild(el('button',{style:'flex:1;padding:11px;border-radius:12px;background:var(--ok);color:#fff;font-weight:800',onclick:function(){checkIn(g.job);}},'✓ '+T('I was here')));
-      row.appendChild(el('button',{style:'padding:11px 13px;border-radius:12px;background:#EFECE5;font-weight:700',onclick:function(){pickVideo({id:'',visitJob:g.job,date:d,title:jb?jb.name:''},true);}},'🎥 '+T('Video')));
+      var mx={id:'',visitJob:g.job,date:d,title:jb?jb.name:''};
+      row.appendChild(el('button',{style:'padding:11px 12px;border-radius:12px;background:#EFECE5;font-weight:700',onclick:function(){openMedia(mx);}},'📷 🎥'));
       card.appendChild(row);
-      if(v.videos&&v.videos.length)card.appendChild(el('div',{class:'vids',style:'margin-top:8px'},v.videos.map(function(it){return el('button',{class:'vidtile',onclick:function(){playVideo(it);}},el('span',{class:'play',text:'▶'}),el('span',{text:clockOf(it.at)+(it.dur?' · '+fmtDur(it.dur):'')}));})));
+      var ph=v.photos||[],vd=v.videos||[];
+      if(ph.length)card.appendChild(el('div',{class:'thumbs',style:'margin-top:10px'},ph.map(function(it){
+        return el('div',{style:'position:relative;display:inline-block'},thumb(it.id),
+          el('button',{style:'position:absolute;top:2px;right:2px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:14px;line-height:26px;padding:0',onclick:function(){delVisitMedia(g.job,'photo',it.id,jb);}},'✕'));})));
+      if(vd.length)card.appendChild(el('div',{class:'vids',style:'margin-top:8px'},vd.map(function(it){
+        return el('div',{style:'display:flex;gap:6px;align-items:stretch'},
+          el('button',{class:'vidtile',style:'flex:1',onclick:function(){playVideo(it);}},el('span',{class:'play',text:'▶'}),el('span',{text:T('Video')+' '+clockOf(it.at)+(it.dur?' · '+fmtDur(it.dur):'')})),
+          el('button',{style:'padding:0 12px;border-radius:10px;background:#FDECEA;color:var(--red);font-weight:800',onclick:function(){delVisitMedia(g.job,'video',it.id,jb);}},'🗑'));})));
     }
     wrap.appendChild(card);
   });
   return wrap;
 }
-function clockOf(iso){var x=new Date(iso);if(isNaN(x))return '';var h=x.getHours(),m=x.getMinutes();return ((h%12)||12)+':'+(m<10?'0':'')+m+(h<12?' AM':' PM');}
+function delVisitMedia(job,kind,id,jb){var d=today();
+  openSheet([el('h2',{text:'🗑 '+T(kind==='video'?'Delete this video?':'Delete this photo?')}),el('p',{class:'muted',text:(jb?jb.name+' · ':'')+T('It goes to the Google Drive trash, where it can still be restored for 30 days.')}),
+    el('button',{class:'danger',onclick:function(){closeSheet();var v=(S.visits||{})[job];if(v){var k=kind==='video'?'videos':'photos';v[k]=(v[k]||[]).filter(function(x){return x.id!==id;});}render();
+      call('visitMediaDel',{date:d,job:job,kind:kind,id:id}).then(function(r){apply(r);render();toast('✓ '+T('Deleted'));}).catch(function(e){toast('❗ '+errText(e));refresh(true);});}},'🗑 '+T('Delete')),
+    el('button',{class:'ghost',onclick:closeSheet},T('Cancel'))]);}
 function checkIn(job){var d=today();S.visits=S.visits||{};var v=S.visits[job]=S.visits[job]||{times:[],videos:[]};v.times.push(new Date().toISOString());render();toast('✓ '+T('Checked in'));
   call('visitAdd',{date:d,job:job}).then(function(r){apply(r);render();}).catch(function(e){toast('❗ '+errText(e));refresh(true);});}
 function crewDayView(){
@@ -1444,6 +1456,9 @@ document.getElementById('photoIn').addEventListener('change',function(e){
       c.getContext('2d').drawImage(im,0,0,c.width,c.height);
       var data=c.toDataURL('image/jpeg',0.72);
       toast(T('Uploading photo…'));S.saving++;render();
+      if(x.visitJob){var vp={visit:{date:x.date,job:x.visitJob},data:data.split(',')[1]};
+        call('visitPhoto',vp).then(function(r){S.saving--;apply(r);var vv=(S.visits||{})[x.visitJob];if(vv&&vv.photos&&vv.photos.length)S.photos[vv.photos[vv.photos.length-1].id]=data;render();toast('✓ '+T('Photo added'));})
+          .catch(function(e){S.saving--;if(isNet(e)){enqueue('visitPhoto',vp);return;}render();toast('❗ '+T('Could not upload the photo.')+' '+errText(e));});return;}
       var pp={id:x.id,data:data.split(',')[1]};
       call('photoAdd',pp).then(function(r){S.saving--;apply(r);
         var t=S.tasks.filter(function(q){return q.id===x.id;})[0];if(t&&t.photos){var ids=t.photos.split(',');S.photos[ids[ids.length-1]]=data;}
