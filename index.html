@@ -586,6 +586,7 @@ function openMaint(fresh){
 function errPlain(e){var t=e.text||'';
   if(/Script error/.test(t))return T('A small glitch on an iPhone screen (iPhones don\'t say what). Nothing was saved wrong or lost.');
   if(/BAD_KEY/.test(t))return T('The AI assistant (Instinct) tried to connect with a wrong or old key.');
+  if(/Service Spreadsheets|Service error|temporarily unavailable/i.test(t))return T('Google Sheets (where the app keeps its data) had a short hiccup on Google\'s side. The app now tries again by itself.');
   if(/Lock timeout/.test(t))return T('The app was very busy for a moment and had to try again.');
   if(/already exists/.test(t))return T('Two phones opened the app at the same second; it fixed itself.');
   if(/Notification failed/.test(t))return T('A notification could not be delivered to a phone.');
@@ -763,7 +764,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611120236',lastUpd=0;
+var BUILD='202611121353',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -777,18 +778,22 @@ function showUpdBar(){if(document.getElementById('updbar'))return;var b=el('butt
 function buildLabel(){var b=String(BUILD);if(!/^\d{12}$/.test(b))return b;var d=new Date(Date.UTC(+b.slice(0,4),+b.slice(4,6)-1,+b.slice(6,8),+b.slice(8,10),+b.slice(10,12)));return d.toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});}
 var PENDING_GO=null;try{var sg=sessionStorage.getItem('sam_go');if(sg){PENDING_GO=sg;sessionStorage.removeItem('sam_go');}}catch(e){}
 try{var gq0=0;}catch(e){}
-try{var gq=new URLSearchParams(location.search).get('go');if(gq){PENDING_GO=gq;history.replaceState(history.state,'',location.pathname);}}catch(e){}
-if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',function(e){if(e.data&&e.data.type==='go'&&e.data.go){PENDING_GO=e.data.go;refresh(true);setTimeout(runGo,4000);checkUpdate(true);}});
+var PENDING_GT=null;try{var usp=new URLSearchParams(location.search),gq=usp.get('go');if(gq){PENDING_GO=gq;try{PENDING_GT=JSON.parse(usp.get('gt')||'null');}catch(x){}history.replaceState(history.state,'',location.pathname);}}catch(e){}
+if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',function(e){if(e.data&&e.data.type==='go'&&e.data.go){PENDING_GO=e.data.go;try{PENDING_GT=e.data.gt?JSON.parse(e.data.gt):null;}catch(x){PENDING_GT=null;}GO_FRESH=false;GO_GEN++;runGo();refresh(true);checkUpdate(true);}});
+// Open what a notification is about right away from what the phone already has; if it's brand new, open it as soon as the fresh list arrives.
+var GO_FRESH=false,GO_GEN=0;
+// The copy of the task that came inside the notification: use it if the phone doesn't have the task yet.
+function goSnap(id){var g=PENDING_GT;if(!g||g.id!==id||(g.owner!==S.me&&!isOffice()))return null;PENDING_GT=null;S.tasks=S.tasks.concat([g]);return g;}
 function runGo(){
   if(!PENDING_GO||!S.me||!S.loaded)return;var go=PENDING_GO;PENDING_GO=null;var p=go.split(':');
   try{closeSheet();}catch(e){}
-  if(p[0]==='task'){var t=S.tasks.filter(function(x){return x.id===p[1];})[0];
-    if(!t){toast(T('That task is no longer open.'));return;}
+  if(p[0]==='task'){var t=S.tasks.filter(function(x){return x.id===p[1];})[0]||(!GO_FRESH&&goSnap(p[1]));
+    if(!t){if(!GO_FRESH){PENDING_GO=go;return;}toast(T('That task is no longer open.'));return;}
     if(isOffice()){S.view='tasks';S.tab=PEOPLE.indexOf(t.owner)>=0?t.owner:'crew';if(S.tab==='crew')S.crewTaskDay=t.due||today();}
     render();window.scrollTo(0,0);if(S.tab==='crew'&&isOffice()){openWorkerDay(t.owner,t.due||today());return;}
     var tid=t.id;openSheet([card(t,{showOwner:true}),el('button',{class:'ghost',onclick:closeSheet},T('Close'))]);
     S.sheetRefresh=function(){var t2=S.tasks.filter(function(x){return x.id===tid;})[0],sh=document.querySelector('#scrim .sheet');if(!t2||!sh)return;sh.replaceChild(card(t2,{showOwner:true}),sh.firstChild);};return;}
-  if(p[0]==='chat'){var tc=S.tasks.filter(function(x){return x.id===p[1];})[0];if(!tc){toast(T('That task is no longer open.'));return;}
+  if(p[0]==='chat'){var tc=S.tasks.filter(function(x){return x.id===p[1];})[0]||(!GO_FRESH&&goSnap(p[1]));if(!tc){if(!GO_FRESH){PENDING_GO=go;return;}toast(T('That task is no longer open.'));return;}
     if(isOffice()){S.view='tasks';S.tab=PEOPLE.indexOf(tc.owner)>=0?tc.owner:'crew';if(S.tab==='crew')S.crewTaskDay=tc.due||today();}
     render();openChat(tc.id);return;}
   if(p[0]==='rep'&&isOffice()){S.view='home';render();if(p[1])openReportDay(p[1],p[2]);else openReports();return;}
@@ -1397,7 +1402,7 @@ function save(action,payload){
 
 function refresh(force){
   if(!S.me||!S.pin||(S.saving&&!force))return;
-  call('list').then(function(d){S.offline=false;S.lastOk=new Date().toISOString();if(S.saving)return;apply(d);S.loaded=true;S.err='';if(!document.getElementById('scrim'))render();else if(S.sheetRefresh){try{S.sheetRefresh();}catch(e){}}runGo();})
+  var goAt=GO_GEN;call('list').then(function(d){S.offline=false;S.lastOk=new Date().toISOString();if(S.saving)return;apply(d);S.loaded=true;S.err='';if(goAt===GO_GEN)GO_FRESH=true;if(!document.getElementById('scrim'))render();else if(S.sheetRefresh){try{S.sheetRefresh();}catch(e){}}runGo();})
   .catch(function(e){if(isBadPin(e)){signOut('');return;}if(/LOCKED/.test(String(e&&e.message)))toast('🔒 '+errText(e));if(isNet(e))S.offline=true;S.loaded=true;if(!S.tasks.length)S.err=T('Could not load the list. Check your signal.');render();});
 }
 function startPolling(){
@@ -2051,5 +2056,6 @@ if('serviceWorker' in navigator){getReg().catch(function(){});}
 if(S.me){try{var pg=JSON.parse(sessionStorage.getItem('sam_page')||'null');if(pg&&pg.me===S.me&&pg.v&&pg.v!=='home'){S.view=pg.v;if(pg.tab)S.tab=pg.tab;if(pg.cd)S.crewDay=pg.cd;if(pg.ctd)S.crewTaskDay=pg.ctd;}}catch(e){}}
 if(S.me){try{var cached=JSON.parse(localStorage.getItem('sam_cache')||'null');if(cached&&cached.me&&cached.me.key===S.me){cached.__cached=1;apply(cached);S.loaded=true;}}catch(e){}}
 render();
+if(S.me&&S.loaded)runGo();
 if(S.me){refresh(true);startPolling();if(notifState()==='granted')enablePush(false);}
 </script></body></html>

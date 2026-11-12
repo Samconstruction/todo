@@ -1,11 +1,11 @@
 // Tapping a notification opens the app right on the thing it is about (registered before Firebase so it runs first).
 self.addEventListener('notificationclick',function(e){
-  var d=e.notification.data||{},f=d.FCM_MSG||{},go=d.go||(f.data&&f.data.go)||'';
+  var d=e.notification.data||{},f=d.FCM_MSG||{},go=d.go||(f.data&&f.data.go)||'',gt=d.gt||(f.data&&f.data.gt)||'';
   if(!go){try{go=new URL((f.fcmOptions&&f.fcmOptions.link)||(f.notification&&f.notification.click_action)||'x:').searchParams.get('go')||'';}catch(x){}}
   e.stopImmediatePropagation();e.notification.close();
-  var url='https://samconstruction.github.io/todo/'+(go?'?go='+encodeURIComponent(go):'');
+  var url='https://samconstruction.github.io/todo/'+(go?'?go='+encodeURIComponent(go)+(gt?'&gt='+encodeURIComponent(gt):''):'');
   e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(function(list){
-    for(var i=0;i<list.length;i++){if(list[i].url.indexOf('/todo/')>=0&&'focus' in list[i]){list[i].postMessage({type:'go',go:go});return list[i].focus();}}
+    for(var i=0;i<list.length;i++){if(list[i].url.indexOf('/todo/')>=0&&'focus' in list[i]){list[i].postMessage({type:'go',go:go,gt:gt});return list[i].focus();}}
     return self.clients.openWindow(url);
   }));
 });
