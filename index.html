@@ -452,7 +452,7 @@ function apply(d){
   if(d&&('__va' in d)&&d.__va!==(S.viewAs||null))return;
   if(d&&d.seen)S.seen=d.seen;if(d&&d.myPush===0&&!d.__cached)setTimeout(pushHeal,1500);
   if(!d||!d.me)return;
-  S.me=d.me.key;S.name=d.me.name;S.role=d.me.role;S.weak=!!d.me.weak;S.tasks=d.tasks||[];S.crew=(d.crew||[]).slice().sort(function(a,b){return a.name.localeCompare(b.name);});S.office=d.office||[];S.jobs=d.jobs||S.jobs||[];S.anns=d.anns||[];S.sched=d.sched||{};S.mates=d.mates||[];S.names=d.names||S.names||{};S.mycrew=d.mycrew||null;if(d.drivers)S.drivers=d.drivers;S.avatars=d.avatars||{};var oldDraft=S.myweek&&S.myweek.draft;S.myweek=d.myweek||null;if(S.myweek&&oldDraft)S.myweek.draft=oldDraft;S.steady=d.steady||{crews:[],reports:[]};
+  S.me=d.me.key;S.name=d.me.name;S.role=d.me.role;S.weak=!!d.me.weak;S.tasks=d.tasks||[];S.crew=(d.crew||[]).slice().sort(function(a,b){return a.name.localeCompare(b.name);});S.office=d.office||[];S.jobs=d.jobs||S.jobs||[];S.anns=d.anns||[];S.sched=d.sched||{};S.mates=d.mates||[];S.names=d.names||S.names||{};S.mycrew=d.mycrew||null;if(d.drivers)S.drivers=d.drivers;S.avatars=d.avatars||{};var oldDraft=S.myweek&&S.myweek.draft;S.myweek=d.myweek||null;if(S.myweek&&oldDraft)S.myweek.draft=oldDraft;S.steady=d.steady||{crews:[],reports:[]};if(d.visits)S.visits=d.visits;
   if(!S.viewAs){store('sam_me',S.me);store('sam_name',S.name);store('sam_role',S.role);
   try{if(d.tasks)localStorage.setItem('sam_cache',JSON.stringify(d));}catch(e){}}
   if(Q.length)applyQ();
@@ -622,6 +622,7 @@ function homeView(){
   wrap.appendChild(el('div',{class:'homegrid'},
     b('✅',T('Tasks'),function(){S.view='tasks';S.tab=S.me;render();window.scrollTo(0,0);}),
     b('🗓',T('Schedule'),function(){S.view='sched';S.crewDay=today();render();window.scrollTo(0,0);}),
+    S.me==='Yossi'&&!S.viewAs?b('📍',T('Job sites today'),function(){S.view='sites';render();window.scrollTo(0,0);}):null,
     b('📋',T('Daily reports'),function(){openReports();}),
     b('📣',T('Announcement'),function(){openAnnounce();}),
     b('👷',T('Workers'),openCrewManager),
@@ -645,6 +646,7 @@ function render_(){
   if(!isOffice())app.appendChild(workerView());
   else if(v==='home')app.appendChild(homeView());
   else if(v==='sched')app.appendChild(crewDayView());
+  else if(v==='sites')app.appendChild(sitesView());
   else app.appendChild(S.tab==='crew'?crewListView():listView(PEOPLE.indexOf(S.tab)>=0?S.tab:S.me));
   if(isOffice()&&v==='tasks')app.appendChild(el('button',{class:'fab','aria-label':'Add task',onclick:function(){if(S.tab==='crew')openEditor(null,{due:S.crewTaskDay||today()});else openEditor(null);}},'+'));
   window.scrollTo(0,y);
@@ -766,7 +768,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611121637',lastUpd=0;
+var BUILD='202611121835',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -1000,6 +1002,60 @@ function openPhones(){
 // ---------- crew (office) ----------
 var SCHED_OLD={};
 function unplaced(plan){var m={};((plan&&plan.off)||[]).forEach(function(k){m[k]=1;});((plan&&plan.crews)||[]).forEach(function(c){if(!c.job&&!c.note)return;if(!c.extra)m[c.leader]=1;(c.members||[]).forEach(function(k){m[k]=1;});});return dailyCrew().filter(function(w){return !m[w.id];});}
+// 📍 Job sites today (Yossi only): every job from today's schedule + the steady crews, with check-ins and videos.
+function siteList(){
+  var d=today(),sc=(S.sched||{})[d],by={},order=[];
+  function get(key,job,note){if(!by[key]){by[key]={key:key,job:job,note:note||'',drivers:[],people:[],steady:[],time:''};order.push(key);}return by[key];}
+  (sc&&sc.crews||[]).forEach(function(c){if(!c.job&&!c.note)return;var g=get(c.job||('n:'+c.note),c.job,c.note);
+    if(!c.extra&&c.leader)g.drivers.push(nameOf(c.leader));else if(c.extra&&c.leader)g.drivers.push(c.leader);
+    (c.members||[]).forEach(function(m){g.people.push(nameOf(m));});
+    if(c.time&&(!g.time||c.time<g.time))g.time=c.time;});
+  (S.steady&&S.steady.crews||[]).forEach(function(c){if(!c.job||!jobOf(c.job))return;get(c.job,c.job).steady.push(c);});
+  return order.map(function(k){return by[k];});
+}
+function sitesView(){
+  var wrap=listShell();if(!wrap)return el('main',{class:'list'},el('p',{class:'empty',text:T('Loading…')}));
+  var d=today(),V=S.visits||{},list=siteList(),tab=S.sitesTab||'todo';
+  var seen=function(g){return g.job&&V[g.job]&&V[g.job].times&&V[g.job].times.length;};
+  var people=list.reduce(function(n,g){return n+g.drivers.length+g.people.length+g.steady.reduce(function(m,c){return m+(c.members||[]).length;},0);},0);
+  var done=list.filter(seen).length;
+  wrap.appendChild(el('div',{style:'font-size:24px;font-weight:800;margin:2px 0 2px',text:'📍 '+T('Job sites today')}));
+  wrap.appendChild(el('div',{class:'muted',style:'font-size:14px;margin:0 0 12px'},dateLabel(d)+' · '+list.length+' '+T(list.length===1?'job':'jobs')+' · '+people+' '+T(people===1?'person':'people')+' · ',el('b',{style:'color:var(--ok)',text:done+' '+T('of')+' '+list.length+' '+T('checked')})));
+  if(!list.length){wrap.appendChild(el('p',{class:'empty',text:T('No schedule yet for today.')}));return wrap;}
+  function tb(id,label){return el('button',{style:'flex:1;padding:10px;border-radius:10px;font-weight:700;'+(tab===id?'background:var(--acc);color:#fff':'background:#EFECE5'),onclick:function(){S.sitesTab=id;render();}},label);}
+  wrap.appendChild(el('div',{style:'display:flex;gap:8px;margin-bottom:12px'},tb('todo',T('To check')+' ('+(list.length-done)+')'),tb('done',T('Checked')+' ('+done+')')));
+  var shown=list.filter(function(g){return tab==='done'?seen(g):!seen(g);});
+  if(!shown.length)wrap.appendChild(el('p',{class:'empty',text:tab==='done'?T('Nothing checked yet today.'):'✅ '+T('All job sites checked today!')}));
+  shown.forEach(function(g){
+    var jb=jobOf(g.job),addr=jb?(jb.address||jb.name):'',v=g.job&&V[g.job]||{times:[],videos:[]},ok=v.times&&v.times.length;
+    var who=[];if(g.drivers.length)who.push(el('b',{style:'color:var(--ink)',text:g.drivers.join(', ')}));
+    var line=(g.people.length?' · '+g.people.join(', '):'')+(g.time?' · '+timeLabel(g.time):'');
+    var card=el('div',{style:'background:#fff;border-radius:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);border-left:6px solid '+(ok?'var(--ok)':'var(--acc)')+';padding:14px 14px 12px'},
+      el('div',{style:'display:flex;justify-content:space-between;gap:8px;align-items:flex-start'},
+        el('div',{style:'font-size:19px;font-weight:800;line-height:1.2',text:'🏗 '+(jb?jb.name:g.note)}),
+        addr?el('a',{href:mapsUrl(addr),target:'_blank',rel:'noopener',style:'flex:none;background:var(--acc);color:#fff;font-weight:700;font-size:14px;padding:8px 11px;border-radius:10px;text-decoration:none'},'🧭 '+T('Navigate')):null),
+      addr?el('div',{style:'font-size:15px;margin-top:6px',text:'📍 '+addr}):null,
+      (g.drivers.length||g.people.length)?el('div',{class:'muted',style:'font-size:14px;margin-top:6px'},g.drivers.length?'🚐 ':'👷 ',who[0]||null,(who[0]?'':'')+(g.drivers.length?line:line.replace(/^ · /,''))):null,
+      g.steady.length?el('div',{class:'muted',style:'font-size:14px;margin-top:4px',text:'👥 '+g.steady.map(function(c){return crewTitle(c)+' ('+(c.members||[]).length+')';}).join(' · ')}):null);
+    if(g.job){
+      var row=el('div',{style:'display:flex;gap:8px;margin-top:12px;align-items:center'});
+      if(ok){row.appendChild(el('button',{style:'flex:1;padding:11px;border-radius:12px;background:#E6F6EA;color:var(--ok);font-weight:800;text-align:center',onclick:function(){
+          openSheet([el('h2',{text:'✅ '+(jb?jb.name:'')}),el('p',{text:T('Checked at')+' '+v.times.map(clockOf).join(', ')}),
+            el('button',{class:'danger',onclick:function(){closeSheet();v.times.pop();render();call('visitUndo',{date:d,job:g.job}).then(apply).then(render).catch(function(e){toast('❗ '+errText(e));refresh(true);});}},'↩ '+T('Remove the last check-in')),
+            el('button',{class:'ghost',onclick:closeSheet},T('Close'))]);}},'✅ '+T('Checked')+' '+v.times.map(clockOf).join(', ')));
+        row.appendChild(el('button',{style:'padding:11px 12px;border-radius:12px;background:#EFECE5;font-weight:700',onclick:function(){checkIn(g.job);}},'＋ '+T('Again')));}
+      else row.appendChild(el('button',{style:'flex:1;padding:11px;border-radius:12px;background:var(--ok);color:#fff;font-weight:800',onclick:function(){checkIn(g.job);}},'✓ '+T('I was here')));
+      row.appendChild(el('button',{style:'padding:11px 13px;border-radius:12px;background:#EFECE5;font-weight:700',onclick:function(){pickVideo({id:'',visitJob:g.job,date:d,title:jb?jb.name:''},true);}},'🎥 '+T('Video')));
+      card.appendChild(row);
+      if(v.videos&&v.videos.length)card.appendChild(el('div',{class:'vids',style:'margin-top:8px'},v.videos.map(function(it){return el('button',{class:'vidtile',onclick:function(){playVideo(it);}},el('span',{class:'play',text:'▶'}),el('span',{text:clockOf(it.at)+(it.dur?' · '+fmtDur(it.dur):'')}));})));
+    }
+    wrap.appendChild(card);
+  });
+  return wrap;
+}
+function clockOf(iso){var x=new Date(iso);if(isNaN(x))return '';var h=x.getHours(),m=x.getMinutes();return ((h%12)||12)+':'+(m<10?'0':'')+m+(h<12?' AM':' PM');}
+function checkIn(job){var d=today();S.visits=S.visits||{};var v=S.visits[job]=S.visits[job]||{times:[],videos:[]};v.times.push(new Date().toISOString());render();toast('✓ '+T('Checked in'));
+  call('visitAdd',{date:d,job:job}).then(function(r){apply(r);render();}).catch(function(e){toast('❗ '+errText(e));refresh(true);});}
 function crewDayView(){
   var wrap=listShell();if(!wrap)return el('main',{class:'list'},el('p',{class:'empty',text:T('Loading…')}));
   if(!S.crewDay)S.crewDay=today();
@@ -1353,7 +1409,7 @@ document.getElementById('videoIn').addEventListener('change',function(e){
     var scrim=document.getElementById('scrim');if(scrim){scrim.dataset.lock='1';var nb=scrim.cloneNode(true);scrim.parentNode.replaceChild(nb,scrim);bar=nb.querySelector('.pbar');pct=nb.querySelector('.pbar').nextSibling;
       var cb=nb.querySelector('.vcancel');if(cb)cb.addEventListener('click',function(){cancelled=true;cb.textContent='…';});}
     S.saving++;
-    call('videoStart',{id:x.id,size:f.size,mime:f.type||'video/mp4',dur:dur}).then(function(st){
+    call('videoStart',{id:x.id,visit:x.visitJob?{date:x.date,job:x.visitJob}:undefined,size:f.size,mime:f.type||'video/mp4',dur:dur}).then(function(st){
       var off=0,CH=st.chunk;
       function next(){if(cancelled)return Promise.reject(new Error('CANCELLED'));var part=f.slice(off,Math.min(f.size,off+CH));
         return readB64(part).then(function(b64){var tries=0;
