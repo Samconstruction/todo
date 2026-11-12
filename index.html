@@ -760,7 +760,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611120036',lastUpd=0;
+var BUILD='202611120044',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -865,7 +865,8 @@ function tabs(){
     return el('button',{class:'tab'+(S.tab===o?' on':''),onclick:function(){S.tab=o;render();window.scrollTo(0,0);}},o==='crew'?T('Crew'):o,o==='crew'?null:el('span',{class:'count'+(c.od?' red':'')},String(c.n)));}));
 }
 
-function byWhen(a,b){var A=(a.due||'9999')+(a.time||'99'),B=(b.due||'9999')+(b.time||'99');if(A!==B)return A<B?-1:1;return a.createdAt<b.createdAt?-1:1;}
+// Same day: newest added on top. Different days (Coming up / Overdue): earliest date first.
+function byWhen(a,b){var A=a.due||'9999',B=b.due||'9999';if(A!==B)return A<B?-1:1;return (a.createdAt||'')<(b.createdAt||'')?1:-1;}
 function groupedList(wrap,mine,emptyText,opts){
   var t=today();
   var closed=opts&&opts.closed||function(x){return x.status==='done';};
