@@ -446,7 +446,7 @@ function openReport(){
     .then(function(){closeSheet();toast('✓ '+T('Thanks! We got your report.'));}).catch(function(e){b.disabled=false;toast('❗ '+T('Not sent')+': '+errText(e));});}},T('Send'));
   openSheet([el('h2',{text:'🐞 '+T('Report a problem')}),t,b,el('button',{class:'ghost',onclick:closeSheet},T('Cancel'))]);setTimeout(function(){t.focus();},50);
 }
-function apply(d){if(d&&d.seen)S.seen=d.seen;
+function apply(d){if(d&&d.seen)S.seen=d.seen;if(d&&d.myPush===0&&!d.__cached)setTimeout(pushHeal,1500);
   if(!d||!d.me)return;
   S.me=d.me.key;S.name=d.me.name;S.role=d.me.role;S.weak=!!d.me.weak;S.tasks=d.tasks||[];S.crew=(d.crew||[]).slice().sort(function(a,b){return a.name.localeCompare(b.name);});S.office=d.office||[];S.jobs=d.jobs||S.jobs||[];S.anns=d.anns||[];S.sched=d.sched||{};S.mates=d.mates||[];S.names=d.names||S.names||{};S.mycrew=d.mycrew||null;if(d.drivers)S.drivers=d.drivers;S.avatars=d.avatars||{};var oldDraft=S.myweek&&S.myweek.draft;S.myweek=d.myweek||null;if(S.myweek&&oldDraft)S.myweek.draft=oldDraft;S.steady=d.steady||{crews:[],reports:[]};
   if(!S.viewAs){store('sam_me',S.me);store('sam_name',S.name);store('sam_role',S.role);
@@ -760,7 +760,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611120044',lastUpd=0;
+var BUILD='202611120054',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -2023,6 +2023,11 @@ function deviceName(){
   try{if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues)return navigator.userAgentData.getHighEntropyValues(['model']).then(function(v){return (v.model?base.replace('Android phone','Android')+' '+v.model:base)+tail;}).catch(function(){return base+tail;});}catch(e){}
   return Promise.resolve(base+tail);
 }
+// The phone thinks alerts are on but the server lost its sign-up (old or dead token): get a fresh one and sign up again.
+var HEALED=false;
+function pushHeal(){if(HEALED||!S.me||S.viewAs||notifState()!=='granted')return;HEALED=true;store('sam_tok','');
+  var go=function(){try{if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);getReg().then(function(reg){return firebase.messaging().deleteToken().catch(function(){});}).then(function(){enablePush(false);}).catch(function(){enablePush(false);});}catch(e){enablePush(false);}};
+  if(!window.firebase||!firebase.messaging)loadFirebase(go);else go();}
 function enablePush(ask){
   var st=notifState();
   if(st==='unsupported'||st==='ios-browser'||st==='denied')return;
@@ -2041,7 +2046,7 @@ function enablePush(ask){
 
 if('serviceWorker' in navigator){getReg().catch(function(){});}
 if(S.me){try{var pg=JSON.parse(sessionStorage.getItem('sam_page')||'null');if(pg&&pg.me===S.me&&pg.v&&pg.v!=='home'){S.view=pg.v;if(pg.tab)S.tab=pg.tab;if(pg.cd)S.crewDay=pg.cd;if(pg.ctd)S.crewTaskDay=pg.ctd;}}catch(e){}}
-if(S.me){try{var cached=JSON.parse(localStorage.getItem('sam_cache')||'null');if(cached&&cached.me&&cached.me.key===S.me){apply(cached);S.loaded=true;}}catch(e){}}
+if(S.me){try{var cached=JSON.parse(localStorage.getItem('sam_cache')||'null');if(cached&&cached.me&&cached.me.key===S.me){cached.__cached=1;apply(cached);S.loaded=true;}}catch(e){}}
 render();
 if(S.me){refresh(true);startPolling();if(notifState()==='granted')enablePush(false);}
 </script></body></html>
