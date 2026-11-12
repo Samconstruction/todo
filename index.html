@@ -768,7 +768,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611121913',lastUpd=0;
+var BUILD='202611121915',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -1177,7 +1177,7 @@ function rideLine(x){
   var txt;
   if(!x.driver||x.owner===x.driver)txt='🚐 '+(isOffice()?nameOf(x.owner)+' '+T('picks up'):T('Pick up'))+': '+(w||'—');
   else if(isOffice())txt='🚐 '+T('Driver')+': '+(x.driverName||nameOf(x.driver));
-  else txt='🚐 '+T('Driver')+': '+(x.driverName||nameOf(x.driver))+(x['with']?' · '+T('With you')+': '+x['with']:'');
+  else txt='🚐 '+T('Driver')+': '+(x.driverName||nameOf(x.driver));
   return el('div',{class:'teamline',style:'font-weight:700',text:txt});
 }
 function sharedLine(x){
