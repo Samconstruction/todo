@@ -824,7 +824,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611131711',lastUpd=0;
+var BUILD='202611131728',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -1397,10 +1397,13 @@ function openChat(id){
       el('button',{class:'rbx','aria-label':T('Cancel'),onclick:function(){replyTo=null;paintComp();}},'✕')));
     if(more)comp.appendChild(el('div',{class:'chatmore'},
       el('button',{class:'cbtn',onclick:function(){more=false;paintComp();pickPhoto(cur(),true);}},'📷 '+T('Take photo')),
-      el('button',{class:'cbtn',onclick:function(){more=false;paintComp();pickPhoto(cur());}},'🖼 '+T('Gallery')),
-      el('button',{class:'cbtn',onclick:function(){more=false;paintComp();pickVideo(cur(),true,true);}},'🎥 '+T('Video'))));
+      el('button',{class:'cbtn',onclick:function(){more=false;paintComp();pickPhoto(cur());}},'🖼 '+T('Photo from gallery')),
+      el('button',{class:'cbtn',onclick:function(){more=false;paintComp();pickVideo(cur(),true,true);}},'🎥 '+T('Record video')),
+      el('button',{class:'cbtn',onclick:function(){more=false;paintComp();pickVideo(cur(),false,true);}},'🎞 '+T('Video from gallery'))));
     comp.appendChild(el('div',{class:'chatbar'},el('button',{class:'chatplus'+(more?' on':''),'aria-label':T('Add photo'),onclick:function(){more=!more;paintComp();}},'📷'),input,sendB,micB));}
   paintHead();paintList();paintComp();
+  // Get the newest video ready in the background, so it plays right away when tapped.
+  try{var lv=(JSON.parse(x.comments||'[]')||[]).filter(function(m){return m.video;}).pop();if(lv)setTimeout(function(){getMedia(lv.video).catch(function(){});},800);}catch(e){}
   openSheet([head,list,comp]);
   var sc=document.getElementById('scrim');if(sc)sc.querySelector('.sheet').classList.add('chatsheet');
   S.chatId=id;S.sheetRefresh=function(){paintHead();paintList();};
@@ -1497,13 +1500,7 @@ document.getElementById('videoIn').addEventListener('change',function(e){
       var cb=nb.querySelector('.vcancel');if(cb)cb.addEventListener('click',function(){cancelled=true;cb.textContent='…';});}
     S.saving++;
     call('videoStart',{id:x.id,visit:x.visitJob?{date:x.date,job:x.visitJob}:undefined,size:f.size,mime:f.type||'video/mp4',dur:dur}).then(function(st){
-      var off=0,CH=st.chunk;
-      function next(){if(cancelled)return Promise.reject(new Error('CANCELLED'));var part=f.slice(off,Math.min(f.size,off+CH));
-        return readB64(part).then(function(b64){var tries=0;
-          function send(){return call('videoChunk',{uid:st.uid,offset:off,data:b64}).catch(function(err){if(++tries<3&&!/NOT_ALLOWED|EXPIRED/.test(String(err.message)))return new Promise(function(r){setTimeout(r,2000*tries);}).then(send);throw err;});}
-          return send();}).then(function(r){off+=part.size;var p=Math.round(off*100/f.size);bar.firstChild.style.width=p+'%';pct.textContent=p+'%';
-          if(r&&r.more)return next();return r;});}
-      return next();
+      return pushChunks(f,st,function(off){var p=Math.round(off*100/f.size);bar.firstChild.style.width=p+'%';pct.textContent=p+'%';},function(){return cancelled;});
     }).then(function(r){S.saving--;closeSheet(false,true);if(r&&r.me)apply(r);render();toast('✓ '+T('Video added'));if(videoBackToChat)openChat(x.id);})
     .catch(function(err){S.saving--;closeSheet(false,true);render();if(String(err&&err.message)==='CANCELLED'){toast(T('Cancelled'));return;}toast('❗ '+T('Could not upload the video.')+' '+errText(err));logErr('Video upload failed: '+String(err&&err.message||err),'size '+f.size+' type '+f.type+' dur '+dur);});
   });
@@ -1511,6 +1508,32 @@ document.getElementById('videoIn').addEventListener('change',function(e){
 // ---------- attachments (files, plans, videos) ----------
 function fmtSize(b){b=+b||0;return b>=1048576?(Math.round(b/104857.6)/10)+' MB':Math.max(1,Math.round(b/1024))+' KB';}
 function fileIcon(m){var n=String(m.name||'').toLowerCase(),t=String(m.mime||'');return /pdf$/.test(n)||/pdf/.test(t)?'📄':/\.(dwg|dxf)$/.test(n)?'📐':/^image\//.test(t)?'🖼':/\.(xls|xlsx|csv)$/.test(n)?'📊':/\.(doc|docx)$/.test(n)?'📝':'📎';}
+// Send a big file in pieces. Fast way: straight from the phone to Google Drive (no detour through our script, 1/3 less data).
+// If this phone can't do that, it falls back to the old way (each piece through our script). Resolves with the server's answer.
+function pushChunks(f,st,prog,isCancelled){
+  var off=0,direct=!!st.url&&window.fetch,DCH=8*1048576,fails=0;
+  function wait(ms){return new Promise(function(r){setTimeout(r,ms);});}
+  function finish(){return call('videoChunk',{uid:st.uid,status:1}).then(function(r){if(r&&r.more)throw new Error('UPLOAD_INCOMPLETE');return r;});}
+  function step(){
+    if(isCancelled())return Promise.reject(new Error('CANCELLED'));
+    if(direct){var part=f.slice(off,Math.min(f.size,off+DCH));
+      return fetch(st.url,{method:'PUT',headers:{'Content-Range':'bytes '+off+'-'+(off+part.size-1)+'/'+f.size},body:part}).then(function(r){
+        if(r.status===308||r.status===200||r.status===201){off+=part.size;fails=0;prog(off);return r.status===308&&off<f.size?step():finish();}
+        throw new Error('DRIVE '+r.status);
+      },function(e){throw new Error('NET');}).catch(function(err){var m=String(err&&err.message);
+        if(m==='CANCELLED'||m==='UPLOAD_INCOMPLETE'||/NOT_ALLOWED|EXPIRED/.test(m))throw err;
+        if(off===0&&!fails){fails=1;direct=false;return step();} // this phone can't send straight to Drive – use the old way
+        if(++fails>5)throw err;
+        // Bad signal: ask how much Drive already has and go on from there.
+        return wait(2000*fails).then(function(){return call('videoChunk',{uid:st.uid,status:1});}).then(function(r){if(r&&r.more){off=+r.got||0;prog(off);return step();}return r;});
+      });}
+    var part2=f.slice(off,Math.min(f.size,off+st.chunk));
+    return readB64(part2).then(function(b64){var tries=0;
+      function send(){return call('videoChunk',{uid:st.uid,offset:off,data:b64}).catch(function(err){if(++tries<3&&!/NOT_ALLOWED|EXPIRED/.test(String(err.message)))return wait(2000*tries).then(send);throw err;});}
+      return send();}).then(function(r){off+=part2.size;prog(off);if(r&&r.more)return step();return r;});
+  }
+  return step();
+}
 // Upload one big file (video or any file) in pieces with a progress sheet. Resolves with the server's answer.
 function uploadBig(f,params,label){
   var mb=Math.max(1,Math.round(f.size/1048576)),bar=el('div',{class:'pbar'},el('div',{class:'pfill'})),pct=el('div',{class:'muted',style:'text-align:center',text:'0% · '+mb+' MB'}),cancelled=false;
@@ -1519,12 +1542,7 @@ function uploadBig(f,params,label){
     var cb=nb.querySelector('.vcancel');if(cb)cb.addEventListener('click',function(){cancelled=true;cb.textContent='…';});}
   S.saving++;
   return call('videoStart',Object.assign({size:f.size,mime:f.type||''},params)).then(function(st){
-    var off=0,CH=st.chunk;
-    function next(){if(cancelled)return Promise.reject(new Error('CANCELLED'));var part=f.slice(off,Math.min(f.size,off+CH));
-      return readB64(part).then(function(b64){var tries=0;
-        function send(){return call('videoChunk',{uid:st.uid,offset:off,data:b64}).catch(function(err){if(++tries<3&&!/NOT_ALLOWED|EXPIRED/.test(String(err.message)))return new Promise(function(r){setTimeout(r,2000*tries);}).then(send);throw err;});}
-        return send();}).then(function(r){off+=part.size;var p=Math.round(off*100/f.size);bar.firstChild.style.width=p+'%';pct.textContent=p+'% · '+mb+' MB';if(r&&r.more)return next();return r;});}
-    return next();
+    return pushChunks(f,st,function(off){var p=Math.round(off*100/f.size);bar.firstChild.style.width=p+'%';pct.textContent=p+'% · '+mb+' MB';},function(){return cancelled;});
   }).then(function(r){S.saving--;closeSheet(false,true);if(r&&r.me)apply(r);render();return r;},function(err){S.saving--;closeSheet(false,true);render();throw err;});
 }
 function shrinkPhoto(f){return new Promise(function(res,rej){var url=URL.createObjectURL(f),im=new Image();im.onerror=function(){URL.revokeObjectURL(url);rej(new Error('PHOTO'));};
@@ -1540,15 +1558,35 @@ function sendAttachments(atts,ids){
     pr.then(one).catch(function(err){if(String(err&&err.message)==='CANCELLED'){toast(T('Cancelled'));return;}toast('❗ '+T('Could not upload')+' '+(a.f.name||'')+'. '+errText(err));logErr('Attachment upload failed: '+String(err&&err.message||err),'size '+a.f.size+' type '+a.f.type);});}
   one();
 }
+// Download a video / file from Drive: several pieces at the same time (much faster), kept for the rest of the session.
+var MEDIA_GET={};
+function getMedia(id,prog,mime0){
+  if(S.vids[id])return Promise.resolve(S.vids[id]);
+  var job=MEDIA_GET[id];
+  if(!job){job=MEDIA_GET[id]={ls:[],got:0,total:0};
+    function dec(r){var bin=atob(r.data),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u;}
+    function tell(){job.ls.forEach(function(f){try{f(job.got,job.total||job.got);}catch(e){}});}
+    job.p=call('videoGet',{fileId:id,start:0}).then(function(r){
+      var first=dec(r),total=r.total||first.length,CH=first.length,mime=r.mime||mime0||'application/octet-stream',parts=[first],starts=[];
+      job.total=total;job.got=first.length;tell();
+      for(var s=CH;s<total&&CH>0;s+=CH)starts.push(s);
+      var idx=0;
+      function worker(){if(idx>=starts.length)return Promise.resolve();var k=idx++,st=starts[k],tries=0;
+        function get(){return call('videoGet',{fileId:id,start:st}).catch(function(e){if(++tries<3)return new Promise(function(z){setTimeout(z,1500*tries);}).then(get);throw e;});}
+        return get().then(function(r2){var u=dec(r2);parts[k+1]=u;job.got+=u.length;tell();return worker();});}
+      var ws=[];for(var w=0;w<4;w++)ws.push(worker());
+      return Promise.all(ws).then(function(){var url=URL.createObjectURL(new Blob(parts,{type:mime}));S.vids[id]=url;delete MEDIA_GET[id];return url;});
+    }).catch(function(e){delete MEDIA_GET[id];throw e;});}
+  if(prog){job.ls.push(prog);if(job.got)prog(job.got,job.total||job.got);}
+  return job.p;
+}
 // Open a file from the chat: download it in pieces, then open / save it on the phone.
 function openFile(m){
   if(S.vids[m.file]){showFile(m,S.vids[m.file]);return;}
   var bar=el('div',{class:'pbar'},el('div',{class:'pfill'})),pct=el('div',{class:'muted',style:'text-align:center',text:fmtSize(m.size)});
   openSheet([el('h2',{text:fileIcon(m)+' '+(m.name||T('File'))}),el('p',{class:'muted',text:T('Downloading…')}),bar,pct]);
-  var parts=[],got=0,mime=m.mime||'application/octet-stream';
-  function next(){return call('videoGet',{fileId:m.file,start:got}).then(function(r){mime=r.mime||mime;var bin=atob(r.data),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);parts.push(u);got+=u.length;
-    if(r.total){var p=Math.round(got*100/r.total);bar.firstChild.style.width=p+'%';pct.textContent=p+'% · '+fmtSize(r.total);}if(got<r.total&&u.length)return next();});}
-  next().then(function(){var url=URL.createObjectURL(new Blob(parts,{type:mime}));S.vids[m.file]=url;showFile(m,url);}).catch(function(e){closeSheet();toast('❗ '+T('Could not open the file.')+' '+errText(e));});
+  getMedia(m.file,function(got,total){var p=Math.round(got*100/total);bar.firstChild.style.width=p+'%';pct.textContent=p+'% · '+fmtSize(total);},m.mime)
+    .then(function(url){showFile(m,url);}).catch(function(e){closeSheet();toast('❗ '+T('Could not open the file.')+' '+errText(e));});
 }
 function showFile(m,url){openSheet([el('h2',{text:fileIcon(m)+' '+(m.name||T('File'))}),el('p',{class:'muted',text:fmtSize(m.size)}),
   el('a',{class:'primary',href:url,target:'_blank',rel:'noopener',style:'display:block;text-align:center;text-decoration:none'},'👁 '+T('Open')),
@@ -1559,10 +1597,7 @@ function playVideo(it){
   openViewer(box);
   if(S.vids[it.id]){box.appendChild(el('video',{src:S.vids[it.id],controls:'',autoplay:'',playsinline:''}));return;}
   box.appendChild(el('p',{class:'muted',style:'text-align:center',text:T('Loading video…')}));box.appendChild(bar);
-  var parts=[],got=0,mime='video/mp4';
-  function next(){return call('videoGet',{fileId:it.id,start:got}).then(function(r){mime=r.mime||mime;var bin=atob(r.data),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
-    parts.push(u);got+=u.length;bar.firstChild.style.width=Math.round(got*100/(r.total||got))+'%';if(got<r.total&&u.length)return next();});}
-  next().then(function(){var url=URL.createObjectURL(new Blob(parts,{type:mime}));S.vids[it.id]=url;
+  getMedia(it.id,function(got,total){bar.firstChild.style.width=Math.round(got*100/total)+'%';},'video/mp4').then(function(url){
     if(!document.getElementById('viewer'))return;box.innerHTML='';box.appendChild(el('video',{src:url,controls:'',autoplay:'',playsinline:''}));})
   .catch(function(err){box.innerHTML='';box.appendChild(el('p',{text:T('Could not load the video.')}));logErr('Video play failed: '+String(err&&err.message||err),it.id);});
 }
@@ -2159,7 +2194,7 @@ function jobForm(j,onSaved,onCancel){
   return el('div',{class:'jobnew'},name,addressPicker(addr),err,b,el('button',{class:'ghost',type:'button',onclick:onCancel},T('Cancel')));
 }
 // ---------- 🏗 Jobs list + 🕓 job history (office) ----------
-Object.assign(ES,{'Edit jobs':'Editar obras','Add or edit jobs':'Agregar o editar obras','Search a job or address…':'Buscar obra o dirección…','No job found.':'No se encontró la obra.','last work':'último trabajo','no work yet':'sin trabajo todavía','History':'Historial','started':'empezó','Photos':'Fotos','Videos':'Videos','Files':'Archivos','All':'Todo','checked in':'pasó a las','Show older days':'Ver días anteriores','today':'hoy'});
+Object.assign(ES,{'Edit jobs':'Editar obras','Video from gallery':'Video de la galería','Photo from gallery':'Foto de la galería','Add or edit jobs':'Agregar o editar obras','Search a job or address…':'Buscar obra o dirección…','No job found.':'No se encontró la obra.','last work':'último trabajo','no work yet':'sin trabajo todavía','History':'Historial','started':'empezó','Photos':'Fotos','Videos':'Videos','Files':'Archivos','All':'Todo','checked in':'pasó a las','Show older days':'Ver días anteriores','today':'hoy'});
 function openJobs(){S.view='jobs';S.jobQ='';render();window.scrollTo(0,0);loadJobsAll(60000);}
 // All jobs with their newest days are kept on the phone, so the job pages open right away; refreshed quietly in the background.
 var JOBS_AT=0,JOBS_BUSY=false;
