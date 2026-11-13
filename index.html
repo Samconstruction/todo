@@ -386,7 +386,7 @@ html.big body{zoom:1.15}
 .filetile .ficon{font-size:22px}.filetile .fname{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.filetile .fsize{font-size:12px;color:var(--muted)}
 
 .jhtitle{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:24px;font-weight:800;margin:2px 0 6px}
-.jhedit{font-size:14px;font-weight:700;background:#EFECE5;border-radius:10px;padding:8px 12px}
+.jhedit{display:block;width:100%;font-size:16px;font-weight:800;background:#fff;color:var(--acc);border:1.5px dashed var(--acc);border-radius:14px;padding:12px;margin:0 0 14px}
 .jhsearch{width:100%;box-sizing:border-box;font-size:17px;padding:12px 14px;border:1.5px solid #DDD8CF;border-radius:14px;background:#fff;margin:0 0 12px}
 .jhcard{display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);cursor:pointer}
 .jhname{font-size:18px;font-weight:800;line-height:1.2}
@@ -434,7 +434,7 @@ function isOffice(){return S.role==='office';}
 function setLang(l){LANG=l;store('sam_lang',l);document.documentElement.lang=l;closeSheet();render();if(S.me&&notifState()==='granted')enablePush(false);}
 function langSwitch(){return el('div',{class:'lang'},[['en','English'],['es','Español']].map(function(p){return el('button',{class:'lang-b'+(LANG===p[0]?' on':''),onclick:function(){if(LANG!==p[0])setLang(p[0]);}},p[1]);}));}
 
-var READS={maint:1,list:1,photoGet:1,videoGet:1,avatarGet:1,avatarBig:1,otWeek:1,schedGet:1,reportsRange:1,places:1,logError:1,jobHistory:1,jobsSummary:1};
+var READS={maint:1,list:1,photoGet:1,videoGet:1,avatarGet:1,avatarBig:1,otWeek:1,schedGet:1,reportsRange:1,places:1,logError:1,jobHistory:1,jobsSummary:1,jobsAll:1};
 function rid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 function call(action,payload,as){
   payload=payload||{};
@@ -657,6 +657,7 @@ var maintAt=0;
 function homeView(){
   if(S.me==='Yossi'&&!S.viewAs&&Date.now()-maintAt>300000){maintAt=Date.now();setTimeout(function(){maintLoad();},1500);} // App maintenance opens instantly
   var wrap=listShell();if(!wrap)return el('main',{class:'list'},el('p',{class:'empty',text:T('Loading…')}));
+  if(!S.viewAs)setTimeout(function(){loadJobsAll();},3000); // get the job pages ready in the background
   function b(icon,label,fn){return el('button',{class:'homebtn',onclick:fn},el('span',{class:'hi',text:icon}),el('span',{text:label}),el('span',{class:'hchev',text:'›'}));}
   // Rocky: simple home – his 3 everyday buttons big, the rest small underneath.
   if(S.me==='Rocky'){
@@ -708,7 +709,7 @@ function render_(){
 }
 
 function isBadPin(e){return String((e&&e.message)||e).indexOf('BAD_PIN')>=0;}
-function clearSession(){['sam_me','sam_pin','sam_tok','sam_role','sam_name','sam_cache'].forEach(function(k){store(k,null);});S.me=null;S.pin=null;S.role=null;S.name=null;S.tasks=[];S.crew=[];S.loaded=false;}
+function clearSession(){['sam_me','sam_pin','sam_tok','sam_role','sam_name','sam_cache','sam_jall'].forEach(function(k){store(k,null);});S.jall=null;S.me=null;S.pin=null;S.role=null;S.name=null;S.tasks=[];S.crew=[];S.loaded=false;}
 function dropPush(){try{var tk=store('sam_tok');if(tk&&S.me&&S.pin)call('unregister',{token:String(tk).split('|').slice(2).join('|')}).catch(function(){});}catch(e){}}
 function signOut(msg){dropPush();clearSession();Q=[];qSave();OTW={};try{localStorage.removeItem('sam_otw');}catch(e){}S.loginMsg=msg||'';closeSheet();render();}
 function goLogin(name){dropPush();clearSession();S.pick=name||null;S.loginMsg='';closeSheet();render();}
@@ -823,7 +824,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611131654',lastUpd=0;
+var BUILD='202611131711',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -2158,22 +2159,31 @@ function jobForm(j,onSaved,onCancel){
   return el('div',{class:'jobnew'},name,addressPicker(addr),err,b,el('button',{class:'ghost',type:'button',onclick:onCancel},T('Cancel')));
 }
 // ---------- 🏗 Jobs list + 🕓 job history (office) ----------
-Object.assign(ES,{'Edit jobs':'Editar obras','Search a job or address…':'Buscar obra o dirección…','No job found.':'No se encontró la obra.','last work':'último trabajo','no work yet':'sin trabajo todavía','History':'Historial','started':'empezó','Photos':'Fotos','Videos':'Videos','Files':'Archivos','All':'Todo','checked in':'pasó a las','Show older days':'Ver días anteriores','today':'hoy'});
-function openJobs(){S.view='jobs';S.jobQ='';render();window.scrollTo(0,0);loadJobsSum();}
-function loadJobsSum(){call('jobsSummary',{}).then(function(r){S.jobsSum=r||{};if(S.view==='jobs')render();}).catch(function(){});}
+Object.assign(ES,{'Edit jobs':'Editar obras','Add or edit jobs':'Agregar o editar obras','Search a job or address…':'Buscar obra o dirección…','No job found.':'No se encontró la obra.','last work':'último trabajo','no work yet':'sin trabajo todavía','History':'Historial','started':'empezó','Photos':'Fotos','Videos':'Videos','Files':'Archivos','All':'Todo','checked in':'pasó a las','Show older days':'Ver días anteriores','today':'hoy'});
+function openJobs(){S.view='jobs';S.jobQ='';render();window.scrollTo(0,0);loadJobsAll(60000);}
+// All jobs with their newest days are kept on the phone, so the job pages open right away; refreshed quietly in the background.
+var JOBS_AT=0,JOBS_BUSY=false;
+try{var _ja=JSON.parse(localStorage.getItem('sam_jall')||'null');if(_ja&&_ja.me)S.jall=_ja;}catch(e){}
+function jall(){return S.jall&&S.jall.me===S.me?S.jall.data:null;}
+function loadJobsAll(age){if(JOBS_BUSY||Date.now()-JOBS_AT<(age||300000))return;JOBS_BUSY=true;var who=S.me;
+  call('jobsAll',{}).then(function(r){JOBS_BUSY=false;JOBS_AT=Date.now();if(S.me!==who)return;S.jall={me:who,data:r||{}};try{localStorage.setItem('sam_jall',JSON.stringify(S.jall));}catch(e){}
+    var h=S.hist,c=h&&r&&r[h.job];if(c&&S.view==='jobhist'&&!h.paged)histFrom(h,c);
+    if(S.view==='jobs'||S.view==='jobhist')render();}).catch(function(){JOBS_BUSY=false;});}
+function histFrom(h,c){h.loading=false;h.err='';h.info=c.job;h.first=c.first;h.counts=c.counts;h.more=c.more;h.days=c.days;}
 function shortDay(s){if(!s)return '';if(s===today())return T('today');var d=parse(s);return LANG==='es'?d.getDate()+' '+MNE[d.getMonth()]:MN[d.getMonth()]+' '+d.getDate();}
 function jobsView(){
   var wrap=listShell();if(!wrap)return el('main',{class:'list'},el('p',{class:'empty',text:T('Loading…')}));
-  var sum=S.jobsSum||{},q=(S.jobQ||'').trim().toLowerCase();
-  wrap.appendChild(el('div',{class:'jhtitle'},el('span',{text:'🏗 '+T('Jobs')}),el('button',{class:'jhedit',onclick:openJobManager},'✎ '+T('Edit jobs'))));
+  var sum=jall()||{},q=(S.jobQ||'').trim().toLowerCase();
+  wrap.appendChild(el('div',{class:'jhtitle',text:'🏗 '+T('Jobs')}));
   var inp=el('input',{class:'jhsearch',type:'search',placeholder:'🔍 '+T('Search a job or address…'),value:S.jobQ||''});
   inp.addEventListener('input',function(){S.jobQ=inp.value;var y=window.scrollY;render();var n=document.querySelector('.jhsearch');if(n){n.focus();try{n.setSelectionRange(n.value.length,n.value.length);}catch(e){}}window.scrollTo(0,y);});
   wrap.appendChild(inp);
+  wrap.appendChild(el('button',{class:'jhedit',onclick:openJobManager},'＋ '+T('Add or edit jobs')));
   var jobs=activeJobs().filter(function(j){return !q||(j.name+' '+(j.address||'')).toLowerCase().indexOf(q)>=0;});
   jobs.sort(function(a,b){var la=(sum[a.id]||{}).last||'',lb=(sum[b.id]||{}).last||'';return la<lb?1:la>lb?-1:a.name.localeCompare(b.name);});
   if(!jobs.length)wrap.appendChild(el('p',{class:'empty',text:q?T('No job found.'):T('No jobs yet.')}));
   jobs.forEach(function(j){var s=sum[j.id],bits=[];
-    if(s){if(s.photos)bits.push('📷 '+s.photos);if(s.videos)bits.push('🎥 '+s.videos);if(s.files)bits.push('📄 '+s.files);bits.push(s.last?T('last work')+' '+shortDay(s.last):T('no work yet'));}
+    if(s){var c=s.counts||{};if(c.photos)bits.push('📷 '+c.photos);if(c.videos)bits.push('🎥 '+c.videos);if(c.files)bits.push('📄 '+c.files);bits.push(s.last?T('last work')+' '+shortDay(s.last):T('no work yet'));}
     wrap.appendChild(el('div',{class:'jhcard',onclick:function(){openHist(j.id);}},
       el('div',{style:'flex:1;min-width:0'},el('div',{class:'jhname',text:'🏗 '+j.name}),
         j.address?el('div',{class:'jhaddr',text:'📍 '+j.address}):null,
@@ -2181,14 +2191,14 @@ function jobsView(){
       el('button',{class:'jhbtn',onclick:function(e){e.stopPropagation();openHist(j.id);}},'🕓 '+T('History'))));});
   return wrap;
 }
-function openHist(jobId){S.view='jobhist';S.hist={job:jobId,f:'all',days:[],loading:true};render();window.scrollTo(0,0);loadHist();}
+function openHist(jobId){var c=(jall()||{})[jobId];S.view='jobhist';S.hist={job:jobId,f:'all',days:[],loading:true};if(c)histFrom(S.hist,c);render();window.scrollTo(0,0);if(!c)loadHist();else loadJobsAll(120000);}
 function loadHist(before){var h=S.hist;if(!h)return;h.loading=true;var job=h.job;
   call('jobHistory',{job:job,before:before||''}).then(function(r){if(!S.hist||S.hist.job!==job)return;h.loading=false;h.err='';h.info=r.job;h.first=r.first;h.counts=r.counts;h.more=r.more;
-    h.days=before?h.days.concat(r.days):r.days;render();})
+    if(before)h.paged=true;h.days=before?h.days.concat(r.days):r.days;render();})
   .catch(function(e){if(!S.hist||S.hist.job!==job)return;h.loading=false;h.err=errText(e);render();});}
 function histView(){
   var wrap=listShell();if(!wrap)return el('main',{class:'list'},el('p',{class:'empty',text:T('Loading…')}));
-  var h=S.hist;if(!h){S.view='jobs';setTimeout(function(){render();loadJobsSum();},0);return wrap;}
+  var h=S.hist;if(!h){S.view='jobs';setTimeout(function(){render();loadJobsAll(60000);},0);return wrap;}
   var jb=jobOf(h.job)||h.info||{name:''},c=h.counts||{},f=h.f||'all';
   wrap.appendChild(el('div',{class:'jhtitle',text:'🏗 '+jb.name}));
   if(jb.address||h.first)wrap.appendChild(el('div',{class:'jhaddr',style:'margin:2px 0 10px'},jb.address?el('a',{href:mapsUrl(jb.address),target:'_blank',rel:'noopener',style:'color:inherit;text-decoration:none'},'📍 '+jb.address):null,h.first?(jb.address?' · ':'')+T('started')+' '+shortDay(h.first):null));
