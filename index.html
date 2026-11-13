@@ -384,6 +384,31 @@ html.big body{zoom:1.15}
 .attx{margin-left:auto;width:28px;height:28px;border-radius:50%;background:#fff;font-weight:800;flex:none}
 .filetile{display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;border-radius:12px;background:#EEF5FB;text-align:left;margin-top:4px}
 .filetile .ficon{font-size:22px}.filetile .fname{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.filetile .fsize{font-size:12px;color:var(--muted)}
+
+.jhtitle{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:24px;font-weight:800;margin:2px 0 6px}
+.jhedit{font-size:14px;font-weight:700;background:#EFECE5;border-radius:10px;padding:8px 12px}
+.jhsearch{width:100%;box-sizing:border-box;font-size:17px;padding:12px 14px;border:1.5px solid #DDD8CF;border-radius:14px;background:#fff;margin:0 0 12px}
+.jhcard{display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);cursor:pointer}
+.jhname{font-size:18px;font-weight:800;line-height:1.2}
+.jhaddr{color:var(--mut,#6B7078);font-size:14px;margin-top:3px}
+.jhstat{font-size:14px;margin-top:4px}
+.jhbtn{flex:none;background:var(--acc);color:#fff;font-weight:800;font-size:14px;padding:10px 12px;border-radius:12px}
+.jhchips{display:flex;gap:6px;overflow-x:auto;margin:0 0 12px;padding-bottom:2px}
+.jhchip{flex:none;white-space:nowrap;padding:8px 13px;border-radius:999px;background:#EFECE5;font-weight:700;font-size:14px}
+.jhchip.on{background:var(--acc);color:#fff}
+.jhdate{font-weight:800;font-size:15px;color:#6B7078;margin:4px 2px 6px}
+.jhday{background:#fff;border-radius:14px;padding:12px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.jhwho{font-size:14px;color:#6B7078;margin-bottom:8px}
+.jhmedia{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.jhmedia .thumb{width:76px;height:76px}
+.jhvid{width:76px;height:76px;border-radius:8px;background:#1F2328;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:22px;padding:0}
+.jhvid small{font-size:11px}
+.jhfile{display:flex;align-items:center;gap:8px;width:100%;background:#EAF2FA;border-radius:10px;padding:10px 12px;margin-bottom:8px;text-align:left;font-size:15px}
+.jhfile b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jhfile small{color:#6B7078;flex:none}
+.jhchat{font-size:15px;line-height:1.4;border-top:1px solid #eee;padding-top:8px}
+.jhvoice{background:#EFECE5;border-radius:8px;padding:3px 9px;font-size:14px;font-weight:600}
+.jhmore{display:block;margin:4px auto 30px;background:none;color:var(--acc);font-weight:800;font-size:17px;padding:10px}
 </style></head><body>
 <div id="app"></div>
 <input type="file" id="photoIn" accept="image/*" style="display:none"><input type="file" id="videoIn" accept="video/*" style="display:none"><input type="file" id="photoCam" accept="image/*" capture="environment" style="display:none"><input type="file" id="videoCam" accept="video/*" capture="environment" style="display:none">
@@ -409,7 +434,7 @@ function isOffice(){return S.role==='office';}
 function setLang(l){LANG=l;store('sam_lang',l);document.documentElement.lang=l;closeSheet();render();if(S.me&&notifState()==='granted')enablePush(false);}
 function langSwitch(){return el('div',{class:'lang'},[['en','English'],['es','Español']].map(function(p){return el('button',{class:'lang-b'+(LANG===p[0]?' on':''),onclick:function(){if(LANG!==p[0])setLang(p[0]);}},p[1]);}));}
 
-var READS={maint:1,list:1,photoGet:1,videoGet:1,avatarGet:1,avatarBig:1,otWeek:1,schedGet:1,reportsRange:1,places:1,logError:1};
+var READS={maint:1,list:1,photoGet:1,videoGet:1,avatarGet:1,avatarBig:1,otWeek:1,schedGet:1,reportsRange:1,places:1,logError:1,jobHistory:1,jobsSummary:1};
 function rid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
 function call(action,payload,as){
   payload=payload||{};
@@ -643,7 +668,7 @@ function homeView(){
     wrap.appendChild(el('div',{class:'homemore',text:T('More')}));
     wrap.appendChild(el('div',{class:'homesmgrid'},
       sm('📣',T('Announcement'),function(){openAnnounce();}),sm('👷',T('Workers'),openCrewManager),
-      sm('📞',T('Phone list'),openPhones),sm('🏗',T('Jobs'),openJobManager)));
+      sm('📞',T('Phone list'),openPhones),sm('🏗',T('Jobs'),openJobs)));
     return wrap;
   }
   wrap.appendChild(el('div',{class:'homegrid'},
@@ -654,7 +679,7 @@ function homeView(){
     b('📣',T('Announcement'),function(){openAnnounce();}),
     b('👷',T('Workers'),openCrewManager),
     b('📞',T('Phone list'),openPhones),
-    b('🏗',T('Manage jobs'),openJobManager),
+    b('🏗',T('Jobs'),openJobs),
     b('🐞',T('Report a problem'),openReport),
     S.me==='Yossi'?b('🛠',T('App maintenance'),openMaint):null));
   return wrap;
@@ -667,13 +692,16 @@ function render_(){
   if(INSTALL_EV&&!S.viewAs&&!isStandalone())app.appendChild(el('button',{class:'instbtn',onclick:doInstall},'📲 '+T('Install the app on this phone'),el('small',{text:T('One tap to open it, like any other app')})));
   if(S.viewAs)app.appendChild(el('button',{class:'viewasbar',onclick:stopViewAs},'👀 '+T('Viewing as')+' '+S.name+' – '+T('tap to go back to Yossi')));
   var v=S.view||'home';
-  if(isOffice()&&v!=='home')app.appendChild(el('button',{class:'homelink',onclick:goHome},'‹ '+T('Home')));
+  if(isOffice()&&v==='jobhist')app.appendChild(el('button',{class:'homelink',onclick:openJobs},'‹ '+T('Jobs')));
+  else if(isOffice()&&v!=='home')app.appendChild(el('button',{class:'homelink',onclick:goHome},'‹ '+T('Home')));
   if(isOffice()&&v==='tasks')app.appendChild(tabs());
   var nb=notifBanner();if(nb)app.appendChild(nb);var pb=pinBanner();if(pb)app.appendChild(pb);
   if(!isOffice())app.appendChild(workerView());
   else if(v==='home')app.appendChild(homeView());
   else if(v==='sched')app.appendChild(crewDayView());
   else if(v==='sites')app.appendChild(sitesView());
+  else if(v==='jobs')app.appendChild(jobsView());
+  else if(v==='jobhist')app.appendChild(histView());
   else app.appendChild(S.tab==='crew'?crewListView():listView(PEOPLE.indexOf(S.tab)>=0?S.tab:S.me));
   if(isOffice()&&v==='tasks'&&S.tab!=='crew')app.appendChild(el('button',{class:'fab','aria-label':'Add task',onclick:function(){if(S.tab==='crew')openEditor(null,{due:S.crewTaskDay||today()});else openEditor(null);}},'+'));
   window.scrollTo(0,y);
@@ -795,7 +823,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611131630',lastUpd=0;
+var BUILD='202611131654',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -1081,6 +1109,7 @@ function sitesView(){
       else row.appendChild(el('button',{style:'flex:1;padding:11px;border-radius:12px;background:var(--ok);color:#fff;font-weight:800',onclick:function(){checkIn(g.job);}},'✓ '+T('I was here')));
       var mx={id:'',visitJob:g.job,date:d,title:jb?jb.name:''};
       row.appendChild(el('button',{style:'padding:11px 12px;border-radius:12px;background:#EFECE5;font-weight:700',onclick:function(){openMedia(mx);}},'📷 🎥'));
+      row.appendChild(el('button',{style:'padding:11px 12px;border-radius:12px;background:#EFECE5;font-weight:700','aria-label':T('History'),onclick:function(){openHist(g.job);}},'🕓'));
       card.appendChild(row);
       var ph=v.photos||[],vd=v.videos||[];
       if(ph.length)card.appendChild(el('div',{class:'thumbs',style:'margin-top:10px'},ph.map(function(it){
@@ -2127,6 +2156,70 @@ function jobForm(j,onSaved,onCancel){
   }},T('Save job'));
   setTimeout(function(){name.focus();},50);
   return el('div',{class:'jobnew'},name,addressPicker(addr),err,b,el('button',{class:'ghost',type:'button',onclick:onCancel},T('Cancel')));
+}
+// ---------- 🏗 Jobs list + 🕓 job history (office) ----------
+Object.assign(ES,{'Edit jobs':'Editar obras','Search a job or address…':'Buscar obra o dirección…','No job found.':'No se encontró la obra.','last work':'último trabajo','no work yet':'sin trabajo todavía','History':'Historial','started':'empezó','Photos':'Fotos','Videos':'Videos','Files':'Archivos','All':'Todo','checked in':'pasó a las','Show older days':'Ver días anteriores','today':'hoy'});
+function openJobs(){S.view='jobs';S.jobQ='';render();window.scrollTo(0,0);loadJobsSum();}
+function loadJobsSum(){call('jobsSummary',{}).then(function(r){S.jobsSum=r||{};if(S.view==='jobs')render();}).catch(function(){});}
+function shortDay(s){if(!s)return '';if(s===today())return T('today');var d=parse(s);return LANG==='es'?d.getDate()+' '+MNE[d.getMonth()]:MN[d.getMonth()]+' '+d.getDate();}
+function jobsView(){
+  var wrap=listShell();if(!wrap)return el('main',{class:'list'},el('p',{class:'empty',text:T('Loading…')}));
+  var sum=S.jobsSum||{},q=(S.jobQ||'').trim().toLowerCase();
+  wrap.appendChild(el('div',{class:'jhtitle'},el('span',{text:'🏗 '+T('Jobs')}),el('button',{class:'jhedit',onclick:openJobManager},'✎ '+T('Edit jobs'))));
+  var inp=el('input',{class:'jhsearch',type:'search',placeholder:'🔍 '+T('Search a job or address…'),value:S.jobQ||''});
+  inp.addEventListener('input',function(){S.jobQ=inp.value;var y=window.scrollY;render();var n=document.querySelector('.jhsearch');if(n){n.focus();try{n.setSelectionRange(n.value.length,n.value.length);}catch(e){}}window.scrollTo(0,y);});
+  wrap.appendChild(inp);
+  var jobs=activeJobs().filter(function(j){return !q||(j.name+' '+(j.address||'')).toLowerCase().indexOf(q)>=0;});
+  jobs.sort(function(a,b){var la=(sum[a.id]||{}).last||'',lb=(sum[b.id]||{}).last||'';return la<lb?1:la>lb?-1:a.name.localeCompare(b.name);});
+  if(!jobs.length)wrap.appendChild(el('p',{class:'empty',text:q?T('No job found.'):T('No jobs yet.')}));
+  jobs.forEach(function(j){var s=sum[j.id],bits=[];
+    if(s){if(s.photos)bits.push('📷 '+s.photos);if(s.videos)bits.push('🎥 '+s.videos);if(s.files)bits.push('📄 '+s.files);bits.push(s.last?T('last work')+' '+shortDay(s.last):T('no work yet'));}
+    wrap.appendChild(el('div',{class:'jhcard',onclick:function(){openHist(j.id);}},
+      el('div',{style:'flex:1;min-width:0'},el('div',{class:'jhname',text:'🏗 '+j.name}),
+        j.address?el('div',{class:'jhaddr',text:'📍 '+j.address}):null,
+        el('div',{class:'jhstat',text:s?bits.join(' · '):'…'})),
+      el('button',{class:'jhbtn',onclick:function(e){e.stopPropagation();openHist(j.id);}},'🕓 '+T('History'))));});
+  return wrap;
+}
+function openHist(jobId){S.view='jobhist';S.hist={job:jobId,f:'all',days:[],loading:true};render();window.scrollTo(0,0);loadHist();}
+function loadHist(before){var h=S.hist;if(!h)return;h.loading=true;var job=h.job;
+  call('jobHistory',{job:job,before:before||''}).then(function(r){if(!S.hist||S.hist.job!==job)return;h.loading=false;h.err='';h.info=r.job;h.first=r.first;h.counts=r.counts;h.more=r.more;
+    h.days=before?h.days.concat(r.days):r.days;render();})
+  .catch(function(e){if(!S.hist||S.hist.job!==job)return;h.loading=false;h.err=errText(e);render();});}
+function histView(){
+  var wrap=listShell();if(!wrap)return el('main',{class:'list'},el('p',{class:'empty',text:T('Loading…')}));
+  var h=S.hist;if(!h){S.view='jobs';setTimeout(function(){render();loadJobsSum();},0);return wrap;}
+  var jb=jobOf(h.job)||h.info||{name:''},c=h.counts||{},f=h.f||'all';
+  wrap.appendChild(el('div',{class:'jhtitle',text:'🏗 '+jb.name}));
+  if(jb.address||h.first)wrap.appendChild(el('div',{class:'jhaddr',style:'margin:2px 0 10px'},jb.address?el('a',{href:mapsUrl(jb.address),target:'_blank',rel:'noopener',style:'color:inherit;text-decoration:none'},'📍 '+jb.address):null,h.first?(jb.address?' · ':'')+T('started')+' '+shortDay(h.first):null));
+  function chip(id,label){return el('button',{class:'jhchip'+(f===id?' on':''),onclick:function(){h.f=id;render();}},label);}
+  wrap.appendChild(el('div',{class:'jhchips'},chip('all',T('All')),chip('photos','📷 '+T('Photos')+' '+(c.photos||0)),chip('videos','🎥 '+T('Videos')+' '+(c.videos||0)),chip('files','📄 '+T('Files')+' '+(c.files||0)),chip('chat','💬 '+T('Chat')+' '+(c.chat||0))));
+  if(h.err)wrap.appendChild(el('p',{class:'empty'},T('Could not load — check signal'),el('br'),el('button',{class:'retry',onclick:function(){loadHist();render();}},T('Try again'))));
+  if(!h.days.length&&h.loading)wrap.appendChild(el('p',{class:'empty',text:T('Loading…')}));
+  if(!h.days.length&&!h.loading&&!h.err)wrap.appendChild(el('p',{class:'empty',text:T('Nothing yet.')}));
+  var shown=0;
+  h.days.forEach(function(D){
+    var its=D.items.filter(function(it){return f==='all'||(f==='photos'&&it.photo)||(f==='videos'&&it.video)||(f==='files'&&it.file)||(f==='chat'&&(it.text||it.voice));});
+    if(f!=='all'&&!its.length)return;shown++;
+    var card=el('div',{class:'jhday'});
+    if(f==='all'){
+      if(D.who.length)card.appendChild(el('div',{class:'jhwho',text:'👷 '+D.who.join(', ')}));
+      (D.steady||[]).forEach(function(s){card.appendChild(el('div',{class:'jhwho',text:'👥 '+s.crew+': '+s.came+' '+T('came')+(s.acts.length?' · '+s.acts.map(T).join(', '):'')+(s.note?' · '+s.note:'')}));});
+      if(D.checks&&D.checks.length)card.appendChild(el('div',{class:'jhwho',text:'📍 Yossi '+T('checked in')+' '+D.checks.map(clockOf).join(', ')}));
+    }
+    var ph=its.filter(function(i){return i.photo;}),vd=its.filter(function(i){return i.video;}),fl=its.filter(function(i){return i.file;}),ch=its.filter(function(i){return i.text||i.voice;});
+    if(ph.length||vd.length)card.appendChild(el('div',{class:'jhmedia'},ph.map(function(i){return thumb(i.photo);}).concat(vd.map(function(i){
+      return el('button',{class:'jhvid',onclick:function(){playVideo({id:i.video,dur:i.dur});}},el('span',{text:'▶'}),el('small',{text:i.dur?fmtDur(i.dur):T('Video')}));}))));
+    fl.forEach(function(i){card.appendChild(el('button',{class:'jhfile',onclick:function(){openFile(i);}},el('span',{text:fileIcon(i)}),el('b',{text:i.name||T('File')}),el('small',{text:fmtSize(i.size)})));});
+    if(ch.length)card.appendChild(el('div',{class:'jhchat'},ch.map(function(i){
+      return el('div',{},el('b',{text:i.by+': '}),i.voice?el('button',{class:'jhvoice',onclick:function(){playVideo({id:i.voice,dur:i.dur});}},'🎤 '+T('Voice note')+(i.dur?' '+fmtDur(i.dur):'')):document.createTextNode(i.text));})));
+    if(!card.childNodes.length)return;
+    wrap.appendChild(el('div',{class:'jhdate',text:(D.date===today()?T('Today')+' · ':'')+dateLabel(D.date)}));
+    wrap.appendChild(card);
+  });
+  if(h.days.length&&!shown&&!h.more)wrap.appendChild(el('p',{class:'empty',text:T('Nothing yet.')}));
+  if(h.more)wrap.appendChild(el('button',{class:'jhmore',onclick:function(e){e.target.textContent=T('Loading…');loadHist(h.days[h.days.length-1].date);}},h.loading&&h.days.length?T('Loading…'):T('Show older days')+' ›'));
+  return wrap;
 }
 function openJobManager(){
   var jobs=activeJobs();
