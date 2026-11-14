@@ -1203,7 +1203,7 @@ Object.assign(ES,{'Delivered':'Entregado','Delivered to':'Entregado a','not open
 Object.assign(ES,{'Search name, job, date…':'Busca nombre, trabajo, fecha…'});
 Object.assign(ES,{'New chat':'Nuevo chat','Direct chat':'Chat directo','Direct':'Directo','Office':'Oficina','Worker':'Trabajador','Search a name':'Busca un nombre','Nobody found.':'No se encontró a nadie.','One chat per person – all the old messages stay in it.':'Un chat por persona – todos los mensajes viejos se quedan ahí.','Message anyone':'Escribe a cualquiera','In Messages, tap + to chat with any worker, Rocky or Ashley. One chat per person, and all the old messages stay in it.':'En Mensajes, toca + para chatear con cualquier trabajador, Rocky o Ashley. Un chat por persona, y todos los mensajes viejos se quedan ahí.'});
 Object.assign(ES,{'Gallery':'Galería','File':'Archivo','Too long or too big':'Muy largo o muy pesado'});
-Object.assign(ES,{'No work Saturday':'Sábado no se trabaja','No work today (Saturday)':'Hoy no se trabaja (sábado)'});
+Object.assign(ES,{'No work Saturday':'Sábado no se trabaja','No work today (Saturday)':'Hoy no se trabaja (sábado)','Working this Saturday? Tap here to send the report':'¿Trabajan este sábado? Toca aquí para mandar el reporte'});
 Object.assign(ES,{'Delete job':'Borrar trabajo','Tap again to delete this job':'Toca otra vez para borrar este trabajo','Job deleted':'Trabajo borrado','Deleting hides the job. Its photos and history stay; you can bring it back in App maintenance → Undo.':'Borrar esconde el trabajo. Sus fotos e historial quedan; se puede recuperar en Mantenimiento → Deshacer.'});
 Object.assign(ES,{'Task':'Tarea','Edit task':'Editar tarea','Job page':'Página del trabajo','Notes':'Notas'});
 Object.assign(ES,{'Tag someone':'Etiquetar','tagged you':'te etiquetó'});
@@ -1715,7 +1715,7 @@ function homeView(){
   wrap.appendChild(el('div',{class:'ctiles'},
     tile('c-green','✅',T('My tasks'),tasksSub,function(){goView('tasks');}),
     tile('c-blue','🗓',T('Schedule'),schSub,function(){goView('sched');}),
-    tile('c-purple','📋',T('Reports'),isSat(t)?T('No work Saturday'):(crews.length?repIn+' '+T('of')+' '+crews.length+' '+T('sent today'):''),openReports),
+    tile('c-purple','📋',T('Reports'),isSat(t)&&!repIn?T('No work Saturday'):(crews.length?repIn+' '+T('of')+' '+crews.length+' '+T('sent today'):''),openReports),
     tile('c-orange','＋',T('New task'),'',function(){openEditor(null);}),
     isSnowAdmin()&&snowHome()?tile('c-snow wide','❄️',T('Snow plowing'),S.snow&&S.snow.active?T('storm on'):T('Customers · routes · storms'),openSnow):null));
   return wrap;
@@ -1730,7 +1730,7 @@ function needView(){
   wrap.appendChild(heroBox(T('Needs you now'),longDate(t)+(out?' · '+out+' '+T('people out'):''),[
     hTile(od,T('Overdue tasks'),function(){goView('tasks');},od?'red':''),
     hTile(isSat(t)&&!schedSent(t)?'—':(schedSent(t)?nCrews:'✗'),isSat(t)&&!schedSent(t)?T('Closed today'):(schedSent(t)?T('Crews out'):T('Schedule not sent')),function(){goView('sched');},!isSat(t)&&!schedSent(t)?'red':''),
-    hTile(isSat(t)||!crews.length?'—':repIn+'/'+crews.length,isSat(t)?T('No work Saturday'):T('Reports in'),openReports,!isSat(t)&&crews.length&&repIn===crews.length?'ok':'')]));
+    hTile((isSat(t)&&!repIn)||!crews.length?'—':repIn+'/'+crews.length,isSat(t)&&!repIn?T('No work Saturday'):T('Reports in'),openReports,!isSat(t)&&crews.length&&repIn===crews.length?'ok':'')]));
   var need=needItems();
   if(need.length)need.forEach(function(n){wrap.appendChild(needRow(n.icon,n.title,n.sub,n.pl,n.fn,n.cls==='warn'?'warn':''));});
   else wrap.appendChild(el('div',{class:'nrow okrow'},el('span',{class:'nic',text:'✓'}),el('span',{class:'nmid'},el('b',{text:T('All caught up')}),el('span',{class:'nsub',text:T('Nothing is waiting for you')}))));
@@ -1906,7 +1906,8 @@ function bottomTabs(){
 // ===== What's new (TEST app only): every new thing pops up until Yossi has tapped each one =====
 function wnPickWorker(){pickPerson('👀 '+T('See the app as…'),function(p){if(p.id==='Yossi'){toast(T('That is you'));return;}startViewAs(p);});}
 var WHATS_NEW=[
- {id:'avfix',i:'🙂',t:'Photo circle + Saturday reports',d:'Your photo at the top right fills the circle again. On Saturday, Reports shows "No work today (Saturday)" for the Prospect crews instead of "Today not sent yet".',go:function(){openReports();}},
+ {id:'avfix',i:'🙂',t:'Photo circle + Saturday reports',d:'Your photo at the top right fills the circle again. On Saturday, Reports shows "No work today (Saturday)" for the Prospect crews instead of "Today not sent yet". If a Prospect crew does work a Saturday, the crew leader taps "Working this Saturday?" on his app and sends the report as usual – it then shows in Reports.',go:function(){openReports();}},
+ {id:'testsat',i:'🔔',t:'Test notification works on Saturday',d:'"Send a test notification" in App maintenance now always arrives, even on Saturday. All other notifications still stay off on Saturday.',go:function(){openMaint();}},
  {id:'fc1',i:'🛠️',t:'Final check fixes',d:'Full-screen estimate PDF now scrolls from the top and no longer closes by itself when you scroll. Live snow board shows one card per truck. Driver Undo button is easy to see. Worker "I arrived" and My week are fully in Spanish. Stronger colors and bigger buttons for gloves. Estimate mic tells you to use the keyboard mic if the phone blocks it. Snow second round keeps the same trucks, drivers and helpers. A quick double tap on DONE no longer finishes two stops. Salted works with no signal. An estimate saved with no signal comes back so nothing is lost, and Back on a half-typed estimate asks first. You now get the notice when Rocky or Ashley send an estimate with photos. "I arrived", camera photos, voice notes and "no work Sunday" with no signal are kept and sent later by themselves. Workers can add Saturday overtime when they worked Saturday. Going Back from a video before sending stops the upload (saves data).',go:function(){openEst();}},
  {id:'estashley',i:'📄',t:'Estimates for Ashley too',d:'Ashley has Estimates in her More, like Rocky: she can start one (it comes to you) and see every estimate and PDF.',go:function(){openEst();}},
  {id:'sn_helpers',i:'👷',t:'Snow: helpers on each truck',d:'When you start a storm, pick the guys who go with each truck to shovel walkways and salt by hand. Only the driver works the route in the app. Each helper just gets a regular task "Snow: go with Rocky – Truck 1 – shovel & salt", saved in his tasks, with its chat for photos. You see "Rocky + Juan, Luis" on each truck.',go:function(){openSnow();}},
@@ -2200,7 +2201,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611141004',lastUpd=0;
+var BUILD='202611141011',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -2421,7 +2422,8 @@ function workerView(){
   if(isMon(tdy))lead.forEach(function(c){var su=addDays(tdy,-1);if(!reportFor(c.id,su))big.appendChild(workAsk(c,su,true));});
   // Sunday: ask first – "Are you working today?"
   if(isSun(tdy))lead.forEach(function(c){var r=reportFor(c.id,tdy);if(!r)big.appendChild(workAsk(c,tdy,false));});
-  if(!isSat(tdy))lead.forEach(function(c){var r=reportFor(c.id,tdy);if(isSun(tdy)&&!r)return;
+  lead.forEach(function(c){var r=reportFor(c.id,tdy);if(isSun(tdy)&&!r)return;
+    if(isSat(tdy)&&!r){big.appendChild(bigBtn('☀️',T('No work today (Saturday)'),T('Working this Saturday? Tap here to send the report'),function(){openReportEditor(c,tdy);},'',''));return;}
     if(r&&r.nowork){big.appendChild(bigBtn('☀️',T('No work today'),T('tap to change'),function(){openSheet([el('h2',{text:'☀️ '+T('Are you working today?')}),workAsk(c,tdy,false),el('button',{class:'ghost',onclick:closeSheet},T('Cancel'))]);},'','ok'));return;}
     big.appendChild(bigBtn('📋',r?T('Report sent'):T('Send report'),r?'✓ '+r.people.filter(function(p){return p.present!==false;}).length+'/'+c.members.length+' '+T('came')+' · '+T('tap to change'):crewTitle(c)+' · '+T('Today'),function(){openReportEditor(c,tdy);},r?'':'go',r?'ok':''));});
   if(heroX)big.appendChild(jobHero(heroX));
