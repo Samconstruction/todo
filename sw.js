@@ -20,6 +20,7 @@ var CACHE='sam-app-v1'; // always checks for a fresh app page, so updates arrive
 self.addEventListener('fetch',function(e){
   var r=e.request;if(r.method!=='GET')return;var u=new URL(r.url);
   if(u.origin!==self.location.origin||u.pathname.indexOf('/todo/')!==0||/version\.json/.test(u.pathname))return;
+  if(u.pathname.indexOf('/todo/beta')===0)return; // the TEST app has its own
   var nav=r.mode==='navigate'||/\/todo\/(index\.html)?$/.test(u.pathname);
   e.respondWith((nav?fetch(u.origin+u.pathname,{cache:'no-cache',credentials:'same-origin'}):fetch(r)).then(function(res){if(res&&res.ok){var cp=res.clone();caches.open(CACHE).then(function(c){c.put(r.mode==='navigate'?'/todo/':r,cp);});}return res;})
     .catch(function(){return caches.match(r.mode==='navigate'?'/todo/':r).then(function(m){return m||caches.match('/todo/');});}));
