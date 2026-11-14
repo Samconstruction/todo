@@ -873,7 +873,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611140209',lastUpd=0;
+var BUILD='202611140301',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -1072,7 +1072,7 @@ function workerView(){
   if(S.mycrew&&!(S.steady&&S.steady.crews||[]).some(function(c){return c.leader===S.me;})&&!mine.some(function(x){return x.status!=='done'&&!crewClosed(x);}))
     wrap.appendChild(el('div',{class:'card'},el('div',{class:'cardhead'},el('div',{class:'ttl',text:'👷 '+T("You're on")+' '+crewTitle(S.mycrew)}),
       S.mycrew.job?el('div',{class:'jobtag',text:'🏗 '+S.mycrew.job}):null,S.mycrew.leader?el('div',{class:'note',text:T('Crew leader')+': '+S.mycrew.leader}):null)));
-  groupedList(wrap,mine,S.mycrew?'':T('No jobs right now.'),{worker:true,splitTomorrow:true,closed:crewClosed});
+  groupedList(wrap,mine,S.mycrew?'':T('No jobs right now.'),{worker:true,splitTomorrow:true,closed:function(x){return crewClosed(x)&&!(x.status==='done'&&x.due===today());}});
   if(S.myweek){var mwc=myWeekCard();mwc.style.marginTop='14px';wrap.appendChild(mwc);}
   if((S.mates||[]).length)wrap.appendChild(el('button',{class:'homebtn',style:'margin-top:14px',onclick:openPhones},el('span',{class:'hi',text:'📞'}),el('span',{text:T('Phone list')}),el('span',{class:'hchev',text:'›'})));
   return wrap;
