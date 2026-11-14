@@ -36,3 +36,15 @@ self.addEventListener('fetch',function(e){var u=new URL(e.request.url);if(e.requ
   e.respondWith(e.request.formData().then(function(fd){var f=fd.get('file');if(!f||typeof f==='string')return null;
     return caches.open('sam-share').then(function(c){return c.put('shared-file',new Response(f,{headers:{'content-type':f.type||'application/pdf','x-name':encodeURIComponent(f.name||'Estimate.pdf')}}));});
   }).catch(function(){}).then(function(){return Response.redirect(new URL('./?share=1',self.registration.scope).href,303);}));});
+
+// A PDF shared into the app (Share → SAM To-Do): keep it, then open the app to pick the estimate
+self.addEventListener('fetch',function(e){var u=new URL(e.request.url);if(e.request.method!=='POST'||u.pathname.slice(-13)!=="/share-target")return;
+  e.respondWith(e.request.formData().then(function(fd){var f=fd.get('file');if(!f||typeof f==='string')return null;
+    return caches.open('sam-share').then(function(c){return c.put('shared-file',new Response(f,{headers:{'content-type':f.type||'application/pdf','x-name':encodeURIComponent(f.name||'Estimate.pdf')}}));});
+  }).catch(function(){}).then(function(){return Response.redirect(new URL('./?share=1',self.registration.scope).href,303);}));});
+
+// A PDF shared into the app (Share → SAM To-Do): keep it, then open the app to pick the estimate
+self.addEventListener('fetch',function(e){var u=new URL(e.request.url);if(e.request.method!=='POST'||u.pathname.slice(-13)!=="/share-target")return;
+  e.respondWith(e.request.formData().then(function(fd){var f=fd.get('file');if(!f||typeof f==='string')return null;
+    return caches.open('sam-share').then(function(c){return c.put('shared-file',new Response(f,{headers:{'content-type':f.type||'application/pdf','x-name':encodeURIComponent(f.name||'Estimate.pdf')}}));});
+  }).catch(function(){}).then(function(){return Response.redirect(new URL('./?share=1',self.registration.scope).href,303);}));});
