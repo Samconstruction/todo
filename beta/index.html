@@ -858,10 +858,13 @@ function render_(){
 }
 
 function isBadPin(e){return String((e&&e.message)||e).indexOf('BAD_PIN')>=0;}
-function clearSession(){['sam_me','sam_pin','sam_tok','sam_role','sam_name','sam_cache','sam_jall','sam_snow','sam_maint','sam_use'].forEach(function(k){store(k,null);});S.jall=null;S.me=null;S.pin=null;S.role=null;S.name=null;S.tasks=[];S.crew=[];S.loaded=false;}
+function pinHash(who,p){var str='sam|'+DEV_ID+'|'+who+'|'+p,h=2166136261;for(var r=0;r<500;r++)for(var i=0;i<str.length;i++){h^=str.charCodeAt(i)+r;h=Math.imul(h,16777619)>>>0;}return h.toString(36);}
+function rememberPin(){try{if(!S.me||!S.pin||S.viewAs)return;var pick=PEOPLE.indexOf(S.me)>=0?S.me:'crew';localStorage.setItem('sam_pinh',JSON.stringify({pick:pick,me:S.me,h:pinHash(pick,S.pin)}));}catch(e){}}
+function clearSession(){try{var ph=JSON.parse(localStorage.getItem('sam_pinh')||'null'),cd=localStorage.getItem('sam_cache');if(ph&&cd&&!S.badPin)localStorage.setItem('sam_prev',JSON.stringify({pick:ph.pick,me:ph.me,h:ph.h,data:cd}));else localStorage.removeItem('sam_prev');localStorage.removeItem('sam_pinh');}catch(e){}['sam_me','sam_pin','sam_tok','sam_role','sam_name','sam_cache','sam_jall','sam_snow','sam_maint','sam_use'].forEach(function(k){store(k,null);});S.jall=null;S.me=null;S.pin=null;S.role=null;S.name=null;S.tasks=[];S.crew=[];S.loaded=false;}
 function dropPush(){try{var tk=store('sam_tok');if(tk&&S.me&&S.pin)call('unregister',{token:String(tk).split('|')[2]}).catch(function(){});}catch(e){}}
-function signOut(msg){if(S.poll){clearInterval(S.poll);S.poll=null;}dropPush();clearSession();Q=[];qSave();OTW={};try{localStorage.removeItem('sam_otw');}catch(e){}S.loginMsg=msg||'';closeSheet();render();}
-function goLogin(name){dropPush();clearSession();S.pick=name||null;S.loginMsg='';closeSheet();render();}
+function signOut(msg,manual){S.badPin=!manual; // only a normal 'Sign out' keeps the quick sign-in for next time
+if(S.poll){clearInterval(S.poll);S.poll=null;}dropPush();clearSession();Q=[];qSave();OTW={};try{localStorage.removeItem('sam_otw');}catch(e){}S.loginMsg=msg||'';closeSheet();render();}
+function goLogin(name){S.badPin=false;dropPush();clearSession();S.pick=name||null;S.loginMsg='';closeSheet();render();}
 function loginView(){
   var box=el('div',{class:'login'},el('img',{class:'biglogo',src:LOGO,alt:'SAM Construction'}),el('h1',{text:T('To-Do')}));
   if(!S.pick){
@@ -874,9 +877,13 @@ function loginView(){
     var pin=el('input',{class:'pinin',type:'password',inputmode:'numeric',pattern:'[0-9]*',maxlength:'4',placeholder:'••••',autocomplete:'off'});
     var go=el('button',{class:'primary',onclick:function(){
       var p=pin.value.trim();if(p.length!==4){err.textContent=T('Enter your PIN');pin.focus();return;}
-      go.disabled=true;go.textContent=T('Checking…');err.textContent='';
       var who=S.pick;
-      call('list',{pin:p},who).then(function(d){S.pin=p;store('sam_pin',p);apply(d);S.pick=null;S.loginMsg='';S.tab=isOffice()?S.me:'Yossi';S.loaded=true;S.err='';render();runGo();startPolling();if(notifState()==='granted')enablePush(false);})
+      // Same person who used this phone before and the same PIN: go in right away with the saved list, check with the server in the background.
+      try{var prev=JSON.parse(localStorage.getItem('sam_prev')||'null');
+        if(prev&&prev.pick===who&&prev.h===pinHash(who,p)&&prev.data){var dd=JSON.parse(prev.data);
+          if(dd&&dd.me&&dd.me.key===prev.me){S.pin=p;store('sam_pin',p);dd.__cached=1;apply(dd);S.pick=null;S.loginMsg='';S.tab=isOffice()?S.me:'Yossi';S.loaded=true;S.err='';rememberPin();render();startPolling();refresh(true);if(notifState()==='granted')enablePush(false);return;}}}catch(e0){}
+      go.disabled=true;go.textContent=T('Checking…');err.textContent='';
+      call('list',{pin:p},who).then(function(d){S.pin=p;store('sam_pin',p);apply(d);rememberPin();S.pick=null;S.loginMsg='';S.tab=isOffice()?S.me:'Yossi';S.loaded=true;S.err='';render();runGo();startPolling();if(notifState()==='granted')enablePush(false);})
       .catch(function(e){go.disabled=false;go.textContent=T('Continue');err.textContent=/LOCKED/.test(String(e&&e.message))?T('Too many wrong PINs. Try again in 15 minutes.'):isBadPin(e)?T('Wrong PIN. Try again.'):T('Could not connect. Check your signal and try again.');pin.value='';pin.focus();});
     }},T('Continue'));
     pin.addEventListener('keydown',function(e){if(e.key==='Enter')go.click();});
@@ -973,7 +980,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611140209',lastUpd=0;
+var BUILD='202611140212',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -1056,7 +1063,7 @@ function openMenu(){
     ns==='ios-browser'?el('p',{class:'muted',style:'margin:0',text:T('To get notifications on iPhone, open SAM To-Do from your home screen icon.')}):
     ns==='default'?el('button',{class:'primary',onclick:function(){closeSheet();enablePush(true);}},T('Turn on notifications')):null,
     isOffice()?null:el('button',{class:'ghost',onclick:openReport},'🐞 '+T('Report a problem')),
-    (function(){var armS=false,b=el('button',{class:'ghost',onclick:function(){if(!armS){armS=true;b.textContent=T('Tap again to sign out');return;}signOut('');}},T('Sign out'));return b;})(),
+    (function(){var armS=false,b=el('button',{class:'ghost',onclick:function(){if(!armS){armS=true;b.textContent=T('Tap again to sign out');return;}signOut('',true);}},T('Sign out'));return b;})(),
     el('button',{class:'ghost',onclick:closeSheet},T('Cancel')));
   openSheet(kids);
 }
@@ -2779,6 +2786,7 @@ function enablePush(ask){if(window.SAM_BETA)return Promise.resolve();
 
 if('serviceWorker' in navigator){getReg().catch(function(){});}
 if(S.me){try{var pg=JSON.parse(sessionStorage.getItem('sam_page')||'null');if(pg&&pg.me===S.me&&pg.v&&pg.v!=='home'){S.view=pg.v;if(pg.tab)S.tab=pg.tab;if(pg.cd)S.crewDay=pg.cd;if(pg.ctd)S.crewTaskDay=pg.ctd;}}catch(e){}}
+setTimeout(function(){if(S.me&&S.pin)rememberPin();},0);
 if(S.me){try{var cached=JSON.parse(localStorage.getItem('sam_cache')||'null');if(cached&&cached.me&&cached.me.key===S.me){cached.__cached=1;apply(cached);S.loaded=true;}}catch(e){}}
 render();
 if(S.me&&S.loaded)runGo();
