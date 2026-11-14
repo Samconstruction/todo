@@ -489,6 +489,17 @@ html.big body{zoom:1.15}
 .in.stime{width:150px;min-width:150px;flex:none}
 .cpn.unread{background:#25D366;color:#fff}
 html[lang=es] .seg-b{font-size:12.5px}
+
+/* setup helpers */
+.iosinst{position:relative;margin:10px 14px;background:#EEF4FB;border:1.5px solid #B9D3EE;border-radius:16px;padding:12px 40px 12px 14px;font-size:15px}
+.iosinst b{display:block;margin-bottom:6px;font-size:16px}.iosrow{margin:4px 0}
+.iosinst .x{position:absolute;top:6px;right:6px;background:none;border:0;font-size:18px;color:#6B7078;padding:6px}
+.invprev{white-space:pre-wrap;background:#F6F4EF;border-radius:12px;padding:10px;font:14px/1.4 system-ui,sans-serif;margin:0 0 10px;max-height:220px;overflow:auto}
+.seenbox{background:#fff;border:1px solid #E6E1D8;border-radius:14px;padding:10px 12px;margin:0 0 12px}
+.seenhd{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.seenchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.seenchip{border-radius:999px;padding:5px 10px;font-size:13px;font-weight:700;text-decoration:none}
+.seenchip.ok{background:#E6F6EA;color:#2B8A3E}.seenchip.no{background:#FFF1E0;color:#A65A00}
 </style></head><body>
 <div id="app"></div>
 <input type="file" id="photoIn" accept="image/*" style="display:none"><input type="file" id="videoIn" accept="video/*" style="display:none"><input type="file" id="photoCam" accept="image/*" capture="environment" style="display:none"><input type="file" id="videoCam" accept="video/*" capture="environment" style="display:none">
@@ -754,7 +765,7 @@ function openMaint(fresh){
     el('button',{class:'primary',onclick:openProblems},'🐞 '+T('Problems reported')+(probs?' ('+probs+')':'')),
     el('button',{class:'cbtn',onclick:openTestPush},'🔔 '+T('Send a test notification')),
     el('button',{class:'cbtn',onclick:openDevices},'📱 '+T('Phones signed up for alerts')+(M.devices?' · '+T('yours')+': '+mine:'')),
-    el('button',{class:'cbtn',onclick:openRemind},'📲 '+T('Workers alerts on')+' '+on+'/'+crew.length,never?el('small',{class:'muted',style:'display:block;font-weight:600',text:never+' '+T('never opened the app')}):null),
+    el('button',{class:'cbtn',onclick:openNotSetUp},'📲 '+T('Workers alerts on')+' '+on+'/'+crew.length,never?el('small',{class:'muted',style:'display:block;font-weight:600',text:never+' '+T('never opened the app')}):null),
     el('button',{class:'cbtn',onclick:function(){pickPerson('👀 '+T('See the app as…'),function(p){if(p.id==='Yossi'){toast(T('That is you'));return;}startViewAs(p);});}},'👀 '+T('See the app as someone else')),
     el('button',{class:'cbtn',onclick:openUsage},'⏱ '+T('Time in the app today')+((M.usage||[]).length?' · '+M.usage.length+' '+T('people'):'')),
     el('button',{class:'cbtn',onclick:openChanges},'↩ '+T('Undo recent changes')),
@@ -835,9 +846,10 @@ function homeView(){
 }
 function render_(){
   var app=document.getElementById('app'),y=window.scrollY;app.innerHTML='';
-  if(!S.me){if(INSTALL_EV&&!isStandalone())app.appendChild(el('button',{class:'instbtn',onclick:doInstall},'📲 '+T('Install the app on this phone'),el('small',{text:T('One tap to open it, like any other app')})));app.appendChild(loginView());return;}
+  if(!S.me){var ioc0=iosInstallCard();if(ioc0)app.appendChild(ioc0);if(INSTALL_EV&&!isStandalone())app.appendChild(el('button',{class:'instbtn',onclick:doInstall},'📲 '+T('Install the app on this phone'),el('small',{text:T('One tap to open it, like any other app')})));app.appendChild(loginView());return;}
   app.appendChild(header());
   var qb=qBar();if(qb)app.appendChild(qb);
+  var ioc=!S.viewAs&&iosInstallCard();if(ioc)app.appendChild(ioc);
   if(INSTALL_EV&&!S.viewAs&&!isStandalone())app.appendChild(el('button',{class:'instbtn',onclick:doInstall},'📲 '+T('Install the app on this phone'),el('small',{text:T('One tap to open it, like any other app')})));
   if(S.viewAs)app.appendChild(el('button',{class:'viewasbar',onclick:stopViewAs},'👀 '+T('Viewing as')+' '+S.name+' – '+T('tap to go back to Yossi')));
   var v=S.view||'home';
@@ -980,7 +992,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611140212',lastUpd=0;
+var BUILD='202611140221',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -1052,6 +1064,7 @@ function openMenu(){
   var kids=[el('div',{class:'profile'},bigAv,el('div',{class:'pname',text:S.name||S.me}),el('div',{class:'muted',text:role})),el('div',{class:'lbl',style:'text-align:center',text:hasPic?T('Change photo'):T('Add photo')}),el('div',{class:'row2'},photoBtn,galBtn),
     hasPic?el('button',{class:'ghost',onclick:function(){setPhoto('',this);}},T('Remove photo')):null];
   kids.push(el('button',{class:'cbtn',onclick:openPinChange},'🔒 '+T('Change my PIN')));
+  if(isOffice())kids.push(el('button',{class:'cbtn',onclick:openQR},'🔳 '+T('Install on another phone')));
   if(S.me==='Yossi')kids.push(el('button',{class:'cbtn',onclick:openOfficePin},'🔑 '+T('New PIN for Rocky / Ashley')));
   if(isOffice())kids.push(el('button',{class:'cbtn',onclick:openAiKey},'🤖 '+T('AI assistant key (Instinct)')));
   var big=store('sam_big')==='1';
@@ -1301,6 +1314,7 @@ function crewDayView(){
   var pick=el('input',{type:'date',class:'in',value:d});pick.onchange=function(){if(pick.value){S.crewDay=pick.value;render();}};
   wrap.appendChild(el('div',{style:'display:flex;align-items:center;gap:8px;margin:-2px 0 10px'},el('span',{class:'muted',style:'white-space:nowrap',text:'📅 '+T('Go to date')}),pick));
   wrap.appendChild(el('button',{class:'primary schedbig',onclick:function(){openSchedule(d);}},'🗓 '+T(past?'Fix this day':'Make / change schedule')));
+  var ssb=schedSeenBox(d);if(ssb)wrap.appendChild(ssb);
   var sc=(S.sched||{})[d]||SCHED_OLD[d],sum=el('div',{class:'schsum'});
   if(!sc&&d<addDays(today(),-13)&&!SCHED_OLD.hasOwnProperty(d)){
     SCHED_OLD[d]=null;
@@ -1354,7 +1368,7 @@ function openCrewManager(){
     kids.push(el('div',{class:'crewrow'},tapAvatar(c.id,c.name,40),el('div',{style:'flex:1;min-width:0'},el('b',{text:c.name}),
         el('div',{class:'muted',style:'font-size:13px',text:fmtPhone(c.phone)}),
         el('div',{class:'muted',style:'font-size:13px',text:(c.bell?'🔔 ':'🔕 ')+T('Last opened')+': '+seen})),
-      el('div',{style:'display:flex;gap:6px'},el('a',{class:'telbtn sm wa',href:inviteLink(c),target:'_blank',rel:'noopener','aria-label':T('Send invite on WhatsApp')},'📲'),el('button',{class:'cbtn',onclick:function(){openWorkerForm(c);}},'✎'))));
+      el('div',{style:'display:flex;gap:6px'},el('button',{class:'cbtn',style:'padding:8px 10px;font-size:14px',onclick:function(){openSendApp(c,openCrewManager);}},'📲 '+T('Send app')),el('button',{class:'cbtn',onclick:function(){openWorkerForm(c);}},'✎'))));
   });
   kids.push(el('button',{class:'ghost',onclick:closeSheet},T('Cancel')));
   openSheet(kids);
@@ -2391,6 +2405,68 @@ function jobForm(j,onSaved,onCancel){
   return el('div',{class:'jobnew'},name,addressPicker(addr),err,b,el('button',{class:'ghost',type:'button',onclick:onCancel},T('Cancel')));
 }
 Object.assign(ES,{"Sent to": "Enviado a", "Job sites today": "Obras de hoy", "storm on": "tormenta activa", "checked": "revisado", "No schedule yet for today.": "Todavía no hay horario para hoy.", "To check": "Por revisar", "Checked": "Revisado", "Nothing checked yet today.": "Nada revisado todavía hoy.", "All job sites checked today!": "¡Todas las obras revisadas hoy!", "Checked at": "Revisado a las", "Remove the last check-in": "Quitar la última visita", "Again": "Otra vez", "I was here": "Estuve aquí", "It goes to the Google Drive trash, where it can still be restored for 30 days.": "Va a la papelera de Google Drive, donde se puede recuperar por 30 días.", "Checked in": "Visitado", "The attachments could not be added. Add them in the task chat.": "No se pudieron agregar los archivos. Agrégalos en el chat de la tarea.", "Attachments added": "Archivos agregados", "Uploading": "Subiendo", "Could not upload": "No se pudo subir", "No signal: the task will be saved, but the attachments were not sent. Add them in the chat later.": "Sin señal: la tarea se guarda, pero los archivos no se enviaron. Agrégalos en el chat después.", "too big (max 150 MB)": "muy grande (máx. 150 MB)", "That video is too long (max 3 minutes).": "Ese video es muy largo (máx. 3 minutos).", "Attach (optional)": "Adjuntar (opcional)", "File / plans": "Archivo / planos", "A small glitch on an iPhone screen (iPhones don't say what). Nothing was saved wrong or lost.": "Un pequeño error en la pantalla de un iPhone. No se guardó nada mal ni se perdió nada.", "The AI assistant (Instinct) tried to connect with a wrong or old key.": "El asistente (Instinct) intentó conectarse con una clave equivocada o vieja.", "Google Sheets (where the app keeps its data) had a short hiccup on Google's side. The app now tries again by itself.": "Google Sheets tuvo una falla corta. La app vuelve a intentar sola.", "The app was very busy for a moment and had to try again.": "La app estuvo muy ocupada un momento y volvió a intentar.", "Two phones opened the app at the same second; it fixed itself.": "Dos teléfonos abrieron la app al mismo tiempo; se arregló solo.", "A notification could not be delivered to a phone.": "No se pudo entregar una notificación a un teléfono.", "Bad signal on the phone.": "Mala señal en el teléfono.", "by": "por", "at": "a las", "Not done yet": "Todavía no", "Undo – not done": "Deshacer – no listo", "Mark done": "Marcar listo", "Not done": "No hecho", "now": "ahora", "stops": "paradas", "Route": "Ruta", "Phone": "Teléfono", "Address": "Dirección", "Notes": "Notas", "Total": "Total", "about": "aprox.", "Sent – not seen yet": "Enviado – no visto todavía", "To do": "Pendiente", "Add or edit jobs": "Agregar o editar obras", "Reply": "Responder"});
+// ---------- Getting people set up (install help, invites, QR, who still isn't set up) ----------
+var APP_LINK='https://samconstruction.github.io/todo/',QR_APP='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQgAAAEIAQAAAACLjVdSAAABpklEQVR4Xu1Z267CMAxrEP//yznyJVV3JNj7TEBolAmpxrHdUL1u6nV3w++Of/UkxN5rlbbXtcQVvu9ZfdRu73+5N/ZuFIABrrv46tX773jcHVVgg6BY1avJEa0+b7dfC/xwqUOKYBwq+7hf/2sdu22pRlVfPCcLD/Jj9s9OabQJFMSrWXisTQaAcT7sOp2FB61ENZfw3WM5C48X8kbhWRQPdg8R8Qd5eCCIbQ2VdsBqi8YbiIccFvSYhKooQqtJw0NCwcRRzZZxGnN2T8vrwGOA2CHdeiq6ZOkp+UEB8QFOjSJESJssPJDHuHtgYigGIdlwFh7YLROpznAW160hcXrKfMqM2nPZ9NlZCsunL3Khujn0MEkc1cWYrH7BfEzK6bkY3o/XUmyz8JC/2GQmjYy1hOKxB6g8uWzfdRwJ5IfPt8JCgLiH4vIHzrcqOoxe1D5eyOIH8weKEOigv/02MI9xXqgBsqfqO6r7f4c8flzm6xoEkSIaBMTioeDBYCZJlbJm4XHM15XQAUpzEMQ5QCIeThwahYy37MrixzFI/1BZePx2e60/2B26824VLcwAAAAASUVORK5CYII=';
+// iPhones have no "install" button: show exactly where to tap.
+function iosInstallCard(){
+  if(!isIOS||isStandalone())return null;try{if(+(localStorage.getItem('sam_ios_x')||0)>Date.now())return null;}catch(e){}
+  var share='<svg viewBox="0 0 24 24" width="22" height="22" style="vertical-align:-5px"><path d="M12 3v12M7 8l5-5 5 5" fill="none" stroke="#1F6FB2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" fill="none" stroke="#1F6FB2" stroke-width="2" stroke-linecap="round"/></svg>';
+  return el('div',{class:'iosinst'},el('b',{text:'📲 '+T('Put the app on your home screen')}),
+    el('div',{class:'iosrow',html:'1. '+T('Tap')+' '+share+' '+T('at the bottom of Safari')}),
+    el('div',{class:'iosrow',text:'2. '+T('Scroll down and tap “Add to Home Screen”')}),
+    el('div',{class:'iosrow',text:'3. '+T('Tap “Add” – then open SAM To-Do from your home screen')}),
+    el('button',{class:'x','aria-label':T('Close'),onclick:function(){try{localStorage.setItem('sam_ios_x',String(Date.now()+7*864e5));}catch(e){}render();}},'✕'));
+}
+function inviteMsg(c){
+  return 'Hola '+c.name+' 👋\nEsta es la app de SAM Construction para ver tus trabajos:\n'+APP_LINK+'\n\n'+
+    '📱 Android: ábrela en Chrome y toca "📲 Instalar".\n🍎 iPhone: ábrela en Safari, toca Compartir ⬆️ y "Agregar a inicio".\n\n'+
+    'Entrar: toca "👷 Estoy en la cuadrilla" y pon tu PIN: '+c.pin+'\nDespués toca "Permitir" para recibir avisos de tus trabajos.\n¡Gracias!';
+}
+// Send the app (link + PIN + install steps in Spanish) by WhatsApp or text message.
+function openSendApp(c,back){
+  var ph=String(c.phone||'').replace(/\D/g,'').slice(-10),m=inviteMsg(c);
+  openSheet([back?el('button',{class:'homelink',style:'padding-left:0',onclick:back},'‹ '+T('Back')):null,el('h2',{text:'📲 '+T('Send the app to')+' '+c.name}),
+    el('p',{class:'muted',style:'margin:0 0 8px',text:T('The message has the link, the PIN and how to install – in Spanish.')}),
+    el('pre',{class:'invprev',text:m}),
+    ph?el('a',{class:'primary',style:'display:block;text-align:center;text-decoration:none;background:#25D366',href:'https://wa.me/1'+ph+'?text='+encodeURIComponent(m),target:'_blank',rel:'noopener'},'💬 '+T('Send on WhatsApp')):null,
+    ph?el('a',{class:'cbtn',style:'display:block;text-align:center;text-decoration:none',href:'sms:'+ph+'?&body='+encodeURIComponent(m)},'✉️ '+T('Send as a text message')):el('p',{class:'err',text:T('No phone number saved for this worker.')}),
+    el('button',{class:'ghost',onclick:function(){closeSheet();}},T('Close'))]);
+}
+// QR code: a new worker scans it from your phone and gets the app.
+function openQR(){
+  openSheet([el('button',{class:'homelink',style:'padding-left:0',onclick:openMenu},'‹ '+T('Back')),el('h2',{text:'🔳 '+T('Install on another phone')}),
+    el('p',{class:'muted',style:'margin:0',text:T('Let the person scan this with their phone camera, then tap the link.')}),
+    el('div',{style:'text-align:center;margin:14px 0'},el('img',{src:QR_APP,alt:'QR',style:'width:240px;height:240px;image-rendering:pixelated;border-radius:12px;background:#fff;padding:8px'})),
+    el('p',{style:'text-align:center;font-weight:700;margin:0',text:APP_LINK.replace('https://','')}),
+    el('button',{class:'ghost',onclick:function(){closeSheet();}},T('Close'))]);
+}
+// Who still isn't set up: never opened the app, or alerts off.
+function whenAgo(iso){if(!iso)return T('Never');var t=new Date(iso.length===10?iso+'T12:00:00':iso),d=Math.round((Date.now()-t)/864e5);return d<=0?T('today'):d===1?T('yesterday'):d+' '+T('days ago');}
+function openNotSetUp(){
+  var crew=(S.crew||[]),never=crew.filter(function(c){return !c.seen;}),noBell=crew.filter(function(c){return c.seen&&!c.bell;});
+  function row(c,why){return el('div',{class:'crewrow'},el('div',{style:'flex:1;min-width:0'},el('b',{text:c.name}),el('div',{class:'muted',style:'font-size:13px',text:why})),
+    el('button',{class:'cbtn',onclick:function(){openSendApp(c,openNotSetUp);}},'📲 '+T('Send')));}
+  openSheet([el('button',{class:'homelink',style:'padding-left:0',onclick:openMaint},'‹ '+T('Back')),el('h2',{text:'📲 '+T('Workers not set up')}),
+    el('p',{class:'muted',style:'margin:0',text:T('Tap Send to give each one the link, their PIN and the install steps (in Spanish).')}),
+    el('div',{class:'lbl',text:'🚫 '+T('Never opened the app')+' ('+never.length+')'})].concat(never.map(function(c){return row(c,T('Never opened the app'));}))
+    .concat([el('div',{class:'lbl',text:'🔕 '+T('Alerts are off')+' ('+noBell.length+')'})]).concat(noBell.map(function(c){return row(c,T('Last opened')+': '+whenAgo(c.seenAt||c.seen));}))
+    .concat(!never.length&&!noBell.length?[el('p',{class:'empty',text:'✅ '+T('Everyone is set up!')})]:[])
+    .concat([el('button',{class:'ghost',onclick:function(){closeSheet();}},T('Close'))]));
+}
+// Schedule seen-by: did each person open the app since the schedule was sent?
+function schedSeenBox(d){
+  var sc=(S.sched||{})[d];if(!sc||!sc._at||!isOffice())return null;var at=sc._at,ids={};
+  (sc.crews||[]).forEach(function(c){if(!(c.job||c.note))return;if(c.leader)ids[c.leader]=1;(c.members||[]).forEach(function(m){ids[m]=1;});});
+  var ppl=(S.crew||[]).filter(function(c){return ids[c.id];});if(!ppl.length)return null;
+  var seen=ppl.filter(function(c){return c.seenAt&&c.seenAt>=at;}),not=ppl.filter(function(c){return !(c.seenAt&&c.seenAt>=at);});
+  return el('div',{class:'seenbox'},el('div',{class:'seenhd'},el('b',{text:'✓✓ '+T('Saw the schedule')+': '+seen.length+' '+T('of')+' '+ppl.length}),el('span',{class:'muted',text:T('sent')+' '+clockOf(at)})),
+    not.length?el('div',{},el('div',{class:'muted',style:'font-size:13px;margin:4px 0',text:T('Not seen yet – tap to call')}),el('div',{class:'seenchips'},not.map(function(c){return el('a',{class:'seenchip no',href:'tel:'+String(c.phone||'').replace(/\D/g,'')},'📞 '+c.name);}))):null,
+    seen.length?el('div',{class:'seenchips'},seen.map(function(c){return el('span',{class:'seenchip ok',text:'✓✓ '+c.name});})):null);
+}
+Object.assign(ES,{'Put the app on your home screen':'Pon la app en tu pantalla de inicio','Tap':'Toca','at the bottom of Safari':'abajo en Safari','Scroll down and tap “Add to Home Screen”':'Baja y toca “Agregar a inicio”','Tap “Add” – then open SAM To-Do from your home screen':'Toca “Agregar” – luego abre SAM To-Do desde tu pantalla de inicio',
+  'Send the app to':'Enviar la app a','The message has the link, the PIN and how to install – in Spanish.':'El mensaje lleva el enlace, el PIN y cómo instalarla – en español.','Send on WhatsApp':'Enviar por WhatsApp','Send as a text message':'Enviar como mensaje de texto','No phone number saved for this worker.':'Este trabajador no tiene teléfono guardado.',
+  'Install on another phone':'Instalar en otro teléfono','Let the person scan this with their phone camera, then tap the link.':'Que la persona lo escanee con la cámara de su teléfono y toque el enlace.','Workers not set up':'Trabajadores sin configurar','Tap Send to give each one the link, their PIN and the install steps (in Spanish).':'Toca Enviar para darle a cada uno el enlace, su PIN y los pasos (en español).',
+  'Never opened the app':'Nunca abrió la app','Alerts are off':'Avisos apagados','Everyone is set up!':'¡Todos están listos!','Send':'Enviar','days ago':'días atrás','yesterday':'ayer','Saw the schedule':'Vieron el horario','sent':'enviado','Not seen yet – tap to call':'No lo han visto – toca para llamar','Send app':'Enviar app'});
 // ---------- ❄️ Snow plowing (management: Yossi only for now; drivers work their own route) ----------
 var SNOW_ADMINS=['Yossi'];
 function isSnowAdmin(){return SNOW_ADMINS.indexOf(S.me)>=0&&!S.viewAs;}
