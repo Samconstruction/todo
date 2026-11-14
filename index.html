@@ -1160,7 +1160,7 @@ body.sndark .toast{bottom:auto;top:calc(70px + env(safe-area-inset-top))}
 .fl{color:#3F7168}
 .sn-stop .t span{color:#6B7078}
 .seg-b,.tab,.lang-b,.pflink,.cbtn,.pinmain,a.addr{min-height:44px}
-.me.meav{width:44px;height:44px}
+.me.meav{width:44px;height:44px;justify-content:center;overflow:hidden}
 .chatx.chatback{min-width:44px}
 .sn-edit{min-width:44px;min-height:44px;background:#E6F6F1;color:#1B8F7B}
 .ot{background:#E6F6F1;color:#0E4F45}
@@ -1906,6 +1906,7 @@ function bottomTabs(){
 // ===== What's new (TEST app only): every new thing pops up until Yossi has tapped each one =====
 function wnPickWorker(){pickPerson('👀 '+T('See the app as…'),function(p){if(p.id==='Yossi'){toast(T('That is you'));return;}startViewAs(p);});}
 var WHATS_NEW=[
+ {id:'avfix',i:'🙂',t:'Profile photo fits its circle',d:'Your photo at the top right fills the circle again.'},
  {id:'fc1',i:'🛠️',t:'Final check fixes',d:'Full-screen estimate PDF now scrolls from the top and no longer closes by itself when you scroll. Live snow board shows one card per truck. Driver Undo button is easy to see. Worker "I arrived" and My week are fully in Spanish. Stronger colors and bigger buttons for gloves. Estimate mic tells you to use the keyboard mic if the phone blocks it. Snow second round keeps the same trucks, drivers and helpers. A quick double tap on DONE no longer finishes two stops. Salted works with no signal. An estimate saved with no signal comes back so nothing is lost, and Back on a half-typed estimate asks first. You now get the notice when Rocky or Ashley send an estimate with photos. "I arrived", camera photos, voice notes and "no work Sunday" with no signal are kept and sent later by themselves. Workers can add Saturday overtime when they worked Saturday. Going Back from a video before sending stops the upload (saves data).',go:function(){openEst();}},
  {id:'estashley',i:'📄',t:'Estimates for Ashley too',d:'Ashley has Estimates in her More, like Rocky: she can start one (it comes to you) and see every estimate and PDF.',go:function(){openEst();}},
  {id:'sn_helpers',i:'👷',t:'Snow: helpers on each truck',d:'When you start a storm, pick the guys who go with each truck to shovel walkways and salt by hand. Only the driver works the route in the app. Each helper just gets a regular task "Snow: go with Rocky – Truck 1 – shovel & salt", saved in his tasks, with its chat for photos. You see "Rocky + Juan, Luis" on each truck.',go:function(){openSnow();}},
@@ -2199,7 +2200,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611140952',lastUpd=0;
+var BUILD='202611141001',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -2256,7 +2257,7 @@ function header(){
   return el('header',{class:'top'},
     el('div',{class:'hl'},el('div',{class:'wmark'},el('span',{class:'wm1',text:'SAM'}),el('span',{class:'wm2',text:'To-Do'})),el('div',{class:'title'},isOffice()?T(({snowdrv:'Snow plowing',est:'Estimates',estone:'Estimates',home:'Today',phones:'Phones',need:'Needs you now',tasks:'Tasks',sched:'Schedule',sites:'Job sites',jobs:'Jobs',jobhist:'Jobs',snow:'Snow plowing',chats:'Messages',more:'More',cal:'Calendar',need:'Needs you now'})[S.view||'home']||'To-Do'):T(({chats:'Messages',week:'My week',more:'More',cal:'Calendar',myjobs:'My jobs'})[S.view]||'Today'))),
     el('div',{class:'right'},el('span',{class:'sync'+(S.offline?' off':'')},savingLong()?T('Saving…'):(S.offline?'📵 '+T('Offline')+(S.lastOk?' · '+clockOf(S.lastOk):''):'')),
-      el('button',{class:'me meav','aria-label':S.name||S.me,onclick:openMenu},avatar(S.me,S.name||S.me,38))));
+      el('button',{class:'me meav','aria-label':S.name||S.me,onclick:openMenu},avatar(S.me,S.name||S.me,44))));
 }
 function openSettings(){
   var ns=notifState(),big=store('sam_big')==='1';
