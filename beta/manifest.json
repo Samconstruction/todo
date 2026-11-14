@@ -1,0 +1,30 @@
+{
+ "name": "SAM To-Do TEST",
+ "short_name": "SAM TEST",
+ "start_url": "./",
+ "scope": "./",
+ "id": "/todo/beta/",
+ "display": "standalone",
+ "background_color": "#E8590C",
+ "theme_color": "#ffffff",
+ "icons": [
+  {
+   "src": "../icon4-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "../icon4-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "../icon4-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
