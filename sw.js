@@ -15,13 +15,24 @@ firebase.initializeApp({apiKey:"AIzaSyC_2FSwxf4zIPNoT_VGQ5NpgG7-YZ0CiGU",authDom
 firebase.messaging();
 self.addEventListener('install',function(){self.skipWaiting();});
 self.addEventListener('activate',function(e){e.waitUntil(self.clients.claim());});
-// Keep the app on the phone so it opens even with no signal: try the network first, use the saved copy if it fails.
-var CACHE='sam-app-v1'; // always checks for a fresh app page, so updates arrive right away
+// Keep the app on the phone so it opens right away: try the network, but if it is slow (bad signal) show the saved copy after 2 seconds.
+// The network answer still updates the saved copy, and the app reloads itself when a new version is out.
+var CACHE='sam-app-v1';
 self.addEventListener('fetch',function(e){
   var r=e.request;if(r.method!=='GET')return;var u=new URL(r.url);
   if(u.origin!==self.location.origin||u.pathname.indexOf('/todo/')!==0||/version\.json/.test(u.pathname))return;
   if(u.pathname.indexOf('/todo/beta')===0)return; // the TEST app has its own
-  var nav=r.mode==='navigate'||/\/todo\/(index\.html)?$/.test(u.pathname);
-  e.respondWith((nav?fetch(u.origin+u.pathname,{cache:'no-cache',credentials:'same-origin'}):fetch(r)).then(function(res){if(res&&res.ok){var cp=res.clone();caches.open(CACHE).then(function(c){c.put(r.mode==='navigate'?'/todo/':r,cp);});}return res;})
-    .catch(function(){return caches.match(r.mode==='navigate'?'/todo/':r).then(function(m){return m||caches.match('/todo/');});}));
+  var nav=r.mode==='navigate'||/\/todo\/(index\.html)?$/.test(u.pathname),key=nav?'/todo/':r;
+  var net=(nav?fetch(u.origin+u.pathname,{cache:'no-cache',credentials:'same-origin'}):fetch(r)).then(function(res){if(res&&res.ok){var cp=res.clone();e.waitUntil(caches.open(CACHE).then(function(c){return c.put(key,cp);}));}return res;});
+  e.waitUntil(net.catch(function(){}));
+  var saved=caches.match(key);
+  e.respondWith(new Promise(function(done){var over=false;function give(x){if(!over&&x){over=true;done(x);}}
+    net.then(give,function(){saved.then(function(m){give(m);if(!over)caches.match('/todo/').then(function(m2){give(m2||Response.error());});});});
+    setTimeout(function(){saved.then(give);},nav?2000:4000);}));
 });
+
+// A PDF shared into the app (Share → SAM To-Do): keep it, then open the app to pick the estimate
+self.addEventListener('fetch',function(e){var u=new URL(e.request.url);if(e.request.method!=='POST'||u.pathname.slice(-13)!=="/share-target")return;
+  e.respondWith(e.request.formData().then(function(fd){var f=fd.get('file');if(!f||typeof f==='string')return null;
+    return caches.open('sam-share').then(function(c){return c.put('shared-file',new Response(f,{headers:{'content-type':f.type||'application/pdf','x-name':encodeURIComponent(f.name||'Estimate.pdf')}}));});
+  }).catch(function(){}).then(function(){return Response.redirect(new URL('./?share=1',self.registration.scope).href,303);}));});
