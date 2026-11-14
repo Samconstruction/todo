@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="SAM To-Do">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon4-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon4.png">
 <link rel="icon" type="image/png" href="icon4-192.png">
 <style>
@@ -873,7 +873,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611132054',lastUpd=0;
+var BUILD='202611140209',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
@@ -2248,7 +2248,7 @@ function jobForm(j,onSaved,onCancel){
 }
 // ---------- ❄️ Snow plowing (management: Yossi only for now; drivers work their own route) ----------
 var SNOW_ADMINS=['Yossi'];
-function isSnowAdmin(){return SNOW_ADMINS.indexOf(S.me)>=0&&!S.viewAs;}
+function isSnowAdmin(){return false;} // snow plowing lives in the TEST app only
 Object.assign(ES,{'Snow plowing':'Quitar nieve','Customers':'Clientes','Routes':'Rutas','Storms':'Tormentas','+ Add snow customer':'+ Agregar cliente de nieve','snow customers · separate from your regular jobs':'clientes de nieve · aparte de los trabajos normales',
  'Plow':'Arar','Salt':'Sal','Sidewalks':'Aceras','Clear by':'Limpio antes de las','NEXT STOP':'PRÓXIMA PARADA','of':'de','done':'listas','Navigate':'Navegar','Photo':'Foto','photos':'fotos','Salted':'Con sal','Problem':'Problema',
  '✓ Done – next stop':'✓ Listo – siguiente parada','Finished':'Terminadas','Snow storm':'Tormenta de nieve','All stops done – great work!':'¡Todas las paradas listas – buen trabajo!','What is the problem?':'¿Cuál es el problema?',
