@@ -284,7 +284,8 @@ function subUI(){return !!(document.getElementById('mmenu')||document.querySelec
 function syncHist(){try{
   var st=history.state||{},s=navSnap(),sh=!!document.getElementById('scrim'),vw=!!document.getElementById('viewer'),sub=sh&&subUI();
   if(!st.sam){history.replaceState({sam:1,pad:1},'');st=history.state;}            // first open: exit pad under everything
-  if(st.pad){if(Date.now()-exitAt<2500&&s.k==='home'&&!sh&&!vw)return;s.d=1;history.pushState(s,'');st=s;}    // (re)arm: first screen on top of the pad
+  if(!st.pad&&(s.k==='home'||s.k==='login|')&&!sh&&!vw){navOwn++;history.back();return;} // back on Today with nothing open: step down to the pad, so the next Back closes the app
+  if(st.pad){if((s.k==='home'||s.k==='login|')&&!sh&&!vw)return;s.d=1;history.pushState(s,'');st=s;}    // Today with nothing open sits on the pad itself, so one Back closes the app (like WhatsApp)
   else if((st.viewer&&!vw)||(st.sheet&&!sh)||(st.sub&&!sub&&!vw)||(sh&&st.sheet&&!st.viewer&&(st.rd||0)>RET.length)){ // a sheet/viewer/step was closed by a button
     if(st.k===s.k&&!navRepl){navOwn++;history.back();return;}                         // same screen: drop its entry (popstate re-syncs)
     s.d=(st.d||1)+1;s.from=st.k;history.replaceState(s,'');st=s;                       // went to a new screen from a sheet: it takes the sheet's place
@@ -338,7 +339,7 @@ window.addEventListener('popstate',function(e){
   if(st.pad&&S.viewAs){stopViewAs();return;}
   if(st.pad){                                                // 3) below the first screen
     if(navKey()!=='home'&&navKey()!=='login|'){S.pick=null;S.view='home';S.tab=S.me;S.snStorm=null;render();window.scrollTo(0,0);return;}
-    exitAt=Date.now();toast(T('Press Back again to close the app'));setTimeout(queueHist,2600);return;}
+    return;}
   if((st.me||'')!==(S.me||'')){history.back();return;}      // entry from before sign-in / sign-out: skip it
   var rt=RET[RET.length-1];
   if(rt&&rt.view&&S.view===rt.view){RET.pop();navApply(st);RET_BUSY=true;try{rt.fn();}finally{RET_BUSY=false;}retMark();return;} // job page opened from a task → back to that task
@@ -763,6 +764,7 @@ function bottomTabs(){
 // ===== What's new (TEST app only): every new thing pops up until Yossi has tapped each one =====
 function wnPickWorker(){pickPerson('👀 '+T('See the app as…'),function(p){if(p.id==='Yossi'){toast(T('That is you'));return;}startViewAs(p);});}
 var WHATS_NEW=[
+ {id:'back1',i:'↩',t:'One Back closes the app',d:'On Today with nothing open, one tap on Back closes the app (no more "press Back again"). From another tab, Back first goes to Today – like WhatsApp.',go:function(){goView('home');}},
  {id:'chatall',i:'💬',t:'Messages: All first',d:'Messages now opens on All – every chat together, newest on top. Tap Chats, Jobs or Groups to see only those.',go:function(){goView('chats');}},
  {id:'noptr',i:'🎥',t:'Swipe down closes – no surprise refresh',d:'Pulling down no longer reloads the whole app. Swipe down on an open video or photo goes back to the chat. The app still updates by itself.',go:function(){goView('chats');}},
  {id:'clean1114',i:'✦',t:'Smaller, cleaner app',d:'Old screens and styles nobody uses anymore were taken out, so the app is smaller and opens faster. Nothing you use was changed.',go:function(){goView('home');}},
@@ -1242,7 +1244,7 @@ function openPinChange(){
 }
 // ---------- Notifications open the right screen ----------
 // Auto-update: when the app comes back on screen, check if a newer version is out and reload into it (never while something is open).
-var BUILD='202611142305',lastUpd=0;
+var BUILD='202611150156',lastUpd=0;
 function checkUpdate(force){if(!force&&Date.now()-lastUpd<120000)return;lastUpd=Date.now();
   fetch('version.json?x='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(v){
     if(!v||!v.v||v.v===BUILD)return;
